@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "392657951585",
-    "project_id": "appcaycanh",
-    "storage_bucket": "appcaycanh.firebasestorage.app"
+    "project_number": "283937838068",
+    "project_id": "sellbonsai2025",
+    "storage_bucket": "sellbonsai2025.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:392657951585:android:b80e120244e20c7d06c320",
+        "mobilesdk_app_id": "1:283937838068:android:e67aa7c1d0b31195381fa1",
         "android_client_info": {
-          "package_name": "com.adrnc_g02.appcaycanh"
+          "package_name": "com.example.sellingbonsai"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBw2WVCQveQpR6WioI-qpX38iQbFyCJ-sU"
+          "current_key": "AIzaSyDUQGUbReKSXhdow7p4B1rDlwb0UEaub0w"
         }
       ],
       "services": {
