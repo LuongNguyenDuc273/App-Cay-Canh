@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "392657951585",
+    "project_id": "appcaycanh",
+    "storage_bucket": "appcaycanh.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:392657951585:android:b80e120244e20c7d06c320",
+        "android_client_info": {
+          "package_name": "com.adrnc_g02.appcaycanh"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBw2WVCQveQpR6WioI-qpX38iQbFyCJ-sU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
