@@ -10,7 +10,7 @@
 
 
     <TextView
-        android:id="@+id/dangnhap_tv"
+        android:id="@+id/login_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="LOGIN"
@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/dangnhap_edt"
+        android:id="@+id/login_edt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
@@ -38,7 +38,7 @@
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dangnhap_tv" />
+        app:layout_constraintTop_toBottomOf="@+id/login_tv" />
 
     <EditText
         android:id="@+id/password_edt"
@@ -54,7 +54,7 @@
         android:fontFamily="@font/nunito_italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dangnhap_edt" />
+        app:layout_constraintTop_toBottomOf="@+id/login_edt" />
 
     <TextView
         android:id="@+id/quenmatkhau"
@@ -70,7 +70,7 @@
         app:layout_constraintTop_toBottomOf="@+id/password_edt" />
 
     <ImageButton
-        android:id="@+id/dangnhap_btn"
+        android:id="@+id/login_btn"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginTop="40dp"
@@ -83,7 +83,7 @@
         app:layout_constraintTop_toBottomOf="@+id/quenmatkhau" />
 
     <TextView
-        android:id="@+id/dangky_tv"
+        android:id="@+id/signin_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
@@ -101,7 +101,7 @@
         android:layout_height="2dp"
         android:background="@color/white"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dangnhap_btn"
+        app:layout_constraintTop_toBottomOf="@+id/login_btn"
         app:layout_constraintEnd_toStartOf="@+id/hoac_tv"
         android:layout_marginTop="55dp"
         android:layout_marginStart="30dp"
@@ -117,7 +117,7 @@
         android:text="hoặc"
         android:textColor="@color/white"
         android:textSize="20dp"
-        app:layout_constraintTop_toBottomOf="@+id/dangnhap_btn"
+        app:layout_constraintTop_toBottomOf="@+id/login_btn"
         app:layout_constraintStart_toEndOf="@+id/line_left"
         app:layout_constraintEnd_toStartOf="@+id/line_right"
         android:layout_marginTop="40dp"/>
@@ -128,14 +128,14 @@
         android:layout_height="2dp"
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dangnhap_btn"
+        app:layout_constraintTop_toBottomOf="@+id/login_btn"
         app:layout_constraintStart_toEndOf="@+id/hoac_tv"
         android:layout_marginTop="55dp"
         android:layout_marginEnd="30dp"
         android:layout_marginStart="8dp"/>
 
     <Button
-        android:id="@+id/dangkygg_btn"
+        android:id="@+id/logingg_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="50dp"

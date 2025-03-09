@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "392657951585",
+    "firebase_url": "https://appcaycanh-default-rtdb.firebaseio.com",
     "project_id": "appcaycanh",
     "storage_bucket": "appcaycanh.firebasestorage.app"
   },
@@ -12,7 +13,20 @@
           "package_name": "com.adrnc_g02.appcaycanh"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "392657951585-hdbvtinrm2tjdqr9dflnn5bpgnp00pbn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.adrnc_g02.appcaycanh",
+            "certificate_hash": "b5818c65c82eb4a54b59da8a3a428325e10b5804"
+          }
+        },
+        {
+          "client_id": "392657951585-etbm72dl0r5a0oithhrnac4vipqbl3dk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBw2WVCQveQpR6WioI-qpX38iQbFyCJ-sU"
@@ -20,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "392657951585-etbm72dl0r5a0oithhrnac4vipqbl3dk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
