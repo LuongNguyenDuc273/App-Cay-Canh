@@ -13,7 +13,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class Login extends AppCompatActivity {
-    TextView changeToRegister;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,16 +23,6 @@ public class Login extends AppCompatActivity {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            changeToRegister = findViewById(R.id.register);
-            changeToRegister.setPaintFlags(changeToRegister.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-
-            changeToRegister.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent rintent = new Intent(Login.this, Register.class);
-                    startActivity(rintent);
-                }
-            });
             return insets;
 
         });
