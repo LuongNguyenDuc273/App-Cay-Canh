@@ -103,8 +103,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:background="@drawable/date_selector_bg" />
+            android:paddingBottom="8dp" />
     </LinearLayout>
 
     <EditText
@@ -173,64 +172,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:text="You have a account, Click Here"
+        android:text="Bạn đã có tài khoản, nhấn vào đây"
+        android:textSize="18sp"
+        android:fontFamily="@font/nunito_bold"
         android:textColor="@color/white"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <View
-        android:id="@+id/line_left"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="8dp"
-        android:background="@color/white"
-        app:layout_constraintEnd_toStartOf="@+id/hoac_tv"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/register_btn" />
-
-    <TextView
-        android:id="@+id/hoac_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/nunito_regular"
-        android:gravity="center"
-        android:text="hoặc"
-        android:textColor="@color/white"
-        android:textSize="20dp"
-        app:layout_constraintTop_toBottomOf="@+id/register_btn"
-        app:layout_constraintStart_toEndOf="@+id/line_left"
-        app:layout_constraintEnd_toStartOf="@+id/line_right"
-        android:layout_marginTop="20dp"/>
-
-    <View
-        android:id="@+id/line_right"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:background="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/register_btn"
-        app:layout_constraintStart_toEndOf="@+id/hoac_tv"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginStart="8dp"/>
-
-    <Button
-        android:id="@+id/dangkygg_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/roundstyle"
-        android:textColor="#13C123"
-        android:fontFamily="@font/nunito_bold"
-        android:text="Đăng nhập bằng google"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hoac_tv" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
