@@ -6,6 +6,7 @@
     </style>
 
     <style name="Theme.AppCayCanh" parent="Base.Theme.AppCayCanh" />
+
     <style name="MyGoogleLoginButtonStyle" parent="Widget.AppCompat.Button">
         <item name="android:background">@color/white</item>
         <item name="android:textColor">#13C123</item>
