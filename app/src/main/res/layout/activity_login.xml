@@ -2,14 +2,14 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/simple_plant_wallpapers"
     tools:context=".Login">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/dangnhap_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="LOGIN"
@@ -37,8 +37,7 @@
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
+        app:layout_constraintTop_toBottomOf="@+id/dangnhap_tv" />
     <EditText
         android:id="@+id/password_edt"
         android:layout_width="match_parent"
@@ -54,6 +53,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dangnhap_edt" />
+    <TextView
+        android:id="@+id/quenmatkhau"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:fontFamily="@font/nunito_medium"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:text="@string/qu_n_m_t_kh_u"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password_edt" />
 
     <ImageButton
         android:id="@+id/dangnhap_btn"
@@ -65,20 +76,69 @@
         android:src="@drawable/btn_dn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password_edt" />
-
+        app:layout_constraintTop_toBottomOf="@+id/quenmatkhau" />
     <TextView
         android:id="@+id/register"
-        android:layout_width="275dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
-        android:textStyle="bold"
-        android:text="You don't have a account, Click Here"
+        android:layout_marginBottom="20dp"
+        android:textSize="18sp"
+        android:fontFamily="@font/nunito_bold"
+        android:text="Chưa có tài khoản, đăng ký ngay"
         android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.801"
+        app:layout_constraintStart_toStartOf="parent" />
+    <View
+        android:id="@+id/line_left"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@color/white"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dangnhap_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/dangnhap_btn"
+        app:layout_constraintEnd_toStartOf="@+id/hoac_tv"
+        android:layout_marginTop="55dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="8dp"/>
+    <TextView
+        android:id="@+id/hoac_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/nunito_regular"
+        android:gravity="center"
+        android:text="hoặc"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/dangnhap_btn"
+        app:layout_constraintStart_toEndOf="@+id/line_left"
+        app:layout_constraintEnd_toStartOf="@+id/line_right"
+        android:layout_marginTop="40dp"/>
+
+    <View
+        android:id="@+id/line_right"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dangnhap_btn"
+        app:layout_constraintStart_toEndOf="@+id/hoac_tv"
+        android:layout_marginTop="55dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="8dp"/>
+
+    <Button
+        android:id="@+id/dangkygg_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="36dp"
+        android:background="@drawable/roundstyle"
+        android:textColor="#13C123"
+        android:fontFamily="@font/nunito_bold"
+        android:text="Đăng nhập bằng google"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hoac_tv" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
