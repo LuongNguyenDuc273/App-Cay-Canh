@@ -71,40 +71,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/register_edt" />
-    <LinearLayout
-        android:id="@+id/date_layout"
+    <EditText
+        android:id="@+id/date_edt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="40dp"
         android:layout_marginTop="10dp"
         android:gravity="center"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:backgroundTint="@color/white"
+        android:hint="Ngày sinh (dd/mm/yyyy)"
+        android:focusable="false"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phone_edt">
-
-        <TextView
-            android:id="@+id/date_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ngày sinh: "
-            android:textColor="@color/white"
-            android:fontFamily="@font/nunito_medium"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/birthday_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Chọn ngày"
-            android:textColor="@color/white"
-            android:fontFamily="@font/nunito_italic"
-            android:textSize="16sp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp" />
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/phone_edt"/>
 
     <EditText
         android:id="@+id/address_edt"
@@ -121,7 +103,7 @@
         android:fontFamily="@font/nunito_italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/date_edt" />
 
 
     <EditText
@@ -154,6 +136,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password_edt" />
+    <EditText
+        android:id="@+id/userId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="40dp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/white"
+        android:textColorHint="@color/white"
+        android:hint=""
+        android:fontFamily="@font/nunito_italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password_cf" />
 
     <ImageButton
         android:id="@+id/register_btn"
@@ -165,7 +163,7 @@
         android:src="@drawable/btn_dn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password_cf" />
+        app:layout_constraintTop_toBottomOf="@+id/userId" />
 
     <TextView
         android:id="@+id/login"
