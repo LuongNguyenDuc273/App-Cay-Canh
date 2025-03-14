@@ -33,12 +33,9 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class Login extends AppCompatActivity {
     private Button loginggbtn;
-
-
+    private TextView register;
     private GoogleSignInClient client;
     private static final int RC_SIGN_IN = 1234;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +50,7 @@ public class Login extends AppCompatActivity {
 
         //Anh xa
         loginggbtn = findViewById(R.id.logingg_btn);
+        register = findViewById(R.id.register_tv);
 
         //Khoi tao gg sign in
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -66,6 +64,14 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 signIn();
+            }
+        });
+        //su kien chuyen sang dang ky
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Login.this, Register.class);
+                startActivity(intent);
             }
         });
     }
