@@ -83,7 +83,7 @@
         app:layout_constraintTop_toBottomOf="@+id/quenmatkhau" />
 
     <TextView
-        android:id="@+id/signin_tv"
+        android:id="@+id/register_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
