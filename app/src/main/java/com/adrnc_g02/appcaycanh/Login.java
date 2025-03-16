@@ -4,8 +4,12 @@ import android.content.Intent;
 import android.credentials.GetCredentialRequest;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +38,10 @@ import com.google.firebase.auth.GoogleAuthProvider;
 public class Login extends AppCompatActivity {
     private Button loginggbtn;
     private TextView register;
+    private EditText edtemail, edtpassword;
     private GoogleSignInClient client;
+    private ImageButton loginbtn;
+    private FirebaseAuth mAuth;
     private static final int RC_SIGN_IN = 1234;
 
     @Override
@@ -51,6 +58,9 @@ public class Login extends AppCompatActivity {
         //Anh xa
         loginggbtn = findViewById(R.id.logingg_btn);
         register = findViewById(R.id.register_tv);
+        edtemail = findViewById(R.id.login_edt);
+        edtpassword = findViewById(R.id.password_edt);
+        loginbtn = findViewById(R.id.login_btn);
 
         //Khoi tao gg sign in
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -63,9 +73,18 @@ public class Login extends AppCompatActivity {
         loginggbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                signIn();
+                signIngg();
             }
         });
+
+        //su kien dang nhap bang email
+        loginbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            signIn();
+            }
+        });
+
         //su kien chuyen sang dang ky
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +95,45 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    private void signIn() {
+    private void signIn(){
+        mAuth = FirebaseAuth.getInstance();
+        String email = edtemail.getText().toString().trim();
+        String password = edtpassword.getText().toString().trim();
+        // Email validation
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(Login.this, "Hãy điền email", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(Login.this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Password validation
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(Login.this, "Hãy điền mật khẩu", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (password.length() < 6) {
+            Toast.makeText(Login.this, "Mật khẩu phải có ít nhất 6 ký tự", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(Login.this, "Đăng nhập thành công ", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(Login.this, MainActivity.class);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(Login.this, "Lỗi đăng nhập ", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+    private void signIngg() {
         Intent signInIntent = client.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
