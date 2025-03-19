@@ -45,45 +45,45 @@ public class MainActivity extends AppCompatActivity {
         cUser = auth.getCurrentUser();
 
 
-        btnlogout = findViewById(R.id.logout_btn);
-        nd = findViewById(R.id.nguoidung);
-
-        if (cUser != null) {
-            nd.setText(cUser.getEmail());
-        } else {
-            nd.setText("Không có người dùng đăng nhập");
-        }
+//        btnlogout = findViewById(R.id.logout_btn);
+//        nd = findViewById(R.id.nguoidung);
+//
+//        if (cUser != null) {
+//            nd.setText(cUser.getEmail());
+//        } else {
+//            nd.setText("Không có người dùng đăng nhập");
+//        }
 
 
         // Initialize Google Sign-In client
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id)) // Replace with your web client ID
-                .requestEmail()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestIdToken(getString(R.string.default_web_client_id)) // Replace with your web client ID
+//                .requestEmail()
+//                .build();
+//        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
 
-        btnlogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signOutCompletely();
-            }
-        });
-    }
+//        btnlogout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                signOutCompletely();
+//            }
+//        });
+//    }
 
-    private void signOutCompletely() {
-        auth.signOut(); // Sign out of Firebase Authentication
-
-        // Sign out of Google Sign-In
-        mGoogleSignInClient.signOut().addOnCompleteListener(MainActivity.this, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                // Successfully signed out of Google Sign-In
-                Log.d("Auth", "Google Sign-Out successful");
-                Intent intent = new Intent(MainActivity.this, Login.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+//    private void signOutCompletely() {
+//        auth.signOut(); // Sign out of Firebase Authentication
+//
+//        // Sign out of Google Sign-In
+//        mGoogleSignInClient.signOut().addOnCompleteListener(MainActivity.this, new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Void> task) {
+//                // Successfully signed out of Google Sign-In
+//                Log.d("Auth", "Google Sign-Out successful");
+//                Intent intent = new Intent(MainActivity.this, Login.class);
+//                startActivity(intent);
+//                finish();
+//            }
+//        });
     }
 }
