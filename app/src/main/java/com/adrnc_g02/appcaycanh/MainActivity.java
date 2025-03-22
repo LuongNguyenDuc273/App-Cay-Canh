@@ -44,15 +44,15 @@ public class MainActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance(); // Initialize Firebase Auth here
         cUser = auth.getCurrentUser();
 
-
-        btnlogout = findViewById(R.id.logout_btn);
-        nd = findViewById(R.id.nguoidung);
-
-        if (cUser != null) {
-            nd.setText(cUser.getEmail());
-        } else {
-            nd.setText("Không có người dùng đăng nhập");
-        }
+//
+//        btnlogout = findViewById(R.id.logout_btn);
+//        nd = findViewById(R.id.nguoidung);
+//
+//        if (cUser != null) {
+//            nd.setText(cUser.getEmail());
+//        } else {
+//            nd.setText("Không có người dùng đăng nhập");
+//        }
 
 
         // Initialize Google Sign-In client
@@ -63,12 +63,12 @@ public class MainActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
 
-        btnlogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signOutCompletely();
-            }
-        });
+//        btnlogout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                signOutCompletely();
+//            }
+//        });
     }
 
     private void signOutCompletely() {
