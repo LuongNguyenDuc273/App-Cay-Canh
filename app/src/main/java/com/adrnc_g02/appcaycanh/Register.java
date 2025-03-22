@@ -23,6 +23,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Firebase;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -41,6 +42,7 @@ public class Register extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private DatabaseReference quotesRef;
+    private FirebaseUser cUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +111,6 @@ public class Register extends AppCompatActivity {
         String phone = edtPhone.getText().toString().trim();
         String address = edtAddress.getText().toString();
         String birthday = dateSet.getText().toString().trim();
-        String key= quotesRef.push().getKey();
 
         // Email validation
         if (TextUtils.isEmpty(email)) {
@@ -169,20 +170,22 @@ public class Register extends AppCompatActivity {
             return;
         }
 
-        //Luu vao realtime database
-        Customer cModule = new Customer(key, fullName, email, birthday, phone, address, password);
-        quotesRef.child(key).setValue(cModule).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-            Toast.makeText(Register.this, "Đã tạo tài khoản", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         // Luu vao authentication fire base
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
+                        //Luu vao realtime database
+                        FirebaseAuth auth = FirebaseAuth.getInstance();
+                        FirebaseUser cUser = auth.getCurrentUser();
+                        String key = cUser.getUid();
+                        Customer cModule = new Customer(key, fullName, email, birthday, phone, address, password);
+                        quotesRef.child(key).setValue(cModule).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(Register.this, "Đã tạo tài khoản", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                         Toast.makeText(Register.this, "Đã tạo tài khoản", Toast.LENGTH_SHORT).show();
                         // Optionally navigate to another activity after successful registration.
                     } else {
