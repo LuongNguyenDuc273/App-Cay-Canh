@@ -41,7 +41,7 @@ public class Register extends AppCompatActivity {
     private TextView edtFullName, edtPhone, edtAddress, changeToLogIn, dateSet;
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
-    private DatabaseReference quotesRef;
+    private DatabaseReference myRef;
     private FirebaseUser cUser;
 
     @Override
@@ -103,7 +103,7 @@ public class Register extends AppCompatActivity {
     //function dang ky
     private void intiRegister(){
         database = FirebaseDatabase.getInstance();
-        quotesRef = database.getReference("Customer");
+        myRef = database.getReference("Customer");
         String email = edtemail.getText().toString().trim();
         String password = edtpassword.getText().toString().trim();
         String cfPassword = edtcfpassword.getText().toString().trim();
@@ -180,7 +180,7 @@ public class Register extends AppCompatActivity {
                         FirebaseUser cUser = auth.getCurrentUser();
                         String key = cUser.getUid();
                         Customer cModule = new Customer(key, fullName, email, birthday, phone, address, password);
-                        quotesRef.child(key).setValue(cModule).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        myRef.child(key).setValue(cModule).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 Toast.makeText(Register.this, "Đã tạo tài khoản", Toast.LENGTH_SHORT).show();
