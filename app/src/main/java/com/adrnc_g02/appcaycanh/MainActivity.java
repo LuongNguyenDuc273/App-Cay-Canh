@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button btnlogout;
     private TextView nd;
+    private ImageButton btnFavorite, btnNotification;
     private FirebaseAuth auth; //Added FirebaseAuth instance variable
     private FirebaseUser cUser;
     private GoogleSignInClient mGoogleSignInClient; // Add GoogleSignInClient
@@ -40,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        //Anh xa
+        btnFavorite = findViewById(R.id.btnFavorite); //Test
+        btnNotification = findViewById(R.id.btnNotification); //Test
         auth = FirebaseAuth.getInstance(); // Initialize Firebase Auth here
         cUser = auth.getCurrentUser();
 
@@ -53,6 +57,24 @@ public class MainActivity extends AppCompatActivity {
 //        } else {
 //            nd.setText("Không có người dùng đăng nhập");
 //        }
+
+        //Test chuyen sang them sang pham
+        btnFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, AddProduct.class);
+                startActivity(intent);
+            }
+        });
+
+        //Test chuyen sang them danh muc san pham
+        btnNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, AddLine.class);
+                startActivity(intent);
+            }
+        });
 
 
         // Initialize Google Sign-In client
