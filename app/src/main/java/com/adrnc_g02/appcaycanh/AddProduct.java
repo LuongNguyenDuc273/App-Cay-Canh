@@ -1,37 +1,56 @@
 package com.adrnc_g02.appcaycanh;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import Model.Line;
+import Model.Product;
 
 public class AddProduct extends AppCompatActivity {
-    private EditText edtProductName, edtQuantity, edtPrice;
+    private EditText edtProductName, edtQuantity, edtPrice, edtDescribe;
+    private Button btnCancel, btnSave;
+    private ImageView imageViewProduct;
     private Spinner spinnerProductType;
-    private String selectedLineID;
+    private String selectedLineID, imgURL;
+    private Uri uri;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
+    private StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,14 +64,108 @@ public class AddProduct extends AppCompatActivity {
         });
 
         //Anh xa
+        edtProductName = findViewById(R.id.editTextProductName);
+        edtQuantity = findViewById(R.id.editTextQuantity);
+        edtPrice = findViewById(R.id.editTextPrice);
+        edtDescribe=findViewById(R.id.editTextDescribe);
+        btnSave = findViewById(R.id.buttonSave);
+        imageViewProduct = findViewById(R.id.imageViewProduct);
         spinnerProductType = findViewById(R.id.spinnerProductType);
 
         //Lay du lieu Line tu database cho spinner
-        updateSpinner();
+        UpdateSpinner();
+
+        //Mo cua so chon anh
+        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK){
+                            Intent data = result.getData();
+                            uri = data.getData();
+                            imageViewProduct.setImageURI(uri);
+                        } else {
+                            Toast.makeText(AddProduct.this, "Chưa chọn ảnh", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+        );
+
+        //Su kien chon anh
+        imageViewProduct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent photoPicker = new Intent(Intent.ACTION_PICK);
+                photoPicker.setType("image/*");
+                activityResultLauncher.launch(photoPicker);
+            }
+        });
+
+        //Su kien them san pham
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SaveProduct();
+            }
+        });
 
     }
 
-    private void updateSpinner(){
+    private void SaveProduct(){
+        storageReference = FirebaseStorage.getInstance().getReference().child("Product").child(uri.getLastPathSegment());
+        if (uri == null) {
+            // No image selected!
+            Toast.makeText(AddProduct.this, "Xin bạn hãy chọn ảnh trước khi lưu sản phẩm.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Android Images")
+                .child(uri.getLastPathSegment());
+
+        storageReference.putFile(uri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(uri -> {
+                        imgURL = uri.toString();
+                        UploadProduct();
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    // Display an error message to the user
+                    Toast.makeText(AddProduct.this, "Chọn ảnh thất bại.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void UploadProduct(){
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("Product");
+        String productName = edtProductName.getText().toString();
+        String quantity = edtQuantity.getText().toString().trim();
+        String price = edtPrice.getText().toString().trim();
+        String Describe = edtDescribe.getText().toString();
+        String key = myRef.push().getKey();
+
+        Product product = new Product(key, selectedLineID, productName, quantity, price, Describe, imgURL);
+
+        myRef.child(key).setValue(product).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Toast.makeText(AddProduct.this, "Saved", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(AddProduct.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+    }
+
+    private void UpdateSpinner(){
         database= FirebaseDatabase.getInstance();
         myRef = database.getReference("Line");
         List<Line> lineList = new ArrayList<>();
