@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -14,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -22,11 +26,27 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import Model.Line;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    private RecyclerView listbnt;
     private Button btnlogout;
+    private ArrayList<Line> dataLine;
+    private FirebaseDatabase database;
+
+    private LinearLayoutManager linearLayoutManager;
+    MyAdapter myAdapter;
     private TextView nd;
+    private DatabaseReference tbline;
     private ImageButton btnFavorite, btnNotification;
     private FirebaseAuth auth; //Added FirebaseAuth instance variable
     private FirebaseUser cUser;
@@ -47,6 +67,17 @@ public class MainActivity extends AppCompatActivity {
         btnNotification = findViewById(R.id.btnNotification); //Test
         auth = FirebaseAuth.getInstance(); // Initialize Firebase Auth here
         cUser = auth.getCurrentUser();
+        listbnt = findViewById(R.id.listbutton);
+
+        //hien thi danh muc san pham
+        database = FirebaseDatabase.getInstance();
+        tbline = database.getReference("Line");
+        dataLine = new ArrayList<Line>();
+        linearLayoutManager = new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL,false);
+        listbnt.setLayoutManager(linearLayoutManager);
+        myAdapter = new MyAdapter(MainActivity.this, dataLine);
+        listbnt.setAdapter(myAdapter);
+        getAllLine();
 
 //
 //        btnlogout = findViewById(R.id.logout_btn);
@@ -93,6 +124,30 @@ public class MainActivity extends AppCompatActivity {
 //        });
     }
 
+    private void getAllLine() {
+        tbline.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dataLine.clear();
+                for(DataSnapshot lineSnapshot:snapshot.getChildren())
+                {
+                    Line line = lineSnapshot.getValue(Line.class);
+                    if (line!=null)
+                    {
+                        dataLine.add(line);
+                    }
+                }
+                myAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(MainActivity.this, "Loi kho tai cac lines: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("Firebase", "Error fetching lines", error.toException());
+            }
+        });
+    }
+
     private void signOutCompletely() {
         auth.signOut(); // Sign out of Firebase Authentication
 
@@ -108,4 +163,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 }
