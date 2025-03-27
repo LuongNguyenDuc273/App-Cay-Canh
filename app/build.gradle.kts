@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-
+    implementation(libs.glide.core)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

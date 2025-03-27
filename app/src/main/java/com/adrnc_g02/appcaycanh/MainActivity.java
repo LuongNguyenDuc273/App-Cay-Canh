@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,21 +33,25 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import Model.Line;
+import Model.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView listbnt;
+    private RecyclerView listbnt,listProduct;
     private Button btnlogout;
     private ArrayList<Line> dataLine;
+    private ArrayList<Product> dataProduct;
     private FirebaseDatabase database;
 
     private LinearLayoutManager linearLayoutManager;
     MyAdapter myAdapter;
+    private ProductApdater productApdater;
     private TextView nd;
-    private DatabaseReference tbline;
+    private GridLayoutManager gridLayoutManager;
+    private DatabaseReference tbline, tblProduct;
     private ImageButton btnFavorite, btnNotification;
     private FirebaseAuth auth; //Added FirebaseAuth instance variable
     private FirebaseUser cUser;
@@ -68,16 +73,27 @@ public class MainActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance(); // Initialize Firebase Auth here
         cUser = auth.getCurrentUser();
         listbnt = findViewById(R.id.listbutton);
+        listProduct = findViewById(R.id.recyclerViewPlants);
 
         //hien thi danh muc san pham
         database = FirebaseDatabase.getInstance();
         tbline = database.getReference("Line");
         dataLine = new ArrayList<Line>();
-        linearLayoutManager = new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL,false);
+        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         listbnt.setLayoutManager(linearLayoutManager);
         myAdapter = new MyAdapter(MainActivity.this, dataLine);
         listbnt.setAdapter(myAdapter);
         getAllLine();
+
+        // hien thi cac san pham
+        tblProduct = database.getReference("Product");
+        dataProduct = new ArrayList<Product>();
+        gridLayoutManager = new GridLayoutManager(this, 2);
+        listProduct.setLayoutManager(gridLayoutManager);
+        productApdater = new ProductApdater(MainActivity.this,dataProduct);
+        listProduct.setAdapter(productApdater);
+        getAllProduct();
+
 
 //
 //        btnlogout = findViewById(R.id.logout_btn);
@@ -122,6 +138,31 @@ public class MainActivity extends AppCompatActivity {
 //                signOutCompletely();
 //            }
 //        });
+    }
+
+    private void getAllProduct() {
+        tblProduct.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dataProduct.clear();
+                for(DataSnapshot productsnapshot:snapshot.getChildren())
+                {
+                    Product product = productsnapshot.getValue(Product.class);
+                    if (product!=null)
+                    {
+                        dataProduct.add(product);
+                    }
+                }
+                productApdater.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(MainActivity.this, "Loi kho tai cac products: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("Firebase", "Error fetching lines", error.toException());
+            }
+        });
     }
 
     private void getAllLine() {
