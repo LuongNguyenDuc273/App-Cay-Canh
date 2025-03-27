@@ -34,6 +34,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import Model.User;
 
 public class Login extends AppCompatActivity {
     private Button loginggbtn;
@@ -42,6 +46,9 @@ public class Login extends AppCompatActivity {
     private GoogleSignInClient client;
     private ImageButton loginbtn;
     private FirebaseAuth mAuth;
+    private FirebaseUser cUser;
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
     private static final int RC_SIGN_IN = 1234;
 
     @Override
@@ -143,6 +150,10 @@ public class Login extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == RC_SIGN_IN){
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            database = FirebaseDatabase.getInstance();
+            myRef = database.getReference("User");
+            cUser = mAuth.getCurrentUser();
+            User user = new User(cUser.getEmail(), "");
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
@@ -151,6 +162,7 @@ public class Login extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
+                                    myRef.child(cUser.getEmail()).setValue(user);
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
                                 } else {

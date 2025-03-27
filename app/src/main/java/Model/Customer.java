@@ -7,15 +7,6 @@ public class Customer {
     private String Birthday;
     private String Phone;
     private String Address;
-    private String Password;
-
-    public String getPassword() {
-        return Password;
-    }
-
-    public void setPassword(String password) {
-        Password = password;
-    }
 
     public void setIDCus(String IDCus) {
         this.IDCus = IDCus;
@@ -65,14 +56,13 @@ public class Customer {
         return Address;
     }
 
-    public Customer(String IDCus, String nameCus, String gmail, String birthday, String phone, String address, String password) {
+    public Customer(String IDCus, String nameCus, String gmail, String birthday, String phone, String address) {
         this.IDCus = IDCus;
         NameCus = nameCus;
         Gmail = gmail;
         Birthday = birthday;
         Phone = phone;
         Address = address;
-        Password = password;
     }
 
     public Customer(){};

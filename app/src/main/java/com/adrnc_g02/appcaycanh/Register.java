@@ -103,7 +103,8 @@ public class Register extends AppCompatActivity {
     //function dang ky
     private void intiRegister(){
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Customer");
+        DatabaseReference cusRef = database.getReference("Customer");
+        DatabaseReference userRef = database.getReference("User");
         String email = edtemail.getText().toString().trim();
         String password = edtpassword.getText().toString().trim();
         String cfPassword = edtcfpassword.getText().toString().trim();
@@ -177,9 +178,9 @@ public class Register extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         //Luu vao realtime database
                         FirebaseAuth auth = FirebaseAuth.getInstance();
-                        FirebaseUser cUser = auth.getCurrentUser();
+                        cUser = auth.getCurrentUser();
                         String key = cUser.getUid();
-                        Customer cModule = new Customer(key, fullName, email, birthday, phone, address, password);
+                        Customer cModule = new Customer(key, fullName, email, birthday, phone, address);
                         myRef.child(key).setValue(cModule).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
