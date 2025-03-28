@@ -1,6 +1,7 @@
 package com.adrnc_g02.appcaycanh;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +40,14 @@ public class ProductApdater extends RecyclerView.Adapter<ProductApdater.MyViewHo
         holder.productItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(context, ProductDetail.class);
+                intent.putExtra("Image", products.get(holder.getAdapterPosition()).getPhoto());
+                intent.putExtra("Name", products.get(holder.getAdapterPosition()).getNameProc());
+                intent.putExtra("Line",products.get(holder.getAdapterPosition()).getIDLine());
+                intent.putExtra("Price", products.get(holder.getAdapterPosition()).getPrice());
+                intent.putExtra("Description",products.get(holder.getAdapterPosition()).getDescribe());
+                intent.putExtra("Key", products.get(holder.getAdapterPosition()).getIDProc());
+                context.startActivity(intent);
             }
         });
     }
@@ -52,7 +60,7 @@ public class ProductApdater extends RecyclerView.Adapter<ProductApdater.MyViewHo
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         CardView productItem;
-        TextView productName, productPrice;
+        TextView productName, productPrice,productDetail,product;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             productItem = itemView.findViewById(R.id.productCard);

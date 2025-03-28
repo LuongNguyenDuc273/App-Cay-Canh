@@ -133,6 +133,7 @@ public class Login extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Toast.makeText(Login.this, "Đăng nhập thành công ", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(Login.this, MainActivity.class);
+                            intent.putExtra("userEmail", email);
                             startActivity(intent);
                         } else {
                             Toast.makeText(Login.this, "Lỗi đăng nhập ", Toast.LENGTH_SHORT).show();
@@ -164,6 +165,7 @@ public class Login extends AppCompatActivity {
                                 if(task.isSuccessful()){
                                     myRef.child(cUser.getEmail()).setValue(user);
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    intent.putExtra("userEmail", account.getEmail());
                                     startActivity(intent);
                                 } else {
                                     Toast.makeText(Login.this, task.getException().getMessage(), Toast.LENGTH_SHORT);
