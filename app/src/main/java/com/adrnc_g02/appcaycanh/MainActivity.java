@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayoutManager linearLayoutManager;
     MyAdapter myAdapter;
     private ProductApdater productApdater;
-    private TextView nd;
+    private TextView nd,Username;
     private GridLayoutManager gridLayoutManager;
     private DatabaseReference tbline, tblProduct;
     private ImageButton btnFavorite, btnNotification;
@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         cUser = auth.getCurrentUser();
         listbnt = findViewById(R.id.listbutton);
         listProduct = findViewById(R.id.recyclerViewPlants);
+        Username = findViewById(R.id.txtUsername);
 
         //hien thi danh muc san pham
         database = FirebaseDatabase.getInstance();
@@ -93,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
         productApdater = new ProductApdater(MainActivity.this,dataProduct);
         listProduct.setAdapter(productApdater);
         getAllProduct();
+        // hien thi user
+        setUsername();
 
 
 //
@@ -138,6 +141,23 @@ public class MainActivity extends AppCompatActivity {
 //                signOutCompletely();
 //            }
 //        });
+    }
+
+    private void setUsername() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userName = getIntent().getStringExtra("userName");
+            String userName2 = getIntent().getStringExtra("userName2");
+            if (userName != null) {
+                Username.setText(userName);
+            } else if (userName2 != null) {
+                Username.setText(userName2);
+            } else {
+                Username.setText(currentUser.getEmail());
+            }
+        } else {
+            Username.setText("Chua Dang Nhap");
+        }
     }
 
     private void getAllProduct() {
