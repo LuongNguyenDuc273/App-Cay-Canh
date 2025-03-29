@@ -198,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
                         dataLine.add(line);
                     }
                 }
+                Log.d("FirebaseData", "Final dataLine size: " + dataLine.size());
                 myAdapter.notifyDataSetChanged();
             }
 

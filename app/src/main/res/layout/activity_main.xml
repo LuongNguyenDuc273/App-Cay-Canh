@@ -171,13 +171,18 @@
                         android:text="Tất Cả"
                         android:textAllCaps="false"
                         android:textColor="#FFFFFF" />
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/listbutton"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:orientation="horizontal"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        android:scrollbars="horizontal"/>
+                        android:scrollbars="horizontal"
+                        android:clipToPadding="false"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="16dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
                 </LinearLayout>
             </HorizontalScrollView>
 
