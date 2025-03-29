@@ -46,6 +46,7 @@ public class ProductApdater extends RecyclerView.Adapter<ProductApdater.MyViewHo
                 intent.putExtra("Line",products.get(holder.getAdapterPosition()).getIDLine());
                 intent.putExtra("Price", products.get(holder.getAdapterPosition()).getPrice());
                 intent.putExtra("Description",products.get(holder.getAdapterPosition()).getDescribe());
+                intent.putExtra("Quantity",products.get(holder.getAdapterPosition()).getReQuantity());
                 intent.putExtra("Key", products.get(holder.getAdapterPosition()).getIDProc());
                 context.startActivity(intent);
             }
