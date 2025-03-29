@@ -36,7 +36,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import Model.Line;
 import Model.Product;
@@ -47,6 +49,7 @@ public class AddProduct extends AppCompatActivity {
     private ImageView imageViewProduct;
     private Spinner spinnerProductType;
     private String selectedLineID, imgURL;
+    private GenericFunction gF = new GenericFunction();
     private Uri uri;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
@@ -106,7 +109,10 @@ public class AddProduct extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 SaveProduct();
+//                Intent intent = new Intent(AddProduct.this, MainActivity.class);
+//                startActivity(intent);
             }
         });
 
@@ -146,21 +152,29 @@ public class AddProduct extends AppCompatActivity {
         String key = myRef.push().getKey();
 
         Product product = new Product(key, selectedLineID, productName, quantity, price, Describe, imgURL);
-
-        myRef.child(key).setValue(product).addOnCompleteListener(new OnCompleteListener<Void>() {
+        gF.addData("Product", key, product).addOnCompleteListener(new OnCompleteListener() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
+            public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()){
                     Toast.makeText(AddProduct.this, "Saved", Toast.LENGTH_SHORT).show();
-                    finish();
                 }
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(AddProduct.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
-            }
         });
+
+//        myRef.child(key).setValue(product).addOnCompleteListener(new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Void> task) {
+//                if (task.isSuccessful()){
+//                    Toast.makeText(AddProduct.this, "Saved", Toast.LENGTH_SHORT).show();
+//                    finish();
+//                }
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                Toast.makeText(AddProduct.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
 
     }

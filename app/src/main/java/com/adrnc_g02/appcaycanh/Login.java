@@ -152,8 +152,8 @@ public class Login extends AppCompatActivity {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             database = FirebaseDatabase.getInstance();
             myRef = database.getReference("User");
-            cUser = mAuth.getCurrentUser();
-            User user = new User(cUser.getEmail(), "");
+//            cUser = mAuth.getCurrentUser();
+//            User user = new User(cUser.getEmail(), "");
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
@@ -162,7 +162,7 @@ public class Login extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
-                                    myRef.child(cUser.getEmail()).setValue(user);
+//                                    myRef.child(cUser.getEmail()).setValue(user);
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
                                 } else {
