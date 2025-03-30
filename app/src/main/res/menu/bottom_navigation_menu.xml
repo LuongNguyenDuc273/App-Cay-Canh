@@ -5,12 +5,12 @@
         android:icon="@drawable/ic_home"
         android:title="Home" />
     <item
-        android:id="@+id/navExplore"
-        android:icon="@drawable/ic_explore"
-        android:title="Sản Phẩm" />
-    <item
         android:id="@+id/navCart"
         android:icon="@drawable/ic_cart"
+        android:title="Mua Sắm" />
+    <item
+        android:id="@+id/navExplore"
+        android:icon="@drawable/ic_cart_2"
         android:title="Giỏ Hàng" />
     <item
         android:id="@+id/navProfile"
