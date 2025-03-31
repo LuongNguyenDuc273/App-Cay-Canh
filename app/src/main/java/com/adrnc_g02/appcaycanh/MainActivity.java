@@ -25,6 +25,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView listbnt,listProduct;
     private Button btnlogout;
+    private BottomNavigationView bottomNavigationView;
     private ArrayList<Line> dataLine;
     private ArrayList<Product> dataProduct;
     private FirebaseDatabase database;
@@ -75,6 +77,24 @@ public class MainActivity extends AppCompatActivity {
         listbnt = findViewById(R.id.listbutton);
         listProduct = findViewById(R.id.recyclerViewPlants);
         Username = findViewById(R.id.txtUsername);
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
+
+
+        //Chuyen trang
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navHome){
+                return true;
+            }
+            else if (itemId == R.id.navCart) {
+            }
+            else if (itemId == R.id.navExplore) {
+                startActivity(new Intent(MainActivity.this, ShoppingCart.class));
+            }
+            else if (itemId == R.id.navProfile) {
+            }
+            return true;
+        });
 
         //hien thi danh muc san pham
         database = FirebaseDatabase.getInstance();

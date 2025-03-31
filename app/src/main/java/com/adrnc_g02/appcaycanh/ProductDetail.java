@@ -65,7 +65,8 @@ public class ProductDetail extends AppCompatActivity {
         String name = getIntent().getStringExtra("Name");
         String price = getIntent().getStringExtra("Price");
         String line = getIntent().getStringExtra("Line");
-        int quantity = Integer.parseInt(getIntent().getStringExtra("Quantity"));
+        int quantity = getIntent().getStringExtra("Quantity") != null ?
+                Integer.parseInt(getIntent().getStringExtra("Quantity")) : 0;
         Log.d("Kiem Tra", "So luong"+ quantity);
         String des = getIntent().getStringExtra("Description");
         String key = getIntent().getStringExtra("Key");
