@@ -41,7 +41,8 @@ public class Register extends AppCompatActivity {
     private TextView edtFullName, edtPhone, edtAddress, changeToLogIn, dateSet;
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
-    private DatabaseReference myRef;
+    SessionControl session;
+    private GenericFunction genericFunction = new GenericFunction();
     private FirebaseUser cUser;
 
     @Override
@@ -55,6 +56,7 @@ public class Register extends AppCompatActivity {
             return insets;
         });
         //Anh xa
+        session = new SessionControl(this);
         edtFullName = findViewById(R.id.fullname_edt);
         edtemail = findViewById(R.id.register_edt);
         edtPhone = findViewById(R.id.phone_edt);
@@ -75,8 +77,19 @@ public class Register extends AppCompatActivity {
         });
 
         //su kien an dang ky
-        btnRegister.setOnClickListener(view -> {
-            intiRegister();
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intiRegister();
+            }
+        });
+
+        //su kien chuyen sang dang nhap
+        changeToLogIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Register.this, Login.class));
+            }
         });
     }
 
@@ -160,7 +173,7 @@ public class Register extends AppCompatActivity {
         // if (TextUtils.isEmpty(address)) { ... }
 
         // Birthday validation
-        if (TextUtils.isEmpty(birthday)) {
+        if (TextUtils.isEmpty(birthday)|| birthday.equals("Chọn ngày")) {
             Toast.makeText(Register.this, "Hãy chọn ngày sinh", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -170,8 +183,6 @@ public class Register extends AppCompatActivity {
             Toast.makeText(Register.this, "Hãy điền địa chỉ", Toast.LENGTH_SHORT).show();
             return;
         }
-
-
         // Luu vao authentication fire base
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
@@ -181,14 +192,10 @@ public class Register extends AppCompatActivity {
                         cUser = auth.getCurrentUser();
                         String key = cUser.getUid();
                         Customer cModule = new Customer(key, fullName, email, birthday, phone, address);
-                        myRef.child(key).setValue(cModule).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Toast.makeText(Register.this, "Đã tạo tài khoản", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        session.saveUserToDatabase(cUser);
+                        genericFunction.addData("Customer", key, cModule);
+                        startActivity(new Intent(Register.this, MainActivity.class));
                         Toast.makeText(Register.this, "Đã tạo tài khoản", Toast.LENGTH_SHORT).show();
-                        // Optionally navigate to another activity after successful registration.
                     } else {
                         // If sign in fails, display a message to the user.
                         try {
