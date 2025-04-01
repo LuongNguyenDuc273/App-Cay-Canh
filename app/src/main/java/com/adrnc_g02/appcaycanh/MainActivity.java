@@ -55,8 +55,9 @@ public class MainActivity extends AppCompatActivity {
     private GridLayoutManager gridLayoutManager;
     private DatabaseReference tbline, tblProduct;
     private ImageButton btnFavorite, btnNotification;
+
+    SessionControl session;
     private FirebaseAuth auth; //Added FirebaseAuth instance variable
-    private FirebaseUser cUser;
     private GoogleSignInClient mGoogleSignInClient; // Add GoogleSignInClient
 
     @Override
@@ -70,10 +71,10 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
         //Anh xa
+        session = new SessionControl(this);
         btnFavorite = findViewById(R.id.btnFavorite); //Test
         btnNotification = findViewById(R.id.btnNotification); //Test
         auth = FirebaseAuth.getInstance(); // Initialize Firebase Auth here
-        cUser = auth.getCurrentUser();
         listbnt = findViewById(R.id.listbutton);
         listProduct = findViewById(R.id.recyclerViewPlants);
         Username = findViewById(R.id.txtUsername);
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, ShoppingCart.class));
             }
             else if (itemId == R.id.navProfile) {
+                session.signOutCompletely();
             }
             return true;
         });
@@ -116,17 +118,6 @@ public class MainActivity extends AppCompatActivity {
         getAllProduct();
         // hien thi user
         setUsername();
-
-
-//
-//        btnlogout = findViewById(R.id.logout_btn);
-//        nd = findViewById(R.id.nguoidung);
-//
-//        if (cUser != null) {
-//            nd.setText(cUser.getEmail());
-//        } else {
-//            nd.setText("Không có người dùng đăng nhập");
-//        }
 
         //Test chuyen sang them sang pham
         btnFavorite.setOnClickListener(new View.OnClickListener() {
@@ -230,20 +221,5 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void signOutCompletely() {
-        auth.signOut(); // Sign out of Firebase Authentication
-
-        // Sign out of Google Sign-In
-        mGoogleSignInClient.signOut().addOnCompleteListener(MainActivity.this, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                // Successfully signed out of Google Sign-In
-                Log.d("Auth", "Google Sign-Out successful");
-                Intent intent = new Intent(MainActivity.this, Login.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-    }
 
 }

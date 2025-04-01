@@ -46,9 +46,7 @@ public class Login extends AppCompatActivity {
     private GoogleSignInClient client;
     private ImageButton loginbtn;
     private FirebaseAuth mAuth;
-    private FirebaseUser cUser;
-    private FirebaseDatabase database;
-    private DatabaseReference myRef;
+    private SessionControl session;
     private static final int RC_SIGN_IN = 1234;
 
     @Override
@@ -70,6 +68,7 @@ public class Login extends AppCompatActivity {
         loginbtn = findViewById(R.id.login_btn);
 
         //Khoi tao gg sign in
+        session = new SessionControl(this);
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -151,10 +150,6 @@ public class Login extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == RC_SIGN_IN){
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            database = FirebaseDatabase.getInstance();
-            myRef = database.getReference("User");
-//            cUser = mAuth.getCurrentUser();
-//            User user = new User(cUser.getEmail(), "");
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
@@ -163,9 +158,8 @@ public class Login extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
-//                                    myRef.child(cUser.getEmail()).setValue(user);
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                    intent.putExtra("userEmail", account.getEmail());
+                                    session.saveUserToDatabase(FirebaseAuth.getInstance().getCurrentUser());
+                                    Intent intent = new Intent(Login.this, MainActivity.class);
                                     startActivity(intent);
                                 } else {
                                     Toast.makeText(Login.this, task.getException().getMessage(), Toast.LENGTH_SHORT);

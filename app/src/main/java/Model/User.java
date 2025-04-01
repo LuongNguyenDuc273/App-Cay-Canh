@@ -3,6 +3,8 @@ package Model;
 public class User {
     private String Gmail;
     private String Password;
+    private String Role;
+    private String Status;
 
     public String getGmail() {
         return Gmail;
@@ -20,9 +22,27 @@ public class User {
         Password = password;
     }
 
-    public User(String gmail, String password) {
+    public String getRole() {
+        return Role;
+    }
+
+    public void setRole(String role) {
+        Role = role;
+    }
+
+    public String getStatus() {
+        return Status;
+    }
+
+    public void setStatus(String status) {
+        Status = status;
+    }
+
+    public User(String gmail, String password, String role, String status) {
         Gmail = gmail;
         Password = password;
+        Role = role;
+        Status = status;
     }
 
     public User(){}
