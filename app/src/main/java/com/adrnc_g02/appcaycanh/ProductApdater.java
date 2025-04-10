@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductApdater extends RecyclerView.Adapter<ProductApdater.MyViewHolder> {
@@ -69,5 +70,9 @@ public class ProductApdater extends RecyclerView.Adapter<ProductApdater.MyViewHo
             productName = itemView.findViewById(R.id.txtPlantName);
             productPrice =itemView.findViewById(R.id.txtPlantPrice);
         }
+    }
+    public void searchData(ArrayList<Product> productList){
+        products = productList;
+        notifyDataSetChanged();
     }
 }

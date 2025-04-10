@@ -92,22 +92,21 @@
             android:orientation="horizontal"
             android:paddingHorizontal="16dp">
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_search" />
-
-            <EditText
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:hint="Tìm kiếm"
                 android:background="@null"
-                android:textColor="#9E9E9E"
-                android:textSize="14sp" />
+                app:iconifiedByDefault="false"
+                app:queryHint="Tìm kiếm"
+                app:searchIcon="@drawable/ic_search"
+                app:queryBackground="@null"
+                app:closeIcon="@null">
+            </androidx.appcompat.widget.SearchView>
 
             <ImageView
+                android:id="@+id/filterButton"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_filter" />

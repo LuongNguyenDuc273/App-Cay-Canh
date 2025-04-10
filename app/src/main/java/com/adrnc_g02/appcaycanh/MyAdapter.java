@@ -45,4 +45,5 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             btnName = itemView.findViewById(R.id.btnLine);
         }
     }
+
 }
