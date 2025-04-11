@@ -138,7 +138,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Ưu Đãi Đặc Biệt"
+                    android:text="Best Seller"
                     android:textColor="#000000"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -164,6 +164,7 @@
                     android:orientation="horizontal">
 
                     <Button
+                        android:id="@+id/all"
                         android:layout_width="wrap_content"
                         android:layout_height="36dp"
                         android:layout_marginTop="4dp"
