@@ -45,7 +45,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView listbnt,listProduct;
-    private Button btnlogout;
+    private Button btnlogout,btnAll;
     private BottomNavigationView bottomNavigationView;
     private ArrayList<Line> dataLine;
     private ArrayList<Product> dataProduct;
@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         listbnt = findViewById(R.id.listbutton);
         listProduct = findViewById(R.id.recyclerViewPlants);
         Username = findViewById(R.id.txtUsername);
+        btnAll = findViewById(R.id.all);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         search = findViewById(R.id.searchView);
 
@@ -108,7 +109,19 @@ public class MainActivity extends AppCompatActivity {
         dataLine = new ArrayList<Line>();
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         listbnt.setLayoutManager(linearLayoutManager);
-        myAdapter = new MyAdapter(MainActivity.this, dataLine);
+        myAdapter = new MyAdapter(MainActivity.this, dataLine, new MyAdapter.OnLineClickListener() {
+            @Override
+            public void onLineClick(int position, Line line) {
+                Log.d("LineClick", "Line clicked: position=" + position + ", lineId=" + line.getIDLine() + ", lineName=" + line.getNameLine());
+                filterProductsByLine(line.getIDLine());
+            }
+        });
+        btnAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                productApdater.searchData(dataProduct);
+            }
+        });
         listbnt.setAdapter(myAdapter);
         getAllLine();
 
@@ -193,6 +206,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void filterProductsByLine(String idLine) {
+        if (idLine == null|| idLine.isEmpty()){
+            productApdater.searchData(dataProduct);
+            return;
+        }
+        ArrayList<Product> filterProduct = new ArrayList<>();
+        for (Product product : dataProduct){
+            if(product.getIDLine()!=null && product.getIDLine().equals(idLine)){
+                filterProduct.add(product);
+            }
+        }
+        productApdater.searchData(filterProduct);
+    }
+
     private void setUsername() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -268,5 +295,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 }

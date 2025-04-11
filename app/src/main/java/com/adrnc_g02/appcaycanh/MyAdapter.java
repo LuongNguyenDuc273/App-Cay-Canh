@@ -1,5 +1,6 @@
 package com.adrnc_g02.appcaycanh;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +18,15 @@ import java.util.List;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     Context context;
     List<Line> lines;
-    public MyAdapter(Context context, List<Line> lines) {
+    private OnLineClickListener onLineClickListener;
+
+    public interface OnLineClickListener {
+        void onLineClick(int position, Line line);
+    }
+    public MyAdapter(Context context, List<Line> lines, OnLineClickListener onLineClickListener) {
         this.context = context;
         this.lines = lines;
+        this.onLineClickListener = onLineClickListener;
     }
     @NonNull
     @Override
@@ -29,8 +36,17 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.btnName.setText(lines.get(position).getNameLine());
+    public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        final Line line = lines.get(position);
+        holder.btnName.setText(line.getNameLine());
+        holder.btnName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onLineClickListener != null) {
+                    onLineClickListener.onLineClick(position, line);
+                }
+            }
+        });
     }
 
     @Override
@@ -43,7 +59,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             btnName = itemView.findViewById(R.id.btnLine);
+
         }
     }
+
 
 }
