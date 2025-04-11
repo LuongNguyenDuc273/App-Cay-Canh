@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -37,6 +39,7 @@ import com.google.firebase.database.ValueEventListener;
 import Model.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private LinearLayoutManager linearLayoutManager;
     MyAdapter myAdapter;
+    private SearchView search;
     private ProductApdater productApdater;
     private TextView nd,Username;
     private GridLayoutManager gridLayoutManager;
@@ -79,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         listProduct = findViewById(R.id.recyclerViewPlants);
         Username = findViewById(R.id.txtUsername);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
-
+        search = findViewById(R.id.searchView);
 
         //Chuyen trang
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -127,6 +131,29 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        // Chao theo thoi gian
+        TextView txtGreeting = findViewById(R.id.txtGreeting);
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        String greeting;
+        if (hour >= 5 && hour <= 10) {
+            greeting = "Chào buổi sáng ☀️";
+        }
+        else if (hour >= 11 && hour <= 12) {
+            greeting = "Chào buổi trưa 🍱";
+        }
+        else if (hour >= 13 && hour <= 17) {
+            greeting = "Chào buổi chiều 🌤️";
+        }
+        else if (hour >= 18 && hour <= 21) {
+            greeting = "Chào buổi tối 🌆";
+        }
+        else {
+            greeting = "Khuya rồi 😴";
+        }
+
+        txtGreeting.setText(greeting);
 
         //Test chuyen sang them danh muc san pham
         btnNotification.setOnClickListener(new View.OnClickListener() {
@@ -152,6 +179,18 @@ public class MainActivity extends AppCompatActivity {
 //                signOutCompletely();
 //            }
 //        });
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                seachList(newText);
+                return true;
+            }
+        });
     }
 
     private void setUsername() {
@@ -195,6 +234,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    public void seachList(String text){
+        ArrayList<Product> searchList = new ArrayList<>();
+        for (Product product: dataProduct){
+            if(product.getNameProc().toLowerCase().contains(text.toLowerCase()))
+            {
+                searchList.add(product);
+            }
+        }
+        productApdater.searchData(searchList);
+    }
 
     private void getAllLine() {
         tbline.addValueEventListener(new ValueEventListener() {
@@ -212,7 +261,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("FirebaseData", "Final dataLine size: " + dataLine.size());
                 myAdapter.notifyDataSetChanged();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(MainActivity.this, "Loi kho tai cac lines: " + error.getMessage(), Toast.LENGTH_SHORT).show();
@@ -220,6 +268,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
 }
