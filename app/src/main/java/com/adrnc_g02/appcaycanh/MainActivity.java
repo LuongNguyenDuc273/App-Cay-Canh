@@ -8,6 +8,7 @@ import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +16,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Line> dataLine;
     private ArrayList<Product> dataProduct;
     private FirebaseDatabase database;
-
+    private CardView searchbar;
     private LinearLayoutManager linearLayoutManager;
     MyAdapter myAdapter;
     private SearchView search;
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         btnAll = findViewById(R.id.all);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         search = findViewById(R.id.searchView);
+        searchbar = findViewById(R.id.searchContainer);
 
         //Chuyen trang
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -185,23 +188,11 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-
-//        btnlogout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                signOutCompletely();
-//            }
-//        });
-        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        search.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                seachList(newText);
-                return true;
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, Search.class);
+                startActivity(intent);
             }
         });
     }
@@ -261,17 +252,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    public void seachList(String text){
-        ArrayList<Product> searchList = new ArrayList<>();
-        for (Product product: dataProduct){
-            if(product.getNameProc().toLowerCase().contains(text.toLowerCase()))
-            {
-                searchList.add(product);
-            }
-        }
-        productApdater.searchData(searchList);
-    }
-
     private void getAllLine() {
         tbline.addValueEventListener(new ValueEventListener() {
             @Override
