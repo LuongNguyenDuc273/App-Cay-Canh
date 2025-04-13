@@ -1,12 +1,14 @@
 package com.adrnc_g02.appcaycanh;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -43,9 +45,18 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         Product product = products.get(position);
         holder.suggestionText.setText(product.getNameProc());
 
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onProductClick(product);
+        holder.searchItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ProductDetail.class);
+                intent.putExtra("Image", products.get(holder.getAdapterPosition()).getPhoto());
+                intent.putExtra("Name", products.get(holder.getAdapterPosition()).getNameProc());
+                intent.putExtra("Line",products.get(holder.getAdapterPosition()).getIDLine());
+                intent.putExtra("Price", products.get(holder.getAdapterPosition()).getPrice());
+                intent.putExtra("Description",products.get(holder.getAdapterPosition()).getDescribe());
+                intent.putExtra("Quantity",products.get(holder.getAdapterPosition()).getReQuantity());
+                intent.putExtra("Key", products.get(holder.getAdapterPosition()).getIDProc());
+                context.startActivity(intent);
             }
         });
     }
@@ -57,10 +68,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView suggestionText;
+        ConstraintLayout searchItem;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             suggestionText = itemView.findViewById(R.id.suggestion_text);
+            searchItem = itemView.findViewById(R.id.search_item);
         }
     }
 }
