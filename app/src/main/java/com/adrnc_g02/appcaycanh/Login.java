@@ -158,7 +158,7 @@ public class Login extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
-                                    session.saveUserToDatabase(FirebaseAuth.getInstance().getCurrentUser());
+                                    SessionControl.saveUserToDatabase(FirebaseAuth.getInstance().getCurrentUser());
                                     Intent intent = new Intent(Login.this, MainActivity.class);
                                     startActivity(intent);
                                 } else {

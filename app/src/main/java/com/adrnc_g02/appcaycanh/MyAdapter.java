@@ -18,7 +18,7 @@ import java.util.List;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     Context context;
     List<Line> lines;
-    private OnLineClickListener onLineClickListener;
+    private final OnLineClickListener onLineClickListener;
 
     public interface OnLineClickListener {
         void onLineClick(int position, Line line);

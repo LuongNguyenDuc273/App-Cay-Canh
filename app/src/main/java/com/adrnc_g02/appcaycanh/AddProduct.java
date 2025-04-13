@@ -49,7 +49,7 @@ public class AddProduct extends AppCompatActivity {
     private ImageView imageViewProduct;
     private Spinner spinnerProductType;
     private String selectedLineID, imgURL;
-    private GenericFunction gF = new GenericFunction();
+    private final GenericFunction gF = new GenericFunction();
     private Uri uri;
     private FirebaseDatabase database;
     private DatabaseReference myRef;

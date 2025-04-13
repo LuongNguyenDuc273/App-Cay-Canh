@@ -208,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
             String userName = getIntent().getStringExtra("userName");
             String userName2 = getIntent().getStringExtra("userName2");
             if (userName != null) {
+
                 Username.setText(userName);
             } else if (userName2 != null) {
                 Username.setText(userName2);

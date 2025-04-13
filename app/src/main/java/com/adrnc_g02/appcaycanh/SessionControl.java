@@ -26,9 +26,9 @@ import com.google.firebase.database.ValueEventListener;
 import Model.User;
 
 public class SessionControl {
-    private FirebaseAuth auth;
-    private GoogleSignInClient mGoogleSignInClient;
-    private Context context;
+    private final FirebaseAuth auth;
+    private final GoogleSignInClient mGoogleSignInClient;
+    private final Context context;
     public SessionControl(Context context) {
         this.context = context; // Initialize the context
         // Configure Google Sign In

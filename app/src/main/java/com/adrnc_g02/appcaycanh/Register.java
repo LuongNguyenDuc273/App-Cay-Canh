@@ -42,7 +42,7 @@ public class Register extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     SessionControl session;
-    private GenericFunction genericFunction = new GenericFunction();
+    private final GenericFunction genericFunction = new GenericFunction();
     private FirebaseUser cUser;
 
     @Override
@@ -192,7 +192,7 @@ public class Register extends AppCompatActivity {
                         cUser = auth.getCurrentUser();
                         String key = cUser.getUid();
                         Customer cModule = new Customer(key, fullName, email, birthday, phone, address);
-                        session.saveUserToDatabase(cUser);
+                        SessionControl.saveUserToDatabase(cUser);
                         genericFunction.addData("Customer", key, cModule);
                         startActivity(new Intent(Register.this, MainActivity.class));
                         Toast.makeText(Register.this, "Đã tạo tài khoản", Toast.LENGTH_SHORT).show();

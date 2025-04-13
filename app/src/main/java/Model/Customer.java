@@ -65,5 +65,5 @@ public class Customer {
         Address = address;
     }
 
-    public Customer(){};
+    public Customer(){}
 }
