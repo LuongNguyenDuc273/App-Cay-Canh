@@ -98,8 +98,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, ShoppingCart.class));
             }
             else if (itemId == R.id.navProfile) {
-                session.signOutCompletely();
-            }
+                //session.signOutCompletely();
+                String userName = getIntent().getStringExtra("userName");
+                String userName2 = getIntent().getStringExtra("userName2");
+                Intent intent = new Intent(MainActivity.this, Profile.class);
+                intent.putExtra("a", userName);
+                intent.putExtra("b", userName2);
+                startActivity(intent);            }
             return true;
         });
 
@@ -226,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
             String userName = getIntent().getStringExtra("userName");
             String userName2 = getIntent().getStringExtra("userName2");
             if (userName != null) {
+
                 Username.setText(userName);
             } else if (userName2 != null) {
                 Username.setText(userName2);

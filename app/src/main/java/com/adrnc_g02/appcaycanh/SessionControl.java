@@ -1,5 +1,6 @@
 package com.adrnc_g02.appcaycanh;
 
+import static android.os.Build.VERSION_CODES.R;
 import static android.provider.Settings.System.getString;
 import static androidx.core.content.ContextCompat.startActivity;
 
