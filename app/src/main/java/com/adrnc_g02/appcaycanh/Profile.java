@@ -1,5 +1,6 @@
 package com.adrnc_g02.appcaycanh;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +12,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -37,6 +39,8 @@ public class Profile extends AppCompatActivity {
     TextView Name, logout, phoneNumber, emailAddress;
     SessionControl session;
     private LinearLayout personalInfoHeader;
+    private BottomNavigationView bottomNavigationView;
+
     private LinearLayout personalInfoContent;
     private ImageView personalInfoArrow;
 
@@ -77,6 +81,26 @@ public class Profile extends AppCompatActivity {
         logout = findViewById(R.id.Logout);
         phoneNumber = findViewById(R.id.phone_number);
         emailAddress = findViewById(R.id.email_address);
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView.setSelectedItemId(R.id.navProfile);
+        //Chuyen trang
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navHome){
+                startActivity(new Intent(Profile.this, MainActivity.class));
+            }
+            else if (itemId == R.id.navCart) {
+            }
+            else if (itemId == R.id.navExplore) {
+                startActivity(new Intent(Profile.this, ShoppingCart.class));
+            }
+            else if (itemId == R.id.navProfile) {
+                return true;
+            }
+            return true;
+
+        });
+
         //setUsername();
         session = new SessionControl(this);
 
