@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView listbnt,listProduct;
     private Button btnlogout,btnAll;
     private BottomNavigationView bottomNavigationView;
+
     private ArrayList<Line> dataLine;
     private ArrayList<Product> dataProduct;
     private FirebaseDatabase database;
