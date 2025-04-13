@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private CardView searchbar;
     private LinearLayoutManager linearLayoutManager;
-    MyAdapter myAdapter;
+    private MyAdapter myAdapter;
     private SearchView search;
     private ProductApdater productApdater;
     private TextView nd,Username;
