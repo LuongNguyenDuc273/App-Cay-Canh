@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private GridLayoutManager gridLayoutManager;
     private DatabaseReference tbline, tblProduct;
     private ImageButton btnFavorite, btnNotification;
+    private MenuNavigation menuNavigation = new MenuNavigation(this);
 
     SessionControl session;
     private FirebaseAuth auth; //Added FirebaseAuth instance variable
@@ -93,23 +94,8 @@ public class MainActivity extends AppCompatActivity {
         //Chuyen trang
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.navHome){
-                return true;
-            }
-            else if (itemId == R.id.navCart) {
-            }
-            else if (itemId == R.id.navExplore) {
-                startActivity(new Intent(MainActivity.this, ShoppingCart.class));
-            }
-            else if (itemId == R.id.navProfile) {
-                //session.signOutCompletely();
-                String userName = getIntent().getStringExtra("userName");
-                String userName2 = getIntent().getStringExtra("userName2");
-                Intent intent = new Intent(MainActivity.this, Profile.class);
-                intent.putExtra("a", userName);
-                intent.putExtra("b", userName2);
-                startActivity(intent);            }
-            return true;
+           menuNavigation.navigateTo(itemId);
+           return true;
         });
 
         //hien thi danh muc san pham
@@ -249,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 productApdater.notifyDataSetChanged();
-
             }
 
             @Override
