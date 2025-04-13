@@ -1,5 +1,6 @@
 package com.adrnc_g02.appcaycanh;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -35,6 +37,7 @@ public class Search extends AppCompatActivity {
     private SearchAdapter searchAdapter;
     private View contentContainer;
     private ImageButton backButton;
+    private ImageView searchIcon;
     private List<Product> allProducts = new ArrayList<>();
     private List<Product> filteredProducts = new ArrayList<>();
     DatabaseReference databaseReference;
@@ -49,11 +52,12 @@ public class Search extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        // Anh xa
+        // Khoi tao view
         searchEditText = findViewById(R.id.search_edit_text);
         suggestionsRecyclerView = findViewById(R.id.suggestions_recycler_view);
         contentContainer = findViewById(R.id.content_container);
         backButton = findViewById(R.id.back_button);
+        searchIcon = findViewById(R.id.search_icon);
 
         // Khoi tao recycler view
         suggestionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -77,38 +81,40 @@ public class Search extends AppCompatActivity {
                     }
                 }
                 Log.d("SearchDebug", "Loaded " + allProducts.size() + " products from Firebase");
-                // su kien tim kiem
-                searchEditText.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                        // Filter products based on search text
-                        String searchText = charSequence.toString().toLowerCase().trim();
-                        filterProducts(searchText);
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-                    }
-                });
-
-                // Su kien khi an vao san pham
-                searchAdapter.setOnProductClickListener(product -> {
-                    // Handle product click here
-                    // For example, navigate to product details
-                    searchEditText.setText(product.getNameProc());
-                    suggestionsRecyclerView.setVisibility(View.GONE);
-                    contentContainer.setVisibility(View.VISIBLE);
-                });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 // Xử lý lỗi nếu cần
                 Toast.makeText(Search.this, "Firebase error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        // su kien tim kiem
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                // Filter products based on search text
+                String searchText = charSequence.toString().toLowerCase().trim();
+                filterProducts(searchText);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        // Su kien tim kiem
+        searchIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Search.this, SearchedProduct.class);
+                intent.putExtra("searchQuery", searchEditText.getText().toString());
+                startActivity(intent);
             }
         });
     }
