@@ -8,32 +8,24 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import java.util.List;
 
-public class ShoppingCart extends AppCompatActivity {
-    private BottomNavigationView bottomNavigationView;
-    private MenuNavigation menuNavigation = new MenuNavigation(this);
+import Model.Product;
+
+public class SearchedProduct extends AppCompatActivity {
+    private List<Product> AllProducts;
+    private List<Product> SearchedProducts;
+    private ProductApdater productApdater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_shopping_cart);
+        setContentView(R.layout.activity_searched_product);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        //Khoi tao cac view
-        bottomNavigationView = findViewById(R.id.bottomNavigation);
-
-        bottomNavigationView.setSelectedItemId(R.id.navExplore);
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            menuNavigation.navigateTo(itemId);
-            return true;
-        });
-
     }
 }
