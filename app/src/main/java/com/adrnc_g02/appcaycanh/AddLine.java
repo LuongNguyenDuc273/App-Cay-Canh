@@ -27,7 +27,7 @@ public class AddLine extends AppCompatActivity {
     Button button, button2;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
-    private List<Line> lineList = new ArrayList<>();
+    private final List<Line> lineList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
