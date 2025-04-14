@@ -29,6 +29,9 @@ public class MenuNavigation {
             context.startActivity(intent);
         }
         else if (destinationID == R.id.navProfile) {
+            Intent intent = new Intent(context, Profile.class); // Replace LoginActivity
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
         }
     }
 }

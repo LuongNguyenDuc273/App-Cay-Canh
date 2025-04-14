@@ -77,7 +77,7 @@ tools:context=".ShoppingCart">
     android:background="#FFFFFF"
     android:elevation="8dp"
     android:padding="8dp"
-    app:layout_constraintBottom_toTopOf="@+id/bottom_navigation">
+    app:layout_constraintBottom_toTopOf="@+id/bottomNavigation">
 
     <CheckBox
         android:id="@+id/cb_select_all"

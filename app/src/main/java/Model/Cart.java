@@ -1,8 +1,9 @@
 package Model;
 
-public class WishList {
+public class Cart {
     private String IDCus;
     private String IDProc;
+    private int Quantity;
 
     public String getIDCus() {
         return IDCus;
@@ -20,9 +21,19 @@ public class WishList {
         this.IDProc = IDProc;
     }
 
-    public WishList(String IDCus) {
-        this.IDCus = IDCus;
+    public int getQuantity() {
+        return Quantity;
     }
 
-    public WishList(){}
+    public void setQuantity(int quantity) {
+        Quantity = quantity;
+    }
+
+    public Cart(String IDCus, String IDProc, int quantity) {
+        this.IDCus = IDCus;
+        this.IDProc = IDProc;
+        Quantity = quantity;
+    }
+
+    public Cart(){};
 }
