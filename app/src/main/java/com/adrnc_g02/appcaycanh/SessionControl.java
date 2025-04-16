@@ -23,12 +23,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import Model.Customer;
 import Model.User;
 
 public class SessionControl {
     private final FirebaseAuth auth;
     private final GoogleSignInClient mGoogleSignInClient;
     private final Context context;
+    private GenericFunction genericFunction;
     public SessionControl(Context context) {
         this.context = context; // Initialize the context
         // Configure Google Sign In
@@ -39,7 +41,8 @@ public class SessionControl {
         mGoogleSignInClient = GoogleSignIn.getClient(context, options); // Initialize client HERE
         auth = FirebaseAuth.getInstance(); // Initialize Firebase Auth
     }
-    public static void saveUserToDatabase(FirebaseUser user) {
+    public static void saveUserToDatabase(String status) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             String email = user.getEmail();
 
@@ -50,7 +53,7 @@ public class SessionControl {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (!dataSnapshot.exists()) {
-                        User newUser = new User(email, "", "", "");
+                        User newUser = new User(email,"CUSTOMER", status);
 
                         usersRef.child(user.getUid()).setValue(newUser)
                                 .addOnSuccessListener(aVoid -> {
@@ -71,6 +74,7 @@ public class SessionControl {
             });
         }
     }
+
 
     public void signOutCompletely() { // Get context
         auth.signOut();

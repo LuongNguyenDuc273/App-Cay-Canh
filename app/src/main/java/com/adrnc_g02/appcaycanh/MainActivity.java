@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference tbline, tblProduct;
     private ImageButton btnFavorite, btnNotification;
     private MenuNavigation menuNavigation = new MenuNavigation(this);
-
+    private GenericFunction genericFunction = new GenericFunction();
     SessionControl session;
     private FirebaseAuth auth; //Added FirebaseAuth instance variable
     private GoogleSignInClient mGoogleSignInClient; // Add GoogleSignInClient
@@ -90,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         search = findViewById(R.id.searchView);
         searchbar = findViewById(R.id.searchContainer);
+
+
 
         //Chuyen trang
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -266,5 +268,37 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("Firebase", "Error fetching lines", error.toException());
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+        Log.d("onStart", "User: " + cUser.getUid());
+        genericFunction.getTableReference("User").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot usersnapshot: snapshot.getChildren()){
+                    User user = usersnapshot.getValue(User.class);
+                    if(user!=null && user.getGmail().equals(cUser.getEmail()) && user.getStatus().equals("FIRST_LOGIN_GOOGLE")){
+                        String key = cUser.getUid();
+                        Customer cModule = new Customer(key,"", cUser.getEmail(), "", "", "");
+                        genericFunction.addData("Customer", key, cModule);
+                        User nUser = new User(cUser.getEmail(), "Customer", "NOT_FIRST_LOGIN_GOOGLE");
+                        genericFunction.getTableReference("User").child(key).setValue(nUser);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+//        if(genericFunction.getItemReference("User", user.getUid()).child("status").equals("FIRST_LOGIN_GOOGLE")){
+//            String key = user.getUid();
+//            Customer cModule = new Customer(key,"", user.getEmail(), "", "", "");
+//            genericFunction.addData("Customer", key, cModule);
+//        }
     }
 }

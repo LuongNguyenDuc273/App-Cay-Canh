@@ -158,7 +158,7 @@ public class Login extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
-                                    SessionControl.saveUserToDatabase(FirebaseAuth.getInstance().getCurrentUser());
+                                    session.saveUserToDatabase("FIRST_LOGIN_GOOGLE");
                                     Intent intent = new Intent(Login.this, MainActivity.class);
                                     startActivity(intent);
                                 } else {
