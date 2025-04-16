@@ -51,6 +51,7 @@ public class ShoppingCart extends AppCompatActivity {
     // Sample data - would normally come from a database
     private List<Cart> cartItems = new ArrayList<>();
     private List<Product> products = new ArrayList<>();
+    private OrderManagment orderManagment = new OrderManagment();
     DatabaseReference databaseReference;
 
     @Override
@@ -107,7 +108,7 @@ public class ShoppingCart extends AppCompatActivity {
         });
 
         FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
-        databaseReference = FirebaseDatabase.getInstance().getReference("Cart");
+        databaseReference = FirebaseDatabase.getInstance().getReference("Customer").child(cUser.getUid()).child("Cart");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -115,10 +116,7 @@ public class ShoppingCart extends AppCompatActivity {
                 for (DataSnapshot itemSnapshot : snapshot.getChildren()) {
                     Cart cart = itemSnapshot.getValue(Cart.class);
                     if (cart != null) {
-                        if(cart.getIDCus().equals(cUser.getUid()))
-                        {
                             cartItems.add(cart);
-                        }
                     }
                 }
                 Log.d("CartDebug", "Loaded " + cartItems.size() + " Cart item from Firebase");
@@ -147,7 +145,7 @@ public class ShoppingCart extends AppCompatActivity {
                 Toast.makeText(this, "Vui lòng chọn sản phẩm trước khi thanh toán", Toast.LENGTH_SHORT).show();
             } else {
                 // Proceed to checkout
-                Toast.makeText(this, "Đang tiến hành thanh toán...", Toast.LENGTH_SHORT).show();
+                orderManagment.addOrder();
             }
         });
     }

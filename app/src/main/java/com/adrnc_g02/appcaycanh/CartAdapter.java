@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adrnc_g02.appcaycanh.R;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +81,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.price.setText(item.product.getPrice() + " VND");
 
         // Set placeholder image
-        holder.image.setImageResource(R.drawable.plant_placeholder);
+        Glide.with(context).load(item.product.getPhoto()).into(holder.image);
 
         // Check availability
         try {

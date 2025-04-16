@@ -188,11 +188,9 @@ public class Register extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         //Luu vao realtime database
-                        FirebaseAuth auth = FirebaseAuth.getInstance();
-                        cUser = auth.getCurrentUser();
                         String key = cUser.getUid();
                         Customer cModule = new Customer(key, fullName, email, birthday, phone, address);
-                        SessionControl.saveUserToDatabase(cUser);
+                        session.saveUserToDatabase("LOGIN_EMAIL");
                         genericFunction.addData("Customer", key, cModule);
                         startActivity(new Intent(Register.this, MainActivity.class));
                         Toast.makeText(Register.this, "Đã tạo tài khoản", Toast.LENGTH_SHORT).show();

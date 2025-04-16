@@ -161,6 +161,7 @@ public class ProductDetail extends AppCompatActivity {
         String IDCus = cUser.getUid();
         int Quantity = Integer.parseInt(tvQuantity.getText().toString());
         Cart cart = new Cart(IDCus, IDProc, Quantity);
-        genericFunction.addData("Cart", IDCus, cart);
+        String key = genericFunction.getTableReference("Customer").child(IDCus).child("Cart").push().getKey();
+        genericFunction.getTableReference("Customer").child(IDCus).child("Cart").child(key).setValue(cart);
     }
 }
