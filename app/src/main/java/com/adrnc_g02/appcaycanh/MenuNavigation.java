@@ -21,7 +21,9 @@ public class MenuNavigation {
             context.startActivity(intent);
         }
         else if (destinationID == R.id.navCart) {
-
+            Intent intent = new Intent(context, Shopping.class); // Replace LoginActivity
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
         }
         else if (destinationID == R.id.navExplore) {
             Intent intent = new Intent(context, ShoppingCart.class); // Replace LoginActivity
