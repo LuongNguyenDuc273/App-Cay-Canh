@@ -38,6 +38,7 @@ public class ProductDetail extends AppCompatActivity {
     private Button btnBuy, btnIncreaseQuantity, btnDecreaseQuantity;
     private EditText tvQuantity;
     private  GenericFunction genericFunction = new GenericFunction();
+    private OrderManagment orderManagment = new OrderManagment();
 
     private int currentQuantity = 1; // Gia tri mac dinh
 
@@ -109,6 +110,14 @@ public class ProductDetail extends AppCompatActivity {
             }
         });
 
+        // SU kien mua hang
+        btnBuy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                newOrder();
+            }
+        });
+
     }
 
     public void LoadProduct() {
@@ -161,7 +170,14 @@ public class ProductDetail extends AppCompatActivity {
         String IDCus = cUser.getUid();
         int Quantity = Integer.parseInt(tvQuantity.getText().toString());
         Cart cart = new Cart(IDCus, IDProc, Quantity);
-        String key = genericFunction.getTableReference("Customer").child(IDCus).child("Cart").push().getKey();
-        genericFunction.getTableReference("Customer").child(IDCus).child("Cart").child(key).setValue(cart);
+        genericFunction.getTableReference("Customer").child(IDCus).child("Cart").child(IDProc).setValue(cart);
+    }
+
+    private void newOrder(){
+        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+        String IDProc = getIntent().getStringExtra("Key");
+        String IDCus = cUser.getUid();
+        int Quantity = Integer.parseInt(tvQuantity.getText().toString());
+        orderManagment.addOrder(IDProc, Quantity, getIntent().getStringExtra("Price"));
     }
 }
