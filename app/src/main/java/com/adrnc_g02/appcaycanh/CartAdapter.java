@@ -1,6 +1,7 @@
 package com.adrnc_g02.appcaycanh;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.adrnc_g02.appcaycanh.R;
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     private Context context;
     private List<CartItem> cartItems;
+    private GenericFunction genericFunction = new GenericFunction();
     private CartListener listener;
 
     // Combined model for simplicity
@@ -107,6 +111,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             if (qty > 1) {
                 item.cart.setQuantity(qty - 1);
                 holder.quantity.setText(String.valueOf(qty - 1));
+                updateCart(item.product, item.cart);
                 if (listener != null) listener.onQuantityChanged();
             }
         });
@@ -115,8 +120,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             int qty = item.cart.getQuantity();
             item.cart.setQuantity(qty + 1);
             holder.quantity.setText(String.valueOf(qty + 1));
+            updateCart(item.product, item.cart);
             if (listener != null) listener.onQuantityChanged();
         });
+
 
         holder.checkBox.setOnClickListener(v -> {
             item.isSelected = holder.checkBox.isChecked();
@@ -164,6 +171,57 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         return selected;
     }
 
+    public void updateCart(Product product, Cart cart){
+        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userID = cUser.getUid();
+        genericFunction.getTableReference("Customer").child(userID).child("Cart").child(product.getIDProc()).setValue(cart);
+    }
+
+    // Add this method to your CartAdapter class
+    // Add this method to your CartAdapter class
+    public void removeSelectedItems() {
+        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userID = cUser.getUid();
+
+        // Create a new list to store items that will remain
+        List<CartItem> remainingItems = new ArrayList<>();
+
+        // First, remove from Firebase and build the remaining list
+        for (int i = 0; i < cartItems.size(); i++) {
+            CartItem item = cartItems.get(i);
+            if (item.isSelected) {
+                // Remove from Firebase
+                genericFunction.getTableReference("Customer")
+                        .child(userID)
+                        .child("Cart")
+                        .child(item.product.getIDProc())
+                        .removeValue();
+
+                // Log for debugging
+                Log.d("CartAdapter", "Removing item: " + item.product.getNameProc());
+            } else {
+                // Add to remaining items
+                remainingItems.add(item);
+            }
+        }
+
+        // Clear the original list and add all remaining items
+        cartItems.clear();
+        cartItems.addAll(remainingItems);
+
+        // Notify adapter of changes - use specific notification for better animation
+        notifyDataSetChanged();
+
+        // Notify any listeners
+        if (listener != null) {
+            listener.onQuantityChanged();
+            listener.onSelectionChanged();
+        }
+
+        // Log the results
+        Log.d("CartAdapter", "Items remaining after removal: " + cartItems.size());
+    }
+
     static class CartViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
         TextView productName, price, status, quantity;
@@ -183,3 +241,5 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         }
     }
 }
+
+

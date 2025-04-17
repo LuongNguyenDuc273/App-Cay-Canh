@@ -42,13 +42,10 @@ public class ShoppingCart extends AppCompatActivity {
     private MenuNavigation menuNavigation = new MenuNavigation(this);
     private RecyclerView rvCartItems;
     private CartAdapter cartAdapter;
-
     private CheckBox cbSelectAll;
     private TextView tvTotalAmount;
     private Button btnCheckout;
     private ImageButton btnBack;
-
-    // Sample data - would normally come from a database
     private List<Cart> cartItems = new ArrayList<>();
     private List<Product> products = new ArrayList<>();
     private OrderManagment orderManagment = new OrderManagment();
@@ -85,51 +82,7 @@ public class ShoppingCart extends AppCompatActivity {
         });
 
         // Load data
-        databaseReference = FirebaseDatabase.getInstance().getReference("Product");
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                products.clear(); // Clear the list before adding new data
-                for (DataSnapshot itemSnapshot : snapshot.getChildren()) {
-                    Product product = itemSnapshot.getValue(Product.class);
-                    if (product != null) {
-                        products.add(product);
-                    }
-                }
-                Log.d("CartDebug", "Loaded " + products.size() + " products from Firebase");
-                // Move RecyclerView setup here
-                setupRecyclerView();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Xử lý lỗi nếu cần
-            }
-        });
-
-        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
-        databaseReference = FirebaseDatabase.getInstance().getReference("Customer").child(cUser.getUid()).child("Cart");
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                cartItems.clear(); // Clear the list before adding new data
-                for (DataSnapshot itemSnapshot : snapshot.getChildren()) {
-                    Cart cart = itemSnapshot.getValue(Cart.class);
-                    if (cart != null) {
-                            cartItems.add(cart);
-                    }
-                }
-                Log.d("CartDebug", "Loaded " + cartItems.size() + " Cart item from Firebase");
-                // Move RecyclerView setup here
-                setupRecyclerView();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Xử lý lỗi nếu cần
-            }
-        });
-
+        fetchProductAndCart();
 
         // Setup "Select All" checkbox
         cbSelectAll.setOnClickListener(v -> {
@@ -145,7 +98,8 @@ public class ShoppingCart extends AppCompatActivity {
                 Toast.makeText(this, "Vui lòng chọn sản phẩm trước khi thanh toán", Toast.LENGTH_SHORT).show();
             } else {
                 // Proceed to checkout
-                orderManagment.addOrder();
+                cartAdapter.removeSelectedItems();
+                orderManagment.addOrder(selectedItems);
             }
         });
     }
@@ -195,5 +149,54 @@ public class ShoppingCart extends AppCompatActivity {
     private void updateSelectAllCheckbox() {
         List<Cart> selectedItems = cartAdapter.getSelectedCarts();
         cbSelectAll.setChecked(selectedItems.size() == cartItems.size() && !cartItems.isEmpty());
+    }
+
+    private void fetchProductAndCart(){
+        databaseReference = FirebaseDatabase.getInstance().getReference("Product");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                products.clear(); // Clear the list before adding new data
+                for (DataSnapshot itemSnapshot : snapshot.getChildren()) {
+                    Product product = itemSnapshot.getValue(Product.class);
+                    if (product != null) {
+                        products.add(product);
+                    }
+                }
+                Log.d("CartDebug", "Loaded " + products.size() + " products from Firebase");
+                fetchCart();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Xử lý lỗi nếu cần
+            }
+        });
+    }
+
+    private void fetchCart() {
+        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+        databaseReference = FirebaseDatabase.getInstance().getReference("Customer").child(cUser.getUid()).child("Cart");
+
+        // Use addListenerForSingleValueEvent instead of addValueEventListener
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                cartItems.clear(); // Clear the list before adding new data
+                for (DataSnapshot itemSnapshot : snapshot.getChildren()) {
+                    Cart cart = itemSnapshot.getValue(Cart.class);
+                    if (cart != null) {
+                        cartItems.add(cart);
+                    }
+                }
+                Log.d("CartDebug", "Loaded " + cartItems.size() + " Cart item from Firebase");
+                setupRecyclerView();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle errors if needed
+            }
+        });
     }
 }
