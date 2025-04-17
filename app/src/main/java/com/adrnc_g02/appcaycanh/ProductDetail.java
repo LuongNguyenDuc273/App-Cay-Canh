@@ -169,8 +169,35 @@ public class ProductDetail extends AppCompatActivity {
         String IDProc = getIntent().getStringExtra("Key");
         String IDCus = cUser.getUid();
         int Quantity = Integer.parseInt(tvQuantity.getText().toString());
-        Cart cart = new Cart(IDCus, IDProc, Quantity);
-        genericFunction.getTableReference("Customer").child(IDCus).child("Cart").child(IDProc).setValue(cart);
+
+        // Reference to the specific cart item
+        DatabaseReference cartItemRef = genericFunction.getTableReference("Customer")
+                .child(IDCus).child("Cart").child(IDProc);
+
+        // Check if the product already exists in the cart
+        cartItemRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // Product already exists in cart, get current quantity and add new quantity
+                    Cart existingCart = snapshot.getValue(Cart.class);
+                    if (existingCart != null) {
+                        int newQuantity = existingCart.getQuantity() + Quantity;
+                        existingCart.setQuantity(newQuantity);
+                        cartItemRef.setValue(existingCart);
+                    }
+                } else {
+                    // Product doesn't exist in cart, add as new
+                    Cart cart = new Cart(IDCus, IDProc, Quantity);
+                    cartItemRef.setValue(cart);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("CartError", "Failed to check cart: " + error.getMessage());
+            }
+        });
     }
 
     private void newOrder(){
