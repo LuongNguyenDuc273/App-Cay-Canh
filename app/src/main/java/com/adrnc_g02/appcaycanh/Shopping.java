@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -82,16 +83,22 @@ public class Shopping extends AppCompatActivity {
         lineAdapter = new MyAdapter(Shopping.this, dataLine, new MyAdapter.OnLineClickListener() {
             @Override
             public void onLineClick(int position, Line line) {
-                Log.d("LineClick", "Line clicked: position=" + position + ", lineId=" + line.getIDLine() + ", lineName=" + line.getNameLine());
+                btnall.setBackground(ContextCompat.getDrawable(Shopping.this, R.drawable.bg_button_outline));
+                btnall.setTextColor(ContextCompat.getColor(Shopping.this, android.R.color.black));
                 filterProductsByLine(line.getIDLine());
             }
         });
         btnall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnall.setBackground(ContextCompat.getDrawable(Shopping.this, R.drawable.bg_button_green));
+                btnall.setTextColor(ContextCompat.getColor(Shopping.this, android.R.color.white));
+                lineAdapter.selectAllButton();
                 productAdater.searchData(dataProduct);
+                filterProductsByLine(null);
             }
         });
+        lineAdapter.setAllButton(btnall);
         listLine.setAdapter(lineAdapter);
         getAllLine();
 
