@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -109,6 +110,9 @@ public class MainActivity extends AppCompatActivity {
         myAdapter = new MyAdapter(MainActivity.this, dataLine, new MyAdapter.OnLineClickListener() {
             @Override
             public void onLineClick(int position, Line line) {
+                btnAll.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.bg_button_outline));
+                btnAll.setTextColor(ContextCompat.getColor(MainActivity.this, android.R.color.black));
+
                 Log.d("LineClick", "Line clicked: position=" + position + ", lineId=" + line.getIDLine() + ", lineName=" + line.getNameLine());
                 filterProductsByLine(line.getIDLine());
             }
@@ -116,9 +120,13 @@ public class MainActivity extends AppCompatActivity {
         btnAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnAll.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.bg_button_green));
+                btnAll.setTextColor(ContextCompat.getColor(MainActivity.this, android.R.color.white));
+                myAdapter.selectAllButton();
                 productApdater.searchData(dataProduct);
             }
         });
+        myAdapter.setAllButton(btnAll);
         listbnt.setAdapter(myAdapter);
         getAllLine();
 
