@@ -43,7 +43,12 @@ import Model.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -66,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
     private MenuNavigation menuNavigation = new MenuNavigation(this);
     private GenericFunction genericFunction = new GenericFunction();
     SessionControl session;
+    private HashMap<String, Integer> productSalesMap = new HashMap<>();
+    private DatabaseReference orderDetailQuanTity;
+
     private FirebaseAuth auth; //Added FirebaseAuth instance variable
     private GoogleSignInClient mGoogleSignInClient; // Add GoogleSignInClient
 
@@ -137,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         listProduct.setLayoutManager(gridLayoutManager);
         productApdater = new ProductApdater(MainActivity.this,dataProduct);
         listProduct.setAdapter(productApdater);
-        getAllProduct();
+        loadBestSellingProducts();
         // hien thi user
         setUsername();
 
@@ -170,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
         else {
             greeting = "Khuya rồi 😴";
         }
-
         txtGreeting.setText(greeting);
 
         //Test chuyen sang them danh muc san pham
@@ -229,6 +236,78 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Username.setText("Chua Dang Nhap");
         }
+    }
+    public void loadBestSellingProducts(){
+        orderDetailQuanTity = database.getReference("OrderDetail");
+        orderDetailQuanTity.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                productSalesMap.clear();
+                for(DataSnapshot orderS : snapshot.getChildren() )
+                {
+                    OrderDetail orderDetail = orderS.getValue(OrderDetail.class);
+                    if (orderDetail != null)
+                    {
+                        String productId = orderDetail.getIDProc();
+                        int quantity = orderDetail.getTotalQuantity();
+                        Log.d("BestSeller", "Sản phẩm ID: " + productId + ", Số lượng bán: " + quantity);
+                        if (productSalesMap.containsKey(productId))
+                        {
+                            int currentQuantity = productSalesMap.get(productId);
+                            productSalesMap.put(productId,currentQuantity+quantity);
+                        }else{
+                            productSalesMap.put(productId,quantity);
+                        }
+                    }
+                }
+                for (Map.Entry<String, Integer> entry : productSalesMap.entrySet()) {
+                    Log.d("BestSeller", "Tổng số lượng bán - Sản phẩm ID: " + entry.getKey() + ", Tổng bán: " + entry.getValue());
+                }
+                List<Map.Entry<String, Integer>> sortedProduct = new ArrayList<>(productSalesMap.entrySet());
+                Collections.sort(sortedProduct, new Comparator<Map.Entry<String, Integer>>() {
+                    @Override
+                    public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                        return o2.getValue().compareTo(o1.getValue());
+                    }
+                });
+                List<String> bestSellingProductIds = new ArrayList<>();
+                for (Map.Entry<String, Integer> entry : sortedProduct) {
+                    bestSellingProductIds.add(entry.getKey());
+                }
+                if (bestSellingProductIds.isEmpty()) {
+                    Log.d("BestSeller", "Không có dữ liệu bán hàng, hiển thị tất cả sản phẩm");
+                    getAllProduct();
+                    return;
+                }
+                dataProduct.clear();
+                for (String productId : bestSellingProductIds){
+                    tblProduct.child(productId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            Product product = snapshot.getValue(Product.class);
+                            if(product!=null)
+                            {
+                                dataProduct.add(product);
+                                Log.d("BestSeller", "Đã thêm sản phẩm: " + product.getNameProc() +
+                                        ", Số lượng bán: " + productSalesMap.get(product.getIDProc()));
+                                productApdater.notifyDataSetChanged();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("BestSeller", "Lỗi khi tải sản phẩm: " + error.getMessage());
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("BestSeller", "Lỗi khi tải dữ liệu đơn hàng: " + error.getMessage());
+                getAllProduct();
+            }
+        });
     }
 
     private void getAllProduct() {
