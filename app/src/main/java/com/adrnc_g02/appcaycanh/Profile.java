@@ -211,7 +211,7 @@ public class Profile extends AppCompatActivity {
                             }
                         } else {
                             // Handle case when no address exists
-                            TextView addressView = findViewById(R.id.address_text); // You need to add this TextView in your XML
+                            TextView addressView = findViewById(R.id.address_1); // You need to add this TextView in your XML
                             if (addressView != null) {
                                 addressView.setText("Chưa có địa chỉ");
                             }
@@ -239,7 +239,7 @@ public class Profile extends AppCompatActivity {
 
     private void updateAddressUI(Address address) {
         // Find or create a TextView for address in your address_content layout
-        TextView addressView = findViewById(R.id.address_text);
+        TextView addressView = findViewById(R.id.address_1);
         if (addressView != null) {
             addressView.setText(address.getAddressLoc() != null ?
                     address.getAddressLoc() : "Chưa cập nhật địa chỉ");
