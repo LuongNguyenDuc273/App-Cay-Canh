@@ -334,10 +334,10 @@
                     android:id="@+id/address_header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:background="@color/green_dark_L"
                     android:orientation="horizontal"
                     android:padding="16dp"
+                    android:layout_marginTop="8dp"
+                    android:background="#E0F2F1"
                     android:clickable="true"
                     android:focusable="true">
 
@@ -346,54 +346,68 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Địa chỉ"
-                        android:textColor="@color/green_dark"
-                        android:textSize="16sp" />
+                        android:textColor="#26A69A"
+                        android:textSize="18sp"
+                        />
 
                     <ImageView
                         android:id="@+id/address_arrow"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_right"
-                        app:tint="@color/green_dark" />
+                        android:src="@drawable/ic_right" />
                 </LinearLayout>
 
-                <!-- Address Content (Expandable) -->
+                <!-- Address Content (Expanded by default) -->
                 <LinearLayout
                     android:id="@+id/address_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-                    <!-- Address Content goes here (add your address fields) -->
+                    android:orientation="vertical">
+
+                    <!-- Address Item 1 -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="#E0F2F1"
-                        android:orientation="horizontal"
+                        android:background=""
+                        android:orientation="vertical"
                         android:padding="16dp">
 
                         <TextView
-                            android:id="@+id/address_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:padding="16dp"
-                            android:text="Đang tải địa chỉ..."
-                            android:textColor="@color/dark_gray"
-                            android:textSize="16sp" />
+                            android:text="Địa chỉ 1"
+                            android:textColor="#212121"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/address_1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="24 Nguyễn Thị Minh Khai, Phường Bến Nghé, Quận 1, TP.HCM"
+                            android:textColor="#757575"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <!-- Add New Address Button -->
+                    <LinearLayout
+                        android:id="@+id/add_address_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#FFFFFF"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:clickable="true"
+                        android:focusable="true">
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Thêm địa chỉ mới"
-                            android:textColor="@color/green_dark"
+                            android:text="+ Thêm địa chỉ mới"
+                            android:textColor="#26A69A"
                             android:textSize="16sp" />
-
-                        <ImageView
-                            android:id="@+id/add_address"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            app:tint="@color/green_dark" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
