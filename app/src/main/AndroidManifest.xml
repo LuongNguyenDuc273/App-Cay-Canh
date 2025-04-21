@@ -13,6 +13,9 @@
         android:theme="@style/Theme.AppCayCanh"
         tools:targetApi="31">
         <activity
+            android:name=".Blogs"
+            android:exported="false" />
+        <activity
             android:name=".Shopping"
             android:exported="false" />
         <activity
