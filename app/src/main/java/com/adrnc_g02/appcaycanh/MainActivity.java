@@ -238,30 +238,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void loadBestSellingProducts(){
-        orderDetailQuanTity = database.getReference("OrderDetail");
-        orderDetailQuanTity.addValueEventListener(new ValueEventListener() {
+        DatabaseReference orderRef = database.getReference("Order");
+        orderRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 productSalesMap.clear();
-                for(DataSnapshot orderS : snapshot.getChildren() )
-                {
-                    OrderDetail orderDetail = orderS.getValue(OrderDetail.class);
-                    if (orderDetail != null)
-                    {
-                        String productId = orderDetail.getIDProc();
-                        int quantity = orderDetail.getTotalQuantity();
-                        Log.d("BestSeller", "Sản phẩm ID: " + productId + ", Số lượng bán: " + quantity);
-                        if (productSalesMap.containsKey(productId))
+                Log.d("BestSeller", "Số bản ghi OrderDetail: " + snapshot.getChildrenCount());
+
+                for (DataSnapshot orderSnapshot : snapshot.getChildren()) {
+                    DataSnapshot orderDetailSnapshot = orderSnapshot.child("OrderDetail");
+                    Log.d("BestSeller", "OrderID: " + orderSnapshot.getKey() + ", Có OrderDetail: " + orderDetailSnapshot.exists());
+                    for(DataSnapshot detaiOder: orderDetailSnapshot.getChildren()){
+                        String productID = detaiOder.child("idproc").getValue(String.class);
+                        Integer quantity = detaiOder.child("totalQuantity").getValue(Integer.class);
+                        Log.d("BestSeller", "Chi tiết đơn hàng - ProductID: " + productID + ", Số lượng: " + quantity);
+                        if(productID !=null && quantity !=null)
                         {
-                            int currentQuantity = productSalesMap.get(productId);
-                            productSalesMap.put(productId,currentQuantity+quantity);
-                        }else{
-                            productSalesMap.put(productId,quantity);
+                            if(productSalesMap.containsKey(productID))
+                            {
+                                int currentQuantity = productSalesMap.get(productID);
+                                productSalesMap.put(productID, currentQuantity+ quantity);
+                            }else{
+                                productSalesMap.put(productID, quantity);
+                            }
                         }
                     }
                 }
-                for (Map.Entry<String, Integer> entry : productSalesMap.entrySet()) {
+                for (Map.Entry<String, Integer> entry: productSalesMap.entrySet()){
                     Log.d("BestSeller", "Tổng số lượng bán - Sản phẩm ID: " + entry.getKey() + ", Tổng bán: " + entry.getValue());
+                }
+                if (productSalesMap.isEmpty()) {
+                    Log.d("BestSeller", "Không có dữ liệu bán hàng, hiển thị tất cả sản phẩm");
+                    getAllProduct();
+                    return;
                 }
                 List<Map.Entry<String, Integer>> sortedProduct = new ArrayList<>(productSalesMap.entrySet());
                 Collections.sort(sortedProduct, new Comparator<Map.Entry<String, Integer>>() {
@@ -270,23 +279,19 @@ public class MainActivity extends AppCompatActivity {
                         return o2.getValue().compareTo(o1.getValue());
                     }
                 });
+
                 List<String> bestSellingProductIds = new ArrayList<>();
                 for (Map.Entry<String, Integer> entry : sortedProduct) {
                     bestSellingProductIds.add(entry.getKey());
-                }
-                if (bestSellingProductIds.isEmpty()) {
-                    Log.d("BestSeller", "Không có dữ liệu bán hàng, hiển thị tất cả sản phẩm");
-                    getAllProduct();
-                    return;
+                    Log.d("BestSeller", "Sắp xếp theo bán chạy - ID: " + entry.getKey() + ", Số lượng: " + entry.getValue());
                 }
                 dataProduct.clear();
-                for (String productId : bestSellingProductIds){
+                for (String productId : bestSellingProductIds) {
                     tblProduct.child(productId).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             Product product = snapshot.getValue(Product.class);
-                            if(product!=null)
-                            {
+                            if (product != null) {
                                 dataProduct.add(product);
                                 Log.d("BestSeller", "Đã thêm sản phẩm: " + product.getNameProc() +
                                         ", Số lượng bán: " + productSalesMap.get(product.getIDProc()));
@@ -301,7 +306,6 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("BestSeller", "Lỗi khi tải dữ liệu đơn hàng: " + error.getMessage());
