@@ -1,17 +1,17 @@
 package Model;
 
 public class OrderDetail {
-    private String IDProc;
+    private String idproc ;
     private double TotalAmount;
-    private int TotalQuantity;
+    private int totalQuantity;
     private double price;
 
     public String getIDProc() {
-        return IDProc;
+        return idproc ;
     }
 
-    public void setIDProc(String IDProc) {
-        this.IDProc = IDProc;
+    public void setIDProc(String idproc ) {
+        this.idproc = idproc ;
     }
 
     public double getTotalAmount() {
@@ -23,11 +23,11 @@ public class OrderDetail {
     }
 
     public int getTotalQuantity() {
-        return TotalQuantity;
+        return totalQuantity;
     }
 
-    public void setTotalQuantity(int totalQuantity) {
-        TotalQuantity = totalQuantity;
+    public void setTotalQuantity(int TotalQuantity) {
+        totalQuantity = TotalQuantity;
     }
 
     public double getPrice() {
@@ -38,10 +38,10 @@ public class OrderDetail {
         this.price = price;
     }
 
-    public OrderDetail(String IDProc, double totalAmount, int totalQuantity, double price) {
-        this.IDProc = IDProc;
+    public OrderDetail(String idproc, double totalAmount, int TotalQuantity, double price) {
+        this.idproc  = idproc ;
         TotalAmount = totalAmount;
-        TotalQuantity = totalQuantity;
+        totalQuantity = TotalQuantity;
         this.price = price;
     }
 
