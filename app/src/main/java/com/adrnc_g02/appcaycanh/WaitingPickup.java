@@ -13,6 +13,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -79,6 +81,7 @@ public class WaitingPickup extends AppCompatActivity {
     }
 
     protected void loadOrders() {
+        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
         genericFunction.getTableReference("Order").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -86,7 +89,7 @@ public class WaitingPickup extends AppCompatActivity {
 
                 for (DataSnapshot itemsnapshot : snapshot.getChildren()) {
                     Order order = itemsnapshot.getValue(Order.class);
-                    if (order != null && order.getStatus().equals("PENDING_PICKUP")) {
+                    if (order != null && order.getStatus().equals("PENDING_PICKUP") && order.getIDCus().equals(cUser.getUid())) {
                         filterOrderList.add(order);
                     }
                 }

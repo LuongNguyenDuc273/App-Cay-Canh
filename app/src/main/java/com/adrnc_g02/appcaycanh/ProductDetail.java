@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -106,7 +107,7 @@ public class ProductDetail extends AppCompatActivity {
         btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addToCart();
+                    addToCart();
             }
         });
 
@@ -151,9 +152,13 @@ public class ProductDetail extends AppCompatActivity {
             }
         });
         if (quantity > 0) {
-            productStatus.setText("Con Hang");
+            productStatus.setText("Còn hàng");
         } else {
-            productStatus.setText("Tam Het Hang");
+            btnBuy.setEnabled(false);
+            btnAddToCart.setEnabled(false);
+            btnIncreaseQuantity.setEnabled(false);
+            btnDecreaseQuantity.setEnabled(false);
+            productStatus.setText("Tạm hết hàng");
             productStatus.setTextColor(getResources().getColor(R.color.red));
             productStatus.setBackground(getResources().getDrawable(R.drawable.bg_unavailable_status));
             btnBuy.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.gray)));
