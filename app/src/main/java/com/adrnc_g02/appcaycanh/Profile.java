@@ -38,7 +38,7 @@ import java.util.ArrayList;
 public class Profile extends AppCompatActivity {
     TextView Name, logout, phoneNumber, emailAddress;
     SessionControl session;
-    private LinearLayout personalInfoHeader;
+    private LinearLayout personalInfoHeader, waitingConfirmationLayout;;
     private BottomNavigationView bottomNavigationView;
 
     private LinearLayout personalInfoContent;
@@ -83,6 +83,16 @@ public class Profile extends AppCompatActivity {
         emailAddress = findViewById(R.id.email_address);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.navProfile);
+        waitingConfirmationLayout = findViewById(R.id.waiting_confirmation_layout);
+
+        // Su kien chuyen sang cho xac nhan
+        waitingConfirmationLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Profile.this, WaitingConfirmation.class));
+            }
+        });
+
         //Chuyen trang
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
