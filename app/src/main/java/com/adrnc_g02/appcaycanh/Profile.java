@@ -36,9 +36,9 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Profile extends AppCompatActivity {
-    TextView Name, logout, phoneNumber, emailAddress;
+    TextView Name, logout, phoneNumber, emailAddress, orderHistory;
     SessionControl session;
-    private LinearLayout personalInfoHeader, waitingConfirmationLayout;;
+    private LinearLayout personalInfoHeader, waitingConfirmationLayout, waitingPickupLayout;;
     private BottomNavigationView bottomNavigationView;
 
     private LinearLayout personalInfoContent;
@@ -84,12 +84,30 @@ public class Profile extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.navProfile);
         waitingConfirmationLayout = findViewById(R.id.waiting_confirmation_layout);
+        waitingPickupLayout = findViewById(R.id.waiting_delivery_layout);
+        orderHistory = findViewById(R.id.tvOrderHistory);
 
         // Su kien chuyen sang cho xac nhan
         waitingConfirmationLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(Profile.this, WaitingConfirmation.class));
+            }
+        });
+
+        // Su kien chuyen sang cho lay hang
+        waitingPickupLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Profile.this, WaitingPickup.class));
+            }
+        });
+
+        // Su kien chuyen sang lich su mua hang
+        orderHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Profile.this, OrderHistory.class));
             }
         });
 
