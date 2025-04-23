@@ -23,7 +23,7 @@ import java.util.List;
 import Model.Order;
 import Model.Product;
 
-public class WaitingConfirmation extends AppCompatActivity {
+public class OrderHistory extends AppCompatActivity {
     private RecyclerView rvOrder;
     private ImageButton backButton;
     private OrderAdapter orderAdapter;
@@ -34,7 +34,7 @@ public class WaitingConfirmation extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_waiting_confirmation);
+        setContentView(R.layout.activity_order_history);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -42,8 +42,8 @@ public class WaitingConfirmation extends AppCompatActivity {
         });
 
         // Khoi tao view
-        rvOrder = findViewById(R.id.rvOrders);
         backButton = findViewById(R.id.btnBack);
+        rvOrder = findViewById(R.id.rvOrders);
         rvOrder.setLayoutManager(new LinearLayoutManager(this));
 
         // Su kien quay lai
@@ -85,14 +85,14 @@ public class WaitingConfirmation extends AppCompatActivity {
 
                 for (DataSnapshot itemsnapshot : snapshot.getChildren()) {
                     Order order = itemsnapshot.getValue(Order.class);
-                    if (order != null && order.getStatus().equals("PENDING_CONFIRMATION")) {
+                    if (order != null) {
                         filterOrderList.add(order);
                     }
                 }
 
                 // Initialize RecyclerView and Adapter *after* data is loaded
                 runOnUiThread(() -> {
-                    orderAdapter = new OrderAdapter(WaitingConfirmation.this, filterOrderList, allProducts);
+                    orderAdapter = new OrderAdapter(OrderHistory.this, filterOrderList, allProducts);
                     rvOrder.setAdapter(orderAdapter);
                 });
             }

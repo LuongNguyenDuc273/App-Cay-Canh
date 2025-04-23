@@ -66,7 +66,7 @@ public class Search extends AppCompatActivity {
 
         // An nut back
         backButton.setOnClickListener(v -> {
-            finish();
+            onBackPressed();
         });
 
         //Su kien tim kiem

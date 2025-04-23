@@ -78,7 +78,16 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             //Set the information for the current view holder.
             setOrderDetails(order, productAdapter, tvOrderName, allProducts);
             // Set order status
-            tvStatus.setText(order.getStatus());
+            if(order.getStatus().equals("PENDING_CONFIRMATION"))
+            {
+                tvStatus.setText("Chờ xác nhận");
+            } else if(order.getStatus().equals("PENDING_PICKUP")){
+                tvStatus.setTextColor(context.getResources().getColor(R.color.orange));
+                tvStatus.setText("Chờ lấy hàng");
+            } else if(order.getStatus().equals("COMPLETED")) {
+                tvStatus.setTextColor(context.getResources().getColor(R.color.green));
+                tvStatus.setText("Hoàn thành");
+            }
             // Format and set total price
             NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
             String formattedPrice = formatter.format(order.getTotalPayment()).replace("₫", "đ");

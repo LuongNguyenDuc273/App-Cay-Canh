@@ -99,6 +99,7 @@
                         android:textSize="16sp" />
 
                     <TextView
+                        android:id="@+id/tvOrderHistory"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Lịch sử mua hàng >"
@@ -141,6 +142,7 @@
 
                     <!-- Delivery Icon -->
                     <LinearLayout
+                        android:id="@+id/waiting_delivery_layout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
