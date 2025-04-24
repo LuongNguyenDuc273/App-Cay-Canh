@@ -16,6 +16,9 @@
             android:name=".OrderHistory"
             android:exported="false" />
         <activity
+            android:name=".Profile"
+            android:exported="false" />
+        <activity
             android:name=".WaitingPickup"
             android:exported="false" />
         <activity
@@ -52,7 +55,7 @@
             android:name=".Admin"
             android:exported="false" />
         <activity
-            android:name=".Profile"
+            android:name=".Profilee"
             android:exported="false" />
         <activity
             android:name=".Login"

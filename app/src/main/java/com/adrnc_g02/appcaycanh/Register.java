@@ -192,7 +192,7 @@ public class Register extends AppCompatActivity {
                         if(cUser!=null)
                         {
                             String key = cUser.getUid();
-                            Customer cModule = new Customer(key, fullName, email, birthday, phone, address);
+                            Customer cModule = new Customer(key, fullName, email, birthday, phone);
                             session.saveUserToDatabase("LOGIN_EMAIL");
                             genericFunction.addData("Customer", key, cModule);
                             startActivity(new Intent(Register.this, MainActivity.class));

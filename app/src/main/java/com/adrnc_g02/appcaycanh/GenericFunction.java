@@ -36,4 +36,8 @@ public class GenericFunction<T> {
     public DatabaseReference getItemReference(String tableName, String itemId) {
         return databaseReference.child(tableName).child(itemId);
     }
+    // Cập nhật dữ liệu theo field name và giá trị mới
+    public Task<Void> updateData(String tableName, String itemId, String fieldName, Object newValue) {
+        return databaseReference.child(tableName).child(itemId).child(fieldName).setValue(newValue);
+    }
 }
