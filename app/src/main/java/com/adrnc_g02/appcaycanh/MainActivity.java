@@ -373,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
                     User user = usersnapshot.getValue(User.class);
                     if(user!=null && user.getGmail().equals(cUser.getEmail()) && user.getStatus().equals("FIRST_LOGIN_GOOGLE")){
                         String key = cUser.getUid();
-                        Customer cModule = new Customer(key,"", cUser.getEmail(), "", "", "");
+                        Customer cModule = new Customer(key,"", cUser.getEmail(), "", "");
                         genericFunction.addData("Customer", key, cModule);
                         User nUser = new User(cUser.getEmail(), "Customer", "NOT_FIRST_LOGIN_GOOGLE");
                         genericFunction.getTableReference("User").child(key).setValue(nUser);

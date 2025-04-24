@@ -181,6 +181,22 @@ public class Profile extends AppCompatActivity {
                 Log.d(TAG, "Personal Info Header clicked, isExpanded: " + isPersonalInfoExpanded);
             }
         });
+        // Su kien chuyen sang cho xac nhan
+        waitingConfirmationLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Profile.this, WaitingConfirmation.class));
+            }
+        });
+
+        // Su kien chuyen sang cho lay hang
+        waitingPickupLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Profile.this, WaitingPickup.class));
+            }
+        });
+
 
         addressHeader.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -6,7 +6,6 @@ public class Customer {
     private String Gmail;
     private String Birthday;
     private String Phone;
-    private String Address;
 
     public void setIDCus(String IDCus) {
         this.IDCus = IDCus;
@@ -28,9 +27,6 @@ public class Customer {
         Phone = phone;
     }
 
-    public void setAddress(String address) {
-        Address = address;
-    }
 
     public String getIDCus() {
         return IDCus;
@@ -52,17 +48,13 @@ public class Customer {
         return Phone;
     }
 
-    public String getAddress() {
-        return Address;
-    }
 
-    public Customer(String IDCus, String nameCus, String gmail, String birthday, String phone, String address) {
+    public Customer(String IDCus, String nameCus, String gmail, String birthday, String phone) {
         this.IDCus = IDCus;
         NameCus = nameCus;
         Gmail = gmail;
         Birthday = birthday;
         Phone = phone;
-        Address = address;
     }
 
     public Customer(){}
