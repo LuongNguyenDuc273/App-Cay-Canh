@@ -25,19 +25,18 @@ import java.util.List;
 import Model.Order;
 import Model.Product;
 
-public class WaitingPickup extends AppCompatActivity {
+public class OrderHistory extends AppCompatActivity {
     private RecyclerView rvOrder;
     private ImageButton backButton;
     private OrderAdapter orderAdapter;
     private GenericFunction genericFunction = new GenericFunction();
     private List<Product> allProducts = new ArrayList<>();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_waiting_pickup);
+        setContentView(R.layout.activity_order_history);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -89,14 +88,14 @@ public class WaitingPickup extends AppCompatActivity {
 
                 for (DataSnapshot itemsnapshot : snapshot.getChildren()) {
                     Order order = itemsnapshot.getValue(Order.class);
-                    if (order != null && order.getStatus().equals("PENDING_PICKUP") && order.getIDCus().equals(cUser.getUid())) {
+                    if (order != null && order.getIDCus().equals(cUser.getUid())) {
                         filterOrderList.add(order);
                     }
                 }
 
                 // Initialize RecyclerView and Adapter *after* data is loaded
                 runOnUiThread(() -> {
-                    orderAdapter = new OrderAdapter(WaitingPickup.this, filterOrderList, allProducts);
+                    orderAdapter = new OrderAdapter(OrderHistory.this, filterOrderList, allProducts);
                     rvOrder.setAdapter(orderAdapter);
                 });
             }

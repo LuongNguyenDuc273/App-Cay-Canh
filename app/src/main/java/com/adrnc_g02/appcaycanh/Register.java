@@ -187,13 +187,17 @@ public class Register extends AppCompatActivity {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        cUser = mAuth.getCurrentUser();
                         //Luu vao realtime database
-                        String key = cUser.getUid();
-                        Customer cModule = new Customer(key, fullName, email, birthday, phone, address);
-                        session.saveUserToDatabase("LOGIN_EMAIL");
-                        genericFunction.addData("Customer", key, cModule);
-                        startActivity(new Intent(Register.this, MainActivity.class));
-                        Toast.makeText(Register.this, "Đã tạo tài khoản", Toast.LENGTH_SHORT).show();
+                        if(cUser!=null)
+                        {
+                            String key = cUser.getUid();
+                            Customer cModule = new Customer(key, fullName, email, birthday, phone, address);
+                            session.saveUserToDatabase("LOGIN_EMAIL");
+                            genericFunction.addData("Customer", key, cModule);
+                            startActivity(new Intent(Register.this, MainActivity.class));
+                            Toast.makeText(Register.this, "Đã tạo tài khoản", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         // If sign in fails, display a message to the user.
                         try {
