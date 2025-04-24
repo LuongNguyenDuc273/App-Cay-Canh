@@ -150,6 +150,7 @@ public class Profile extends AppCompatActivity {
         currentUser = auth.getCurrentUser(); // lay nguoi dung hien tai
         database = FirebaseDatabase.getInstance(); // truy cap csdl
         customerRef = database.getReference("Customer"); // tham chieu den node "Customer"
+        session = new SessionControl(this);
 
         // Khoi tao GenericFunction (replace with your actual implementation)
         customerGenericFunction = new GenericFunction<Customer>(); // Sửa ở đây
@@ -190,7 +191,7 @@ public class Profile extends AppCompatActivity {
         // Load du lieu lay tu firebase
         if (userGmail != null) {
             Log.d(TAG, "Querying Customer node with Gmail: " + userGmail);
-            customerRef.orderByChild("Gmail")
+            customerRef.orderByChild("gmail")
                     .equalTo(userGmail)
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -305,7 +306,7 @@ public class Profile extends AppCompatActivity {
                     (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                 String newPhoneNumber = phone.getText().toString();
                 Log.d(TAG, "Enter key pressed, newPhoneNumber: " + newPhoneNumber);
-                updateField("Customer", currentUserID, "Phone", newPhoneNumber);
+                updateField("Customer", currentUserID, "phone", newPhoneNumber);
                 Log.d("PhoneText", phone.getText().toString());
                 return true;
             }
