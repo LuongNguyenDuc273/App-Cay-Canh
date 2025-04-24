@@ -246,7 +246,9 @@
                         android:layout_height="wrap_content"
                         android:background="@color/green_dark_L"
                         android:orientation="horizontal"
-                        android:padding="16dp">
+                        android:padding="16dp"
+                        android:clickable="true"
+                        android:focusable="true">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -255,7 +257,7 @@
                             android:textColor="@color/green_dark"
                             android:textSize="16sp" />
 
-                        <TextView
+                        <EditText
                             android:id="@+id/phone_number"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -263,19 +265,15 @@
                             android:layout_marginStart="8dp"
                             android:text="0399923883"
                             android:textColor="@color/dark_gray"
-                            android:textSize="16sp" />
-
-                        <ImageView
-                            android:id="@+id/edit_phone"
-                            android:layout_width="22dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_edit"
-                            app:tint="@color/green_dark" />
+                            android:textSize="16sp"
+                            android:background="@null"
+                            android:focusableInTouchMode="true"
+                            android:imeOptions="actionDone"/>
                     </LinearLayout>
 
                     <!-- Email Item -->
                     <LinearLayout
-                        android:id="@+id/email_item"
+                        android:id="@+id/gmail_item"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="#E0F2F1"
@@ -285,26 +283,22 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Email:"
+                            android:text="Gmail:"
                             android:textColor="#26A69A"
                             android:textSize="16sp" />
 
-                        <TextView
-                            android:id="@+id/email_address"
+                        <EditText
+                            android:id="@+id/gmail_address"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="8dp"
                             android:text="tulan246135@gmail.com"
                             android:textColor="@color/dark_gray"
-                            android:textSize="16sp" />
-
-                        <ImageView
-                            android:id="@+id/edit_email"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_edit"
-                            app:tint="#26A69A" />
+                            android:textSize="16sp"
+                            android:background="@null"
+                            android:focusableInTouchMode="true"
+                            android:imeOptions="actionDone"/>
                     </LinearLayout>
                 </LinearLayout>
 
@@ -326,14 +320,14 @@
                         android:layout_weight="1"
                         android:text="Địa chỉ"
                         android:textColor="#26A69A"
-                        android:textSize="18sp"
-                        />
+                        android:textSize="18sp" />
 
                     <ImageView
                         android:id="@+id/address_arrow"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_right" />
+                        android:src="@drawable/ic_right"
+                        app:tint="@color/green_dark"/>
                 </LinearLayout>
 
                 <!-- Address Content (Expanded by default) -->
@@ -341,7 +335,8 @@
                     android:id="@+id/address_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <!-- Address Item 1 -->
                     <LinearLayout
@@ -351,27 +346,22 @@
                         android:orientation="vertical"
                         android:padding="16dp">
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Địa chỉ 1"
-                            android:textColor="#212121"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/address_1"
+                        <EditText
+                            android:id="@+id/address"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="24 Nguyễn Thị Minh Khai, Phường Bến Nghé, Quận 1, TP.HCM"
                             android:textColor="#757575"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"
+                            android:background="@null"
+                            android:focusableInTouchMode="true"
+                            android:imeOptions="actionDone"/>
                     </LinearLayout>
 
-                    <!-- Add New Address Button -->
+                    <!-- Add New Address -->
                     <LinearLayout
-                        android:id="@+id/add_address_button"
+                        android:id="@+id/add_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="#FFFFFF"
