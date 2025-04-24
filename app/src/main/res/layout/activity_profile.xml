@@ -99,6 +99,7 @@
                         android:textSize="16sp" />
 
                     <TextView
+                        android:id="@+id/tvOrderHistory"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Lịch sử mua hàng >"
@@ -141,6 +142,7 @@
 
                     <!-- Delivery Icon -->
                     <LinearLayout
+                        android:id="@+id/waiting_delivery_layout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -238,6 +240,38 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:visibility="gone">
+
+                    <!-- Name Item -->
+                    <LinearLayout
+                        android:id="@+id/fullname_item"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/green_dark_L"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Họ và tên:"
+                            android:textColor="@color/green_dark"
+                            android:textSize="16sp" />
+
+                        <EditText
+                            android:id="@+id/fullname"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            android:text=""
+                            android:textColor="@color/dark_gray"
+                            android:textSize="16sp"
+                            android:background="@null"
+                            android:focusableInTouchMode="true"
+                            android:imeOptions="actionDone"/>
+                    </LinearLayout>
 
                     <!-- Phone Number Item -->
                     <LinearLayout
@@ -346,17 +380,26 @@
                         android:orientation="vertical"
                         android:padding="16dp">
 
-                        <EditText
-                            android:id="@+id/address"
+                        <!--                        <EditText-->
+                        <!--                            android:id="@+id/address"-->
+                        <!--                            android:layout_width="match_parent"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:layout_marginTop="4dp"-->
+                        <!--                            android:text="24 Nguyễn Thị Minh Khai, Phường Bến Nghé, Quận 1, TP.HCM"-->
+                        <!--                            android:textColor="#757575"-->
+                        <!--                            android:textSize="14sp"-->
+                        <!--                            android:background="@null"-->
+                        <!--                            android:focusableInTouchMode="true"-->
+                        <!--                            android:imeOptions="actionDone"/>-->
+
+                        <!-- RecyclerView cho danh sách địa chỉ -->
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/address_recycler_view"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="24 Nguyễn Thị Minh Khai, Phường Bến Nghé, Quận 1, TP.HCM"
-                            android:textColor="#757575"
-                            android:textSize="14sp"
-                            android:background="@null"
-                            android:focusableInTouchMode="true"
-                            android:imeOptions="actionDone"/>
+                            android:padding="14dp"/>
+
                     </LinearLayout>
 
                     <!-- Add New Address -->

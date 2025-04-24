@@ -1,17 +1,7 @@
 package Model;
 
 public class Address {
-    private String IDCus;
     private String AddressLoc;
-
-    public String getIDCus() {
-        return IDCus;
-    }
-
-    public void setIDCus(String IDCus) {
-        this.IDCus = IDCus;
-    }
-
     public String getAddressLoc() {
         return AddressLoc;
     }
@@ -20,8 +10,7 @@ public class Address {
         AddressLoc = addressLoc;
     }
 
-    public Address(String IDCus, String addressLoc) {
-        this.IDCus = IDCus;
+    public Address(String addressLoc) {
         AddressLoc = addressLoc;
     }
 

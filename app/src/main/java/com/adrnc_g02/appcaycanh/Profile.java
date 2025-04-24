@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.cardview.widget.CardView;
@@ -60,18 +62,31 @@ import java.util.Map;
 
 public class Profile extends AppCompatActivity {
     private static final String TAG = "ProfileActivity";
-    TextView nameUser,
-            logout;
-    EditText phone,
+    TextView
+            nameUser,
+            logout,
+            orderHistory;
+    EditText
+            phone,
             gmail;
 
-    private ImageView personalInfoArrow,
+    private ImageView
+            personalInfoArrow,
             addressArrow;
 
-    private LinearLayout personalInfoHeader,
+    private LinearLayout
+            personalInfoHeader,
             personalInfoContent,
             addressHeader,
-            addressContent;
+            addressContent,
+            add_Address,
+            waitingConfirmationLayout,
+            waitingPickupLayout;
+
+    private BottomNavigationView bottomNavigationView;
+    private RecyclerView addressRecycleView;
+    private AddressAdapter addressAdapter;
+
     private String currentUserID = "";
 
     private boolean isPersonalInfoExpanded = false;
@@ -86,7 +101,8 @@ public class Profile extends AppCompatActivity {
     private FirebaseUser currentUser;
 
     private GenericFunction<Customer> customerGenericFunction;
-    private GenericFunction<Address> addressGenericFunction;
+    private GenericFunction addressGenericFunction = new GenericFunction();
+    private List<Address> addressList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,16 +131,47 @@ public class Profile extends AppCompatActivity {
         // Anh xa EditText
         phone = findViewById(R.id.phone_number);
         gmail = findViewById(R.id.gmail_address);
+        waitingConfirmationLayout = findViewById(R.id.waiting_confirmation_layout);
+        waitingPickupLayout = findViewById(R.id.waiting_delivery_layout);
+        orderHistory = findViewById(R.id.tvOrderHistory);
+        // Su kien chuyen sang lich su mua hang
+        orderHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Profile.this, OrderHistory.class));
+            }
+        });
 
         // Anh xa ImageView
         personalInfoArrow = findViewById(R.id.personal_info_arrow);
         addressArrow = findViewById(R.id.address_arrow);
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
+        bottomNavigationView.setSelectedItemId(R.id.navProfile);
+
+        //Chuyen trang
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navHome){
+                startActivity(new Intent(Profile.this, MainActivity.class));
+            }
+            else if (itemId == R.id.navCart) {
+            }
+            else if (itemId == R.id.navExplore) {
+                startActivity(new Intent(Profile.this, ShoppingCart.class));
+            }
+            else if (itemId == R.id.navProfile) {
+                return true;
+            }
+            return true;
+
+        });
 
         // Anh xa LinearLayout
         personalInfoHeader = findViewById(R.id.personal_info_header);
         personalInfoContent = findViewById(R.id.personal_info_content);
         addressHeader = findViewById(R.id.address_header);
         addressContent = findViewById(R.id.address_content);
+        add_Address = findViewById(R.id.add_address);
         // Xu ly su kien cua LinearLayout
         personalInfoHeader.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -152,11 +199,26 @@ public class Profile extends AppCompatActivity {
         customerRef = database.getReference("Customer"); // tham chieu den node "Customer"
         session = new SessionControl(this);
 
-        // Khoi tao GenericFunction (replace with your actual implementation)
-        customerGenericFunction = new GenericFunction<Customer>(); // Sửa ở đây
+        // Khoi tao GenericFunction
+        customerGenericFunction = new GenericFunction<Customer>();
         Log.d(TAG, "GenericFunction initialized: " + (customerGenericFunction != null));
 
+
+        // Anh xa RecycleView
+        addressRecycleView = findViewById(R.id.address_recycler_view);
+        // Thiet lap RecycleView
+        addressRecycleView.setLayoutManager(new LinearLayoutManager(this));
+        addressAdapter = new AddressAdapter(addressList);
+        addressRecycleView.setAdapter(addressAdapter);
+
+
         loadUserData();
+        loadAddress();
+
+        // Xử lý sự kiện thêm địa chỉ
+        add_Address.setOnClickListener(v -> showAddAddressDialog());
+
+
     }
 
     private void loadUserData() {
@@ -227,6 +289,34 @@ public class Profile extends AppCompatActivity {
         }
     }
 
+    private void loadAddress(){
+        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+        currentUserID = cUser.getUid();
+        if(currentUserID.isEmpty()){
+            return;
+        }
+        addressRef = database.getReference("Address");
+        addressRef.orderByChild("IDCus").equalTo(currentUserID)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshott) {
+                        addressList.clear();
+                        for (DataSnapshot snapshott : dataSnapshott.getChildren()) {
+                            Address address = snapshott.getValue(Address.class);
+                            if (address != null) {
+                                addressList.add(address);
+                            }
+                        }
+                        addressAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(Profile.this, "Lỗi tải địa chỉ", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     // Lay thong tin tu database va hien thi
     private void displayInfo(Customer customer) {
         Log.d(TAG, "displayInfo called with customer: " + customer);
@@ -294,6 +384,50 @@ public class Profile extends AppCompatActivity {
         phone.clearFocus();
         Log.d(TAG, "Keyboard hidden and focus cleared");
 
+    }
+
+    private void showAddAddressDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Thêm địa chỉ mới");
+
+        View dialogView = getLayoutInflater().inflate(R.layout.item_address, null);
+        builder.setView(dialogView);
+
+        EditText addressText = dialogView.findViewById(R.id.address_text);
+
+        builder.setPositiveButton("Lưu", (dialog, which) -> {
+            String addressStr = addressText.getText().toString();
+            Log.d("Dia Chi","Dia chi da luu la: "+ addressText.getText().toString());
+            if (!addressStr.isEmpty()) {
+                addNewAddress(addressStr);
+            } else {
+                Toast.makeText(this, "Vui lòng nhập địa chỉ", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Hủy", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void addNewAddress(String addressStr) {
+        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+        currentUserID = cUser.getUid();
+        Log.d("THEM DIA CHI", "Khoi tao function them DC");
+        Log.d("CURRENTUSERID", "ID hien tai la: "+ currentUserID);
+
+        if (currentUserID.isEmpty()) {
+            Toast.makeText(this, "Vui lòng đăng nhập để thêm địa chỉ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Address newAddress = new Address(addressStr);
+
+        if (addressStr != null) {
+            addressGenericFunction.getTableReference("Customer")
+                    .child(currentUserID).child("Address").child(addressStr).setValue(newAddress);
+        }
     }
 
     // Xu ly su kien cho EditText
