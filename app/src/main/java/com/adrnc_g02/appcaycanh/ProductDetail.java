@@ -30,6 +30,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
+import Model.Address;
 import Model.Cart;
 
 public class ProductDetail extends AppCompatActivity {
@@ -210,6 +213,16 @@ public class ProductDetail extends AppCompatActivity {
         String IDProc = getIntent().getStringExtra("Key");
         String IDCus = cUser.getUid();
         int Quantity = Integer.parseInt(tvQuantity.getText().toString());
-        orderManagment.addOrder(IDProc, Quantity, getIntent().getStringExtra("Price"));
+        //orderManagment.addOrder(IDProc, Quantity, getIntent().getStringExtra("Price"));
+        Cart cart = new Cart(IDCus, IDProc, Quantity);
+        genericFunction.getTableReference("Customer")
+                .child(IDCus).child("Cart").child(IDProc).setValue(cart);
+        ArrayList<String> selectedProductIds = new ArrayList<>();
+        selectedProductIds.add(IDProc);
+        // Start OrderConfirmation activity
+        Intent intent = new Intent(ProductDetail.this, OrderConfirmation.class);
+        intent.putStringArrayListExtra("selected_cart_items", selectedProductIds);
+        intent.putExtra("is_from_product_detail", true);
+        startActivity(intent);
     }
 }

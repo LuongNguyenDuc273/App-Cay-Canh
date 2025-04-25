@@ -33,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
 
+import Model.Address;
 import Model.Customer;
 
 public class Register extends AppCompatActivity {
@@ -193,8 +194,10 @@ public class Register extends AppCompatActivity {
                         {
                             String key = cUser.getUid();
                             Customer cModule = new Customer(key, fullName, email, birthday, phone);
+                            Address address1 = new Address(address);
                             session.saveUserToDatabase("LOGIN_EMAIL");
                             genericFunction.addData("Customer", key, cModule);
+                            genericFunction.getTableReference("Customer").child(key).child("Address").child(address).setValue(address1);
                             startActivity(new Intent(Register.this, MainActivity.class));
                             Toast.makeText(Register.this, "Đã tạo tài khoản", Toast.LENGTH_SHORT).show();
                         }
