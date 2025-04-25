@@ -12,7 +12,8 @@ android:background="@color/white">
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="16dp">
+    android:padding="16dp"
+    tools:ignore="MissingConstraints">
 
     <ImageView
         android:id="@+id/profileImage"
@@ -29,6 +30,7 @@ android:background="@color/white">
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/txtGreeting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Chào buổi sáng 👋"
@@ -36,6 +38,7 @@ android:background="@color/white">
             android:textColor="@color/dark_gray" />
 
         <TextView
+            android:id="@+id/userEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Minh béo"
@@ -153,6 +156,7 @@ android:background="@color/white">
                 android:gravity="center">
 
                 <TextView
+                    android:id="@+id/confirm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
@@ -177,6 +181,7 @@ android:background="@color/white">
                 android:gravity="center">
 
                 <TextView
+                    android:id="@+id/cancel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
@@ -201,6 +206,7 @@ android:background="@color/white">
                 android:gravity="center">
 
                 <TextView
+                    android:id="@+id/returnn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
@@ -211,9 +217,9 @@ android:background="@color/white">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Trả hàng/hoàn tiền"
+                    android:text="Hoàn Thành"
                     android:textColor="@color/dark_gray"
-                    android:textSize="10sp"
+                    android:textSize="12sp"
                     android:gravity="center" />
             </LinearLayout>
 
@@ -225,6 +231,7 @@ android:background="@color/white">
                 android:gravity="center">
 
                 <TextView
+                    android:id="@+id/hold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
@@ -235,7 +242,7 @@ android:background="@color/white">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Chờ đáy hàng"
+                    android:text="Chờ lấy hàng"
                     android:textColor="@color/dark_gray"
                     android:textSize="12sp"
                     android:gravity="center" />
