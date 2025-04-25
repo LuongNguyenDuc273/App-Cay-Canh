@@ -179,48 +179,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     // Add this method to your CartAdapter class
     // Add this method to your CartAdapter class
-    public void removeSelectedItems() {
-        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
-        String userID = cUser.getUid();
-
-        // Create a new list to store items that will remain
-        List<CartItem> remainingItems = new ArrayList<>();
-
-        // First, remove from Firebase and build the remaining list
-        for (int i = 0; i < cartItems.size(); i++) {
-            CartItem item = cartItems.get(i);
-            if (item.isSelected) {
-                // Remove from Firebase
-                genericFunction.getTableReference("Customer")
-                        .child(userID)
-                        .child("Cart")
-                        .child(item.product.getIDProc())
-                        .removeValue();
-
-                // Log for debugging
-                Log.d("CartAdapter", "Removing item: " + item.product.getNameProc());
-            } else {
-                // Add to remaining items
-                remainingItems.add(item);
-            }
-        }
-
-        // Clear the original list and add all remaining items
-        cartItems.clear();
-        cartItems.addAll(remainingItems);
-
-        // Notify adapter of changes - use specific notification for better animation
-        notifyDataSetChanged();
-
-        // Notify any listeners
-        if (listener != null) {
-            listener.onQuantityChanged();
-            listener.onSelectionChanged();
-        }
-
-        // Log the results
-        Log.d("CartAdapter", "Items remaining after removal: " + cartItems.size());
-    }
 
     static class CartViewHolder extends RecyclerView.ViewHolder {
         ImageView image;

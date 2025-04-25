@@ -1,5 +1,6 @@
 package com.adrnc_g02.appcaycanh;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -97,9 +98,16 @@ public class ShoppingCart extends AppCompatActivity {
             if (selectedItems.isEmpty()) {
                 Toast.makeText(this, "Vui lòng chọn sản phẩm trước khi thanh toán", Toast.LENGTH_SHORT).show();
             } else {
-                // Proceed to checkout
-                cartAdapter.removeSelectedItems();
-                orderManagment.addOrder(selectedItems);
+                // Create a list of product IDs to pass to OrderConfirmation
+                ArrayList<String> selectedProductIds = new ArrayList<>();
+                for (Cart cart : selectedItems) {
+                    selectedProductIds.add(cart.getIDProc());
+                }
+
+                // Start OrderConfirmation activity
+                Intent intent = new Intent(ShoppingCart.this, OrderConfirmation.class);
+                intent.putStringArrayListExtra("selected_cart_items", selectedProductIds);
+                startActivity(intent);
             }
         });
     }
