@@ -8,6 +8,7 @@ import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView listbnt,listProduct;
     private Button btnlogout,btnAll;
     private BottomNavigationView bottomNavigationView;
-
+    private ImageView admin;
     private ArrayList<Line> dataLine;
     private ArrayList<Product> dataProduct;
     private FirebaseDatabase database;
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         search = findViewById(R.id.searchView);
         searchbar = findViewById(R.id.searchContainer);
-
+        admin = findViewById(R.id.imgProfile);
 
 
         //Chuyen trang
@@ -107,6 +108,20 @@ public class MainActivity extends AppCompatActivity {
             int itemId = item.getItemId();
            menuNavigation.navigateTo(itemId);
            return true;
+        });
+
+        //chuyen sang admin
+        admin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent adminIntent = new Intent(getApplicationContext(), Admin.class);
+                String userName = getIntent().getStringExtra("userName");
+                String userName2 = getIntent().getStringExtra("userName2");
+                adminIntent.putExtra("userEmail", userName);
+                adminIntent.putExtra("userEmail2", userName2);
+                startActivity(adminIntent);
+                finish();
+            }
         });
 
         //hien thi danh muc san pham
@@ -161,23 +176,12 @@ public class MainActivity extends AppCompatActivity {
         TextView txtGreeting = findViewById(R.id.txtGreeting);
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
-
         String greeting;
-        if (hour >= 5 && hour <= 10) {
-            greeting = "Chào buổi sáng ☀️";
-        }
-        else if (hour >= 11 && hour <= 12) {
-            greeting = "Chào buổi trưa 🍱";
-        }
-        else if (hour >= 13 && hour <= 17) {
-            greeting = "Chào buổi chiều 🌤️";
-        }
-        else if (hour >= 18 && hour <= 21) {
-            greeting = "Chào buổi tối 🌆";
-        }
-        else {
-            greeting = "Khuya rồi 😴";
-        }
+        if (hour >= 5 && hour <= 10) {greeting = "Chào buổi sáng ☀️";}
+        else if (hour >= 11 && hour <= 12) {greeting = "Chào buổi trưa 🍱";}
+        else if (hour >= 13 && hour <= 17) {greeting = "Chào buổi chiều 🌤️";}
+        else if (hour >= 18 && hour <= 21) {greeting = "Chào buổi tối 🌆";}
+        else {greeting = "Khuya rồi 😴";}
         txtGreeting.setText(greeting);
 
         //Test chuyen sang them danh muc san pham
