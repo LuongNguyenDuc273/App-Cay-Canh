@@ -11,6 +11,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -18,10 +25,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.time.Year;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Objects;
+
+import Model.MonthlyRevenue;
 
 public class Admin extends AppCompatActivity {
     private GenericFunction genericFunction = new GenericFunction();
+    private BarChart barChart;
+    private ArrayList<BarEntry> revenueList;
 
     private TextView txtHello, username, quantityConfirm, quantityCancel, quantityReturn, quantityHolding;
 
@@ -35,14 +49,12 @@ public class Admin extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        txtHello = findViewById(R.id.txtGreeting);
-        username = findViewById(R.id.userEmail);
-        quantityCancel = findViewById(R.id.cancel);
-        quantityConfirm = findViewById(R.id.confirm);
-        quantityHolding = findViewById(R.id.hold);
-        quantityReturn = findViewById(R.id.returnn);
+
+        initializeViews();
         setUsername();
         updateQuantityStatus();
+        loadRevenue();
+
 
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -55,7 +67,15 @@ public class Admin extends AppCompatActivity {
         txtHello.setText(greeting);
 
     }
-
+    private void initializeViews() {
+        barChart = findViewById(R.id.bar_chart);
+        txtHello = findViewById(R.id.txtGreeting);
+        username = findViewById(R.id.userEmail);
+        quantityCancel = findViewById(R.id.cancel);
+        quantityConfirm = findViewById(R.id.confirm);
+        quantityHolding = findViewById(R.id.hold);
+        quantityReturn = findViewById(R.id.returnn);
+    }
     private void setUsername() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -116,6 +136,107 @@ public class Admin extends AppCompatActivity {
         quantityReturn.setText(String.valueOf(backCount));
         quantityHolding.setText(String.valueOf(holdCount));
         quantityConfirm.setText(String.valueOf(confirmCount));
+    }
+    private void loadRevenue(){
+        revenueList = new ArrayList<>();
+        ArrayList<MonthlyRevenue> monthlyRevenueList = new ArrayList<>();
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        DatabaseReference orderRef = genericFunction.getTableReference("Order");
+        orderRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                float[] monthlyRevenue = new float[12];
+                for(DataSnapshot order: snapshot.getChildren()){
+                   String status = order.child("status").getValue(String.class);
+                   if(status!=null && status.equals("COMPLETE")){
+                       Object totalPaymentObj  = order.child("totalPayment").getValue();
+                       if(totalPaymentObj !=null){
+                           float totalPayment = Float.parseFloat(totalPaymentObj.toString());
+                           Object timeObj = order.child("time").getValue();
+                           if(timeObj!=null){
+                               long timestamp = Long.parseLong(timeObj.toString());
+                               Calendar calendar = Calendar.getInstance();
+                               calendar.setTimeInMillis(timestamp);
+                               int orderYear = calendar.get(calendar.YEAR);
+                               int orderMonth = calendar.get(calendar.MONTH);
+                               if (orderYear == currentYear){
+                                   monthlyRevenue[orderMonth]+= totalPayment;
+                               }
+                           }
+                       }
+                   }
+                }
+                monthlyRevenueList.clear();
+                revenueList.clear();
+                String[] monthNames = {"T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9"};
+                for (int i=0; i<12;i++){
+                    monthlyRevenueList.add(new MonthlyRevenue(monthNames[i], monthlyRevenue[i]));
+                    revenueList.add(new BarEntry(i, monthlyRevenue[i]));
+                }
+                updateBarchart();
+                Log.d("Revenue", "Doanh thu đã được cập nhật");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("RevenueError", "Không thể đọc dữ liệu doanh thu", error.toException());
+
+            }
+        });
+
+    }
+
+    private void updateBarchart() {
+        if(revenueList == null ||revenueList.isEmpty()){
+            Log.e("BarChart", "Không có dữ liệu doanh thu để hiển thị");
+            return;
+        }
+        BarDataSet  barDataSet = new BarDataSet(revenueList, "Doanh Thu (VND)");
+        barDataSet.setColor(getResources().getColor(R.color.green));
+        barDataSet.setValueTextColor(getResources().getColor(R.color.black));
+        barDataSet.setValueTextSize(10f);
+        BarData barData = new BarData(barDataSet);
+        barData.setBarWidth(0.7f);
+        // thiet lap truc x
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                int monthIndex = (int) value;
+                if(monthIndex >= 0 && monthIndex < 12)
+                {
+                    String[] monthNames = {"T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9"};
+                    return monthNames[monthIndex];
+                }
+                return "";
+            }
+        });
+
+        // thiet lap truc y
+        barChart.getAxisLeft().setAxisMaximum(0f);
+        barChart.getAxisRight().setEnabled(false);
+        //thiet lap dinh dang cac gia tri
+
+        barData.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                if(value == 0) return  "";
+                if(value > 1000000){
+                    return String.format("%.1fM", value / 1000000);
+                } else if (value >= 1000) {
+                    return String.format("%.0fK", value / 1000);
+                }
+                return String.format("%.0f", value);
+            }
+        });
+        barChart.setData(barData);
+        barChart.getDescription().setEnabled(false);
+        barChart.getLegend().setEnabled(true);
+        barChart.setFitBars(true);
+        barChart.animateY(1000);
+        barChart.invalidate();
     }
 
 }
