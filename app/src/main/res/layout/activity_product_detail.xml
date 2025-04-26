@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F5F5"
     tools:context=".ProductDetail">
 
     <LinearLayout
@@ -12,10 +13,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <androidx.cardview.widget.CardView
+        <!-- Phần hình ảnh sản phẩm -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="400dp"
-            app:cardCornerRadius="0dp">
+            android:layout_height="400dp">
 
             <ImageView
                 android:id="@+id/ivProductImage"
@@ -26,229 +27,353 @@
 
             <ImageButton
                 android:id="@+id/btnBack"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
                 android:layout_margin="16dp"
                 android:background="@drawable/circular_white_background"
                 android:src="@drawable/ic_back"
-                android:padding="12dp"/>
+                android:elevation="4dp"
+                android:padding="10dp"/>
+        </FrameLayout>
+
+        <!-- Information content block with side margins -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Phần thông tin sản phẩm -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvProductName"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Cây Hạnh Phúc Nội Thất"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/nunito_medium"
+                            android:textColor="#333333"/>
+
+                        <TextView
+                            android:id="@+id/tvProductStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Còn Hàng"
+                            android:textColor="#00A86B"
+                            android:background="@drawable/bg_available_status"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="5dp"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/nunito_medium"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvProductCategory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cây Để Bàn"
+                        android:textSize="14sp"
+                        android:textColor="#666666"
+                        android:fontFamily="@font/nunito_regular"
+                        android:layout_marginTop="4dp"/>
+
+                    <TextView
+                        android:id="@+id/tvProductPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1,100,000 VNĐ"
+                        android:textSize="22sp"
+                        android:textColor="#00A86B"
+                        android:fontFamily="@font/nunito_medium"
+                        android:textStyle="bold"
+                        android:layout_marginTop="12dp"/>
+                </LinearLayout>
+
+                <!-- Đường kẻ phân cách -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#E0E0E0"/>
+
+                <!-- Phần mô tả sản phẩm -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mô Tả Sản Phẩm"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/nunito_medium"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        android:id="@+id/tvProductDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cây Hạnh Phúc Nội Thất là loại cây cảnh được ưa chuộng trong trang trí văn phòng và không gian sống. Với chiều cao phù hợp và màu xanh mát, cây mang lại không khí tươi mới và cảm giác thư thái."
+                        android:textSize="15sp"
+                        android:lineSpacingExtra="4dp"
+                        android:fontFamily="@font/nunito_regular"
+                        android:textColor="#666666"/>
+                </LinearLayout>
+
+                <!-- Đường kẻ phân cách -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#E0E0E0"/>
+
+                <!-- Phần hướng dẫn chăm sóc -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Hướng Dẫn Chăm Sóc"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/nunito_medium"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="12dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="10dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_sun"
+                                app:tint="#00A86B"/>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Đặt cây ở nơi có ánh sáng gián tiếp"
+                                android:textSize="15sp"
+                                android:textColor="#666666"
+                                android:fontFamily="@font/nunito_regular"
+                                android:layout_marginStart="12dp"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="10dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_water"
+                                app:tint="#00A86B"/>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Tưới nước khi đất khô 2-3 cm"
+                                android:textSize="15sp"
+                                android:textColor="#666666"
+                                android:fontFamily="@font/nunito_regular"
+                                android:layout_marginStart="12dp"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="10dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_temperature"
+                                app:tint="#00A86B"/>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Nhiệt độ phù hợp: 18-25°C"
+                                android:textSize="15sp"
+                                android:textColor="#666666"
+                                android:fontFamily="@font/nunito_regular"
+                                android:layout_marginStart="12dp"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_fertilizer"
+                                app:tint="#00A86B"/>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Bón phân 2-3 tháng/lần"
+                                android:textSize="15sp"
+                                android:textColor="#666666"
+                                android:fontFamily="@font/nunito_regular"
+                                android:layout_marginStart="12dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Đường kẻ phân cách -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#E0E0E0"/>
+
+                <!-- Phần chọn số lượng -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Số lượng"
+                        android:textSize="16sp"
+                        android:textColor="#333333"
+                        android:fontFamily="@font/nunito_regular"/>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btnDecreaseQuantity"
+                            android:layout_width="36dp"
+                            android:layout_height="match_parent"
+                            android:text="-"
+                            android:textSize="18sp"
+                            android:textColor="#666666"
+                            android:background="@drawable/btn_quantity_minus"
+                            android:padding="0dp"
+                            android:fontFamily="@font/nunito_regular"
+                            style="?android:attr/borderlessButtonStyle"/>
+
+                        <EditText
+                            android:id="@+id/tvQuantity"
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:text="1"
+                            android:textSize="16sp"
+                            android:textColor="#333333"
+                            android:gravity="center"
+                            android:background="@drawable/bg_quantity_selector"
+                            android:inputType="number"
+                            android:fontFamily="@font/nunito_regular"
+                            android:importantForAutofill="no"/>
+
+                        <Button
+                            android:id="@+id/btnIncreaseQuantity"
+                            android:layout_width="36dp"
+                            android:layout_height="match_parent"
+                            android:text="+"
+                            android:textSize="18sp"
+                            android:textColor="#666666"
+                            android:background="@drawable/btn_quantity_plus"
+                            android:padding="0dp"
+                            android:fontFamily="@font/nunito_regular"
+                            style="?android:attr/borderlessButtonStyle"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Phần nút mua hàng -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="20dp"
+                    android:gravity="center">
+
+                    <ImageButton
+                        android:id="@+id/btnAddToCart"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/circular_light_green_background"
+                        android:backgroundTint="#F0F9F6"
+                        android:src="@drawable/ic_cart"
+                        app:tint="#00A86B"
+                        android:scaleType="centerInside"
+                        android:padding="12dp"/>
+
+                    <View
+                        android:layout_width="16dp"
+                        android:layout_height="match_parent"/>
+
+                    <Button
+                        android:id="@+id/btnBuyNow"
+                        android:layout_width="0dp"
+                        android:layout_height="54dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="#00A86B"
+                        android:text="Mua Ngay"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textAllCaps="false"
+                        android:fontFamily="@font/nunito_medium"
+                        app:cornerRadius="8dp"
+                        android:elevation="0dp" />
+                </LinearLayout>
+            </LinearLayout>
         </androidx.cardview.widget.CardView>
-
-        <!-- Product Details Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/tvProductName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cây Hạnh Phúc Nội Thất"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="#333333"/>
-
-            <TextView
-                android:id="@+id/tvProductCategory"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cây Để Bàn"
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:layout_marginTop="4dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <TextView
-                    android:id="@+id/tvProductPrice"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="1,100,000 VNĐ"
-                    android:textSize="20sp"
-                    android:textColor="#00A86B"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:id="@+id/tvProductStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Còn Hàng"
-                    android:textColor="#00A86B"
-                    android:background="@drawable/bg_available_status"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="4dp"
-                    android:textSize="12sp"/>
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Product Description Section -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#E0E0E0"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Mô Tả Sản Phẩm"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#333333"
-                android:layout_marginBottom="8dp"/>
-
-            <TextView
-                android:id="@+id/tvProductDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cây Hạnh Phúc Nội Thất là loại cây cảnh được ưa chuộng trong trang trí văn phòng và không gian sống. Với chiều cao phù hợp và màu xanh mát, cây mang lại không khí tươi mới và cảm giác thư thái."
-                android:textSize="14sp"
-                android:textColor="#666666"/>
-        </LinearLayout>
-
-        <!-- Care Instructions Section -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#E0E0E0"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Hướng Dẫn Chăm Sóc"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#333333"
-                android:layout_marginBottom="8dp"/>
-
-            <TextView
-                android:id="@+id/tvCareInstructions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="• Đặt cây ở nơi có ánh sáng gián tiếp\n• Tưới nước khi đất khô 2-3 cm\n• Nhiệt độ phù hợp: 18-25°C\n• Bón phân 2-3 tháng/lần"
-                android:textSize="14sp"
-                android:textColor="#666666"/>
-        </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#E0E0E0"/>
-
-        <!-- Quantity Selector Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Số lượng"
-                android:textSize="16sp"
-                android:textColor="#333333"/>
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btnDecreaseQuantity"
-                    android:layout_width="36dp"
-                    android:layout_height="match_parent"
-                    android:text="-"
-                    android:textSize="18sp"
-                    android:textColor="#666666"
-                    android:background="@drawable/btn_quantity_minus"
-                    android:padding="0dp"
-                    style="?android:attr/borderlessButtonStyle"/>
-
-                <EditText
-                    android:id="@+id/tvQuantity"
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent"
-                    android:text="1"
-                    android:textSize="16sp"
-                    android:textColor="#333333"
-                    android:gravity="center"
-                    android:background="@drawable/bg_quantity_selector"
-                    android:inputType="number"
-                    android:importantForAutofill="no"/>
-
-                <Button
-                    android:id="@+id/btnIncreaseQuantity"
-                    android:layout_width="36dp"
-                    android:layout_height="match_parent"
-                    android:text="+"
-                    android:textSize="18sp"
-                    android:textColor="#666666"
-                    android:background="@drawable/btn_quantity_plus"
-                    android:padding="0dp"
-                    style="?android:attr/borderlessButtonStyle"/>
-            </LinearLayout>
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#E0E0E0"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:gravity="center">
-
-            <ImageButton
-                android:id="@+id/btnAddToCart"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:backgroundTint="@color/transparent"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_cart"
-                android:scaleType="centerInside"
-                android:padding="8dp"/>
-
-            <View
-                android:layout_width="8dp"
-                android:layout_height="match_parent"/>
-
-            <Button
-                android:id="@+id/btnBuyNow"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/green"
-                android:padding="10dp"
-                android:text="Mua Ngay"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
-        </LinearLayout>
     </LinearLayout>
 </ScrollView>

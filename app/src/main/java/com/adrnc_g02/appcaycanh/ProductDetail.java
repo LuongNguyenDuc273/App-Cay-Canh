@@ -159,6 +159,8 @@ public class ProductDetail extends AppCompatActivity {
         } else {
             btnBuy.setEnabled(false);
             btnAddToCart.setEnabled(false);
+            btnAddToCart.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.gray)));
+            btnAddToCart.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.white)));
             btnIncreaseQuantity.setEnabled(false);
             btnDecreaseQuantity.setEnabled(false);
             productStatus.setText("Tạm hết hàng");
