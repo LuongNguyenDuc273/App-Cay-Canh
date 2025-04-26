@@ -1,6 +1,7 @@
 package com.adrnc_g02.appcaycanh;
 
 import android.os.Bundle;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.util.Log;
 
@@ -40,6 +41,7 @@ public class Admin extends AppCompatActivity {
     private GenericFunction genericFunction = new GenericFunction();
     private BarChart barChart;
     private ArrayList<BarEntry> revenueList;
+    private LinearLayout confirmProducts, cancelProducts, successProducts, holdProducts;
     private final String[] monthNames = {"T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12"};
     private TextView txtHello, username, quantityConfirm, quantityCancel, quantityReturn, quantityHolding;
 
@@ -60,7 +62,6 @@ public class Admin extends AppCompatActivity {
         setupBarchar();
         loadRevenue();
 
-
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         String greeting;
@@ -80,6 +81,10 @@ public class Admin extends AppCompatActivity {
         quantityConfirm = findViewById(R.id.confirm);
         quantityHolding = findViewById(R.id.hold);
         quantityReturn = findViewById(R.id.returnn);
+        holdProducts = findViewById(R.id.btnHolding);
+        successProducts = findViewById(R.id.btnSuccess);
+        confirmProducts = findViewById(R.id.btnConfirm);
+        cancelProducts = findViewById(R.id.btnCancel);
     }
     private void setUsername() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
