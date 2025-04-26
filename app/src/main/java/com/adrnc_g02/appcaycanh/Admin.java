@@ -25,9 +25,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import Model.MonthlyRevenue;
@@ -36,7 +40,7 @@ public class Admin extends AppCompatActivity {
     private GenericFunction genericFunction = new GenericFunction();
     private BarChart barChart;
     private ArrayList<BarEntry> revenueList;
-
+    private final String[] monthNames = {"T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12"};
     private TextView txtHello, username, quantityConfirm, quantityCancel, quantityReturn, quantityHolding;
 
     @Override
@@ -53,6 +57,7 @@ public class Admin extends AppCompatActivity {
         initializeViews();
         setUsername();
         updateQuantityStatus();
+        setupBarchar();
         loadRevenue();
 
 
@@ -148,19 +153,31 @@ public class Admin extends AppCompatActivity {
                 float[] monthlyRevenue = new float[12];
                 for(DataSnapshot order: snapshot.getChildren()){
                    String status = order.child("status").getValue(String.class);
-                   if(status!=null && status.equals("COMPLETE")){
+                   if(status!=null && status.equals("COMPLETED")){
                        Object totalPaymentObj  = order.child("totalPayment").getValue();
                        if(totalPaymentObj !=null){
                            float totalPayment = Float.parseFloat(totalPaymentObj.toString());
                            Object timeObj = order.child("time").getValue();
                            if(timeObj!=null){
-                               long timestamp = Long.parseLong(timeObj.toString());
-                               Calendar calendar = Calendar.getInstance();
-                               calendar.setTimeInMillis(timestamp);
-                               int orderYear = calendar.get(calendar.YEAR);
-                               int orderMonth = calendar.get(calendar.MONTH);
-                               if (orderYear == currentYear){
-                                   monthlyRevenue[orderMonth]+= totalPayment;
+                               try {
+                                   long timestamp;
+                                   if (timeObj instanceof Long) {
+                                       timestamp = (Long) timeObj;
+                                   } else {
+                                       String timeStr = timeObj.toString();
+                                       SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                                       Date date = format.parse(timeStr);
+                                       timestamp = date != null ? date.getTime() : 0;
+                                   }
+                                   Calendar calendar = Calendar.getInstance();
+                                   calendar.setTimeInMillis(timestamp);
+                                   int orderYear = calendar.get(Calendar.YEAR);
+                                   int orderMonth = calendar.get(Calendar.MONTH);
+                                   if (orderYear == currentYear) {
+                                       monthlyRevenue[orderMonth] += totalPayment;
+                                   }
+                               } catch (ParseException e) {
+                                   Log.e("DateParseError", "Không thể chuyển đổi ngày: " + timeObj.toString(), e);
                                }
                            }
                        }
@@ -168,7 +185,6 @@ public class Admin extends AppCompatActivity {
                 }
                 monthlyRevenueList.clear();
                 revenueList.clear();
-                String[] monthNames = {"T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9"};
                 for (int i=0; i<12;i++){
                     monthlyRevenueList.add(new MonthlyRevenue(monthNames[i], monthlyRevenue[i]));
                     revenueList.add(new BarEntry(i, monthlyRevenue[i]));
@@ -185,39 +201,55 @@ public class Admin extends AppCompatActivity {
         });
 
     }
-
-    private void updateBarchart() {
-        if(revenueList == null ||revenueList.isEmpty()){
-            Log.e("BarChart", "Không có dữ liệu doanh thu để hiển thị");
-            return;
-        }
-        BarDataSet  barDataSet = new BarDataSet(revenueList, "Doanh Thu (VND)");
-        barDataSet.setColor(getResources().getColor(R.color.green));
-        barDataSet.setValueTextColor(getResources().getColor(R.color.black));
-        barDataSet.setValueTextSize(10f);
-        BarData barData = new BarData(barDataSet);
-        barData.setBarWidth(0.7f);
-        // thiet lap truc x
+    private void setupBarchar(){
+        barChart.setDrawBarShadow(false);
+        barChart.setDrawValueAboveBar(true);
+        barChart.getDescription().setEnabled(false);
+        barChart.setPinchZoom(false);
+        barChart.setDrawGridBackground(false);
+        barChart.setScaleEnabled(false);
         XAxis xAxis = barChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1f);
+        xAxis.setDrawGridLines(false);
+        xAxis.setDrawAxisLine(true);
+        xAxis.setTextSize(10f);
+        xAxis.setDrawLabels(true);
+        xAxis.setLabelCount(12, false);
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
-            public String getFormattedValue(float value, AxisBase axis) {
+            public String getFormattedValue(float value) {
                 int monthIndex = (int) value;
-                if(monthIndex >= 0 && monthIndex < 12)
-                {
-                    String[] monthNames = {"T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9"};
+                if (monthIndex >= 0 && monthIndex < 12) {
                     return monthNames[monthIndex];
                 }
                 return "";
             }
         });
 
-        // thiet lap truc y
-        barChart.getAxisLeft().setAxisMaximum(0f);
+        // Setup Y axis
+        barChart.getAxisLeft().setDrawGridLines(true);
+        barChart.getAxisLeft().setAxisMinimum(0f);
         barChart.getAxisRight().setEnabled(false);
-        //thiet lap dinh dang cac gia tri
+
+        // Other chart settings
+        barChart.getLegend().setEnabled(true);
+        barChart.animateY(1000);
+    }
+
+    private void updateBarchart() {
+        if(revenueList == null ||revenueList.isEmpty()){
+            Log.e("BarChart", "Không có dữ liệu doanh thu để hiển thị");
+            return;
+        }
+        BarDataSet barDataSet = new BarDataSet(revenueList, "Doanh Thu (VND)");
+        barDataSet.setColor(getResources().getColor(R.color.green));
+        barDataSet.setValueTextColor(getResources().getColor(R.color.black));
+        barDataSet.setValueTextSize(10f);
+        barDataSet.setHighlightEnabled(true);
+
+        BarData barData = new BarData(barDataSet);
+        barData.setBarWidth(0.7f);
 
         barData.setValueFormatter(new ValueFormatter() {
             @Override
@@ -232,10 +264,9 @@ public class Admin extends AppCompatActivity {
             }
         });
         barChart.setData(barData);
-        barChart.getDescription().setEnabled(false);
-        barChart.getLegend().setEnabled(true);
         barChart.setFitBars(true);
-        barChart.animateY(1000);
+        barChart.highlightValues(null);
+        barChart.notifyDataSetChanged();
         barChart.invalidate();
     }
 
