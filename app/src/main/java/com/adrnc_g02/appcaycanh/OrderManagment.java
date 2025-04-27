@@ -8,8 +8,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 import Model.Cart;
 import Model.Order;
 import Model.OrderDetail;
@@ -104,7 +111,12 @@ public class OrderManagment {
             orderDetails.add(orderDetail);
         }
 
-        Order order = new Order(orderID, userID, totalPayment, totalQuantity, address, "PENDING_CONFIRMATION");
+        //Lay ngay gio hien tai
+        Date now = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy ss:mm:HH", Locale.getDefault()); // Quan trọng: sử dụng Locale
+        String currentDateTime = formatter.format(now);
+
+        Order order = new Order(orderID, userID, totalPayment, totalQuantity, address, currentDateTime, "PENDING_CONFIRMATION");
         genericFunction.getTableReference("Order").child(orderID).setValue(order);
 
         for(OrderDetail orderDetail : orderDetails){
