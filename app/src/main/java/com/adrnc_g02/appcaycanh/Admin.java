@@ -3,6 +3,7 @@ package com.adrnc_g02.appcaycanh;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.util.Log;
@@ -44,7 +45,10 @@ public class Admin extends AppCompatActivity {
     private BarChart barChart;
     private ArrayList<BarEntry> revenueList;
     private OrderItemAdapter orderItemAdapter;
-    private LinearLayout confirmProducts, cancelProducts, successProducts, holdProducts;
+    private TextView txtHome, txtCart, txtManager;
+    private ImageView icHome, icCart, icManager;
+    private LinearLayout confirmProducts, cancelProducts,
+            successProducts, holdProducts, btnCart, btnHome, btnManager;
     private final String[] monthNames = {"T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12"};
     private TextView txtHello, username, quantityConfirm, quantityCancel, quantityReturn, quantityHolding;
 
@@ -61,6 +65,7 @@ public class Admin extends AppCompatActivity {
 
         initializeViews();
         setUsername();
+        btnonClick();
         updateQuantityStatus();
         setupBarchar();
         loadRevenue();
@@ -88,13 +93,22 @@ public class Admin extends AppCompatActivity {
         successProducts = findViewById(R.id.btnSuccess);
         confirmProducts = findViewById(R.id.btnConfirm);
         cancelProducts = findViewById(R.id.btnCancel);
+        btnHome = findViewById(R.id.home);
+        btnCart = findViewById(R.id.cart);
+        btnManager = findViewById(R.id.manager);
+        txtHome = findViewById(R.id.textHome);
+        txtCart = findViewById(R.id.txtcart);
+        txtManager = findViewById(R.id.txtmanager);
+        icHome = findViewById(R.id.ichome);
+        icCart = findViewById(R.id.iccart);
+        icManager = findViewById(R.id.icmanager);
     }
     private void selectCategoryOrder(){
         holdProducts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent holdIntent = new Intent(getApplicationContext(), CategoryOrders.class);
-                holdIntent.putExtra("cate","HOLDING_TAKING");
+                holdIntent.putExtra("cate","PENDING_PICKUP");
                 startActivity(holdIntent);
                 finish();
             }
@@ -112,7 +126,7 @@ public class Admin extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent confirmIntent = new Intent(getApplicationContext(), CategoryOrders.class);
-                confirmIntent.putExtra("cate","PENDING_COMFIRMATION");
+                confirmIntent.putExtra("cate","PENDING_CONFIRMATION");
                 startActivity(confirmIntent);
                 finish();
             }
@@ -121,9 +135,50 @@ public class Admin extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent cancelIntent = new Intent(getApplicationContext(), CategoryOrders.class);
-                cancelIntent.putExtra("cate","CANCEL");
+                cancelIntent.putExtra("cate","CANCELLED");
                 startActivity(cancelIntent);
                 finish();
+            }
+        });
+    }
+    private void btnonClick(){
+        int selectedColor = getResources().getColor(R.color.green);
+        int unselectedColor = getResources().getColor(R.color.gray);
+
+        btnHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txtHome.setTextColor(selectedColor);
+                icHome.setColorFilter(selectedColor);
+                txtCart.setTextColor(unselectedColor);
+                icCart.setColorFilter(unselectedColor);
+                txtManager.setTextColor(unselectedColor);
+                icManager.setColorFilter(unselectedColor);
+            }
+        });
+        btnCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txtCart.setTextColor(selectedColor);
+                icCart.setColorFilter(selectedColor);
+                txtHome.setTextColor(unselectedColor);
+                icHome.setColorFilter(unselectedColor);
+                txtManager.setTextColor(unselectedColor);
+                icManager.setColorFilter(unselectedColor);
+                Intent cartIntent = new Intent(getApplicationContext(), ProductAdmin.class);
+                startActivity(cartIntent);
+                finish();
+            }
+        });
+        btnManager.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txtManager.setTextColor(selectedColor);
+                icManager.setColorFilter(selectedColor);
+                txtHome.setTextColor(unselectedColor);
+                icHome.setColorFilter(unselectedColor);
+                txtCart.setTextColor(unselectedColor);
+                icCart.setColorFilter(unselectedColor);
             }
         });
     }
