@@ -43,6 +43,7 @@ public class ProductDetail extends AppCompatActivity {
     private EditText tvQuantity;
     private  GenericFunction genericFunction = new GenericFunction();
     private OrderManagment orderManagment = new OrderManagment();
+    private int productQuantity = 0;
 
     private int currentQuantity = 1; // Gia tri mac dinh
 
@@ -87,8 +88,13 @@ public class ProductDetail extends AppCompatActivity {
         btnIncreaseQuantity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentQuantity++;
-                tvQuantity.setText(String.valueOf(currentQuantity));
+                int checkquantity = currentQuantity + 1;
+                if(checkquantity > productQuantity){
+                    Toast.makeText(ProductDetail.this, "Số lượng đã đạt giới hạn", Toast.LENGTH_SHORT).show();
+                } else {
+                    currentQuantity++;
+                    tvQuantity.setText(String.valueOf(currentQuantity));
+                }
             }
         });
 
@@ -131,6 +137,7 @@ public class ProductDetail extends AppCompatActivity {
         String line = getIntent().getStringExtra("Line");
         int quantity = getIntent().getStringExtra("Quantity") != null ?
                 Integer.parseInt(getIntent().getStringExtra("Quantity")) : 0;
+        productQuantity = quantity;
         Log.d("Kiem Tra", "So luong" + quantity);
         String des = getIntent().getStringExtra("Description");
         String key = getIntent().getStringExtra("Key");
@@ -155,7 +162,7 @@ public class ProductDetail extends AppCompatActivity {
             }
         });
         if (quantity > 0) {
-            productStatus.setText("Còn hàng");
+            productStatus.setText("Còn hàng: "+quantity + " sản phẩm");
         } else {
             btnBuy.setEnabled(false);
             btnAddToCart.setEnabled(false);

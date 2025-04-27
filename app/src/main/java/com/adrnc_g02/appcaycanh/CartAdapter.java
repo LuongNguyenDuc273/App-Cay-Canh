@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,6 +50,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public interface CartListener {
         void onQuantityChanged();
         void onSelectionChanged();
+        void onItemDeleted(String productId);
     }
 
     public CartAdapter(Context context, List<Cart> carts, List<Product> products) {
@@ -88,8 +91,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         Glide.with(context).load(item.product.getPhoto()).into(holder.image);
 
         // Check availability
+        int stock = Integer.parseInt(item.product.getReQuantity());
         try {
-            int stock = Integer.parseInt(item.product.getReQuantity());
             if (stock <= 0) {
                 holder.status.setVisibility(View.VISIBLE);
             } else {
@@ -105,6 +108,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         // Set selection state
         holder.checkBox.setChecked(item.isSelected);
 
+        // Add this for the delete button
+        holder.deleteBtn.setOnClickListener(v -> {
+            // Get adapter position since it might have changed
+            int adapterPosition = holder.getAdapterPosition();
+            if (adapterPosition != RecyclerView.NO_POSITION) {
+                removeItem(adapterPosition);
+            }
+        });
+
         // Set click listeners
         holder.decreaseBtn.setOnClickListener(v -> {
             int qty = item.cart.getQuantity();
@@ -117,11 +129,16 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         });
 
         holder.increaseBtn.setOnClickListener(v -> {
-            int qty = item.cart.getQuantity();
-            item.cart.setQuantity(qty + 1);
-            holder.quantity.setText(String.valueOf(qty + 1));
-            updateCart(item.product, item.cart);
-            if (listener != null) listener.onQuantityChanged();
+            int currentQty = item.cart.getQuantity();
+            int checkQuantity = currentQty + 1;
+            if (checkQuantity > stock) {
+                Toast.makeText(context, "Số lượng đã đạt giới hạn sản phẩm", Toast.LENGTH_SHORT).show();
+            } else {
+                item.cart.setQuantity(checkQuantity);
+                holder.quantity.setText(String.valueOf(checkQuantity));
+                updateCart(item.product, item.cart);
+                if (listener != null) listener.onQuantityChanged();
+            }
         });
 
 
@@ -177,11 +194,35 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         genericFunction.getTableReference("Customer").child(userID).child("Cart").child(product.getIDProc()).setValue(cart);
     }
 
-    // Add this method to your CartAdapter class
-    // Add this method to your CartAdapter class
+    public void removeItem(int position) {
+        if (position >= 0 && position < cartItems.size()) {
+            CartItem itemToRemove = cartItems.get(position);
+            // Remove from Firebase
+            removeFromCart(itemToRemove.product.getIDProc());
+            // Remove from local list
+            cartItems.remove(position);
+            // Update the UI
+            notifyItemRemoved(position);
+            // Notify listener about the change
+            if (listener != null) {
+                listener.onQuantityChanged();
+                listener.onSelectionChanged();
+            }
+        }
+    }
+
+    private void removeFromCart(String productId) {
+        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (cUser != null) {
+            String userID = cUser.getUid();
+            genericFunction.getTableReference("Customer").child(userID).child("Cart").child(productId).removeValue();
+        }
+    }
+
 
     static class CartViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
+        ImageButton deleteBtn;
         TextView productName, price, status, quantity;
         Button decreaseBtn, increaseBtn;
         CheckBox checkBox;
@@ -189,6 +230,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         public CartViewHolder(@NonNull View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.iv_product);
+            deleteBtn = itemView.findViewById(R.id.btn_delete_item);
             productName = itemView.findViewById(R.id.tv_product_name);
             price = itemView.findViewById(R.id.tv_price);
             status = itemView.findViewById(R.id.tv_status);

@@ -55,7 +55,7 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"/>
 
-        <!-- Total Price -->
+        <!-- Total Price and Button -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -63,27 +63,40 @@
             android:gravity="center_vertical"
             android:paddingTop="8dp">
 
-            <View
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvTotalText"
+                <TextView
+                    android:id="@+id/tvTotalText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tổng số tiền (n sản phẩm):"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvTotalPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="đ458.000"
+                    android:textSize="16sp"
+                    android:textColor="#FF5722"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tổng số tiền (n sản phẩm):"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/tvTotalPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="đ458.000"
-                android:textSize="16sp"
-                android:textColor="#FF5722"
-                android:textStyle="bold"
-                android:layout_marginStart="8dp" />
+                android:text="Status"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/rounded_button"
+                android:backgroundTint="#13C123"
+                android:padding="8dp"
+                android:textSize="14sp"
+                android:minHeight="40dp"/>
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

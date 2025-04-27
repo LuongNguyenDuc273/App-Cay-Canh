@@ -193,11 +193,13 @@ public class Register extends AppCompatActivity {
                         if(cUser!=null)
                         {
                             String key = cUser.getUid();
+                            String idAddress = genericFunction.getTableReference("Customer").child(key).child("Address").push().getKey();
                             Customer cModule = new Customer(key, fullName, email, birthday, phone);
-                            Address address1 = new Address();
+
+                            Address address1 = new Address(address, key);
                             session.saveUserToDatabase("LOGIN_EMAIL");
                             genericFunction.addData("Customer", key, cModule);
-                            genericFunction.getTableReference("Customer").child(key).child("Address").child(address).setValue(address1);
+                            genericFunction.getTableReference("Customer").child(key).child("Address").child(key).setValue(address1);
                             startActivity(new Intent(Register.this, MainActivity.class));
                             Toast.makeText(Register.this, "Đã tạo tài khoản", Toast.LENGTH_SHORT).show();
                         }

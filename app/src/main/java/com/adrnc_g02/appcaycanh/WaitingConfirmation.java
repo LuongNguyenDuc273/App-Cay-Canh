@@ -1,5 +1,6 @@
 package com.adrnc_g02.appcaycanh;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -51,7 +52,7 @@ public class WaitingConfirmation extends AppCompatActivity {
 
         // Su kien quay lai
         backButton.setOnClickListener(v -> {
-            onBackPressed();
+            startActivity(new Intent(WaitingConfirmation.this, Profile.class));
         });
 
         //Load the products and then load the orders.
