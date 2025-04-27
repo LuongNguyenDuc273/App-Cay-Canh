@@ -6,6 +6,7 @@ public class Order {
     private double TotalPayment;
     private int TotalQuantity;
     private String Address;
+    private String OrderTime;
     private String Status;
 
     public String getIDOrder() {
@@ -48,6 +49,14 @@ public class Order {
         Address = address;
     }
 
+    public String getOrderTime() {
+        return OrderTime;
+    }
+
+    public void setOrderTime(String orderTime) {
+        OrderTime = orderTime;
+    }
+
     public String getStatus() {
         return Status;
     }
@@ -56,13 +65,14 @@ public class Order {
         Status = status;
     }
 
-    public Order(String IDOrder, String IDCus, double totalPayment, int totalQuantity, String address, String status) {
+    public Order(String IDOrder, String IDCus, double totalPayment, int totalQuantity, String address, String orderTime, String status) {
         this.IDOrder = IDOrder;
         this.IDCus = IDCus;
-        TotalPayment = totalPayment;
-        TotalQuantity = totalQuantity;
+        this.TotalPayment = totalPayment;
+        this.TotalQuantity = totalQuantity;
         this.Address = address;
-        Status = status;
+        this.OrderTime = orderTime;
+        this.Status = status;
     }
 
     public Order(){}
