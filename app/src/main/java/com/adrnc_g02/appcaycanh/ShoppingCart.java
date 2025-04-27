@@ -144,6 +144,14 @@ public class ShoppingCart extends AppCompatActivity {
                     updateTotal();
                     updateSelectAllCheckbox();
                 }
+
+                @Override
+                public void onItemDeleted(String productId) {
+                    // You can show a confirmation toast or handle it specially
+                    Toast.makeText(ShoppingCart.this, "Đã xóa sản phẩm khỏi giỏ hàng", Toast.LENGTH_SHORT).show();
+                    updateTotal();
+                    updateSelectAllCheckbox();
+                }
             });
         }
     }

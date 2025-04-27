@@ -5,6 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Button;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -60,6 +63,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         private TextView tvTotalText;
         private RecyclerView rvProducts;
         private OrderDetailAdapter productAdapter;
+        private Button btnStatus; // Add this button
 
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -67,31 +71,97 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             tvStatus = itemView.findViewById(R.id.tvStatus);
             tvTotalPrice = itemView.findViewById(R.id.tvTotalPrice);
             tvTotalText = itemView.findViewById(R.id.tvTotalText);
+            btnStatus = itemView.findViewById(R.id.btnStatus); // Initialize the button
             rvProducts = itemView.findViewById(R.id.rvProducts);
             rvProducts.setLayoutManager(new LinearLayoutManager(context));
             productAdapter = new OrderDetailAdapter(context, new ArrayList<>());
             rvProducts.setAdapter(productAdapter);
         }
 
-        //Public void bind, modified to load products and use data from that product
+        private GradientDrawable createRoundedDrawable(int color) {
+            GradientDrawable drawable = new GradientDrawable();
+            drawable.setShape(GradientDrawable.RECTANGLE);
+            drawable.setCornerRadius(40); // Corner radius in pixels
+            drawable.setColor(color);
+            return drawable;
+        }
+
         public void bind(Order order, List<Product> allProducts, Context context) {
             //Set the information for the current view holder.
             setOrderDetails(order, productAdapter, tvOrderName, allProducts);
-            // Set order status
-            if(order.getStatus().equals("PENDING_CONFIRMATION"))
-            {
-                tvStatus.setText("Chờ xác nhận");
-            } else if(order.getStatus().equals("PENDING_PICKUP")){
-                tvStatus.setTextColor(context.getResources().getColor(R.color.orange));
-                tvStatus.setText("Chờ lấy hàng");
-            } else if(order.getStatus().equals("COMPLETED")) {
-                tvStatus.setTextColor(context.getResources().getColor(R.color.green));
-                tvStatus.setText("Hoàn thành");
+
+            // Set order status and button properties based on order status
+            switch(order.getStatus()) {
+                case "PENDING_CONFIRMATION":
+                    tvStatus.setText("Chờ xác nhận");
+                    tvStatus.setTextColor(context.getResources().getColor(R.color.orange));
+
+                    // Set button to "Hủy đơn" with red color
+                    btnStatus.setText("Hủy đơn");
+                    btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#FF5252"))); // Red color
+                    btnStatus.setVisibility(View.VISIBLE);
+                    break;
+
+                case "CANCELLED":
+                    tvStatus.setText("Đã hủy");
+                    tvStatus.setTextColor(context.getResources().getColor(R.color.red));
+
+                    // Set button to "Mua lại" with green color
+                    btnStatus.setText("Mua lại");
+                    btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#13C123"))); // Green color
+                    btnStatus.setVisibility(View.VISIBLE);
+                    break;
+
+                case "PENDING_PICKUP":
+                    tvStatus.setTextColor(context.getResources().getColor(R.color.orange));
+                    tvStatus.setText("Chờ lấy hàng");
+
+                    // Set button to "Chờ giao hàng" but hide it
+                    btnStatus.setText("Chờ giao hàng");
+                    btnStatus.setVisibility(View.GONE);
+                    break;
+
+                case "PENDING_COMPLETED":
+                    tvStatus.setText("Giao hàng thành công");
+                    tvStatus.setTextColor(context.getResources().getColor(R.color.green));
+
+                    // Set button to "Đã nhận được hàng" with green color
+                    btnStatus.setText("Đã nhận được");
+                    btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#13C123"))); // Green color
+                    btnStatus.setVisibility(View.VISIBLE);
+                    break;
+
+                case "COMPLETED_WAIT_REVIEW":
+                    tvStatus.setText("Giao hàng thành công");
+                    tvStatus.setTextColor(context.getResources().getColor(R.color.green));
+
+                    // Set button to "Đánh giá" with green color
+                    btnStatus.setText("Đánh giá");
+                    btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#13C123"))); // Green color
+                    btnStatus.setVisibility(View.VISIBLE);
+                    break;
+
+                case "COMPLETED":
+                    tvStatus.setText("Giao hàng thành công");
+                    tvStatus.setTextColor(context.getResources().getColor(R.color.green));
+
+                    // Set button to "Mua lại" with green color
+                    btnStatus.setText("Mua lại");
+                    btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#13C123"))); // Green color
+                    btnStatus.setVisibility(View.VISIBLE);
+                    break;
+
+                default:
+                    // Handle any other status if needed
+                    btnStatus.setVisibility(View.GONE);
+                    break;
             }
+
             // Format and set total price
             NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
             String formattedPrice = formatter.format(order.getTotalPayment()).replace("₫", "đ");
             tvTotalPrice.setText(formattedPrice);
+
             // Set total quantity text
             String totalText = "Tổng số tiền (" + order.getTotalQuantity() + " sản phẩm):";
             tvTotalText.setText(totalText);
