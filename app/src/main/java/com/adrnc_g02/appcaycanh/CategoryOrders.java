@@ -3,6 +3,7 @@ package com.adrnc_g02.appcaycanh;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,8 +46,14 @@ public class CategoryOrders extends AppCompatActivity {
             return insets;
         });
         setInit();
-        back.setOnClickListener(v -> {
-            onBackPressed();
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent backIntent = new Intent(getApplicationContext(), Admin.class);
+                startActivity(backIntent);
+                finish();
+
+            }
         });
         loadProducts(()->{
             getData();
@@ -80,13 +87,16 @@ public class CategoryOrders extends AppCompatActivity {
 
     private void getData(){
         String type = getIntent().getStringExtra("cate");
-        if(type.equals("COMPLETED"))
-        {
-            cate.setText("Hoan Thanh");
-        } else if (type.equals("CANCEL")) {
-            cate.setText("Don Huy");
-        } else if (type.equals("HOLDING_TAKING")) {
-            cate.setText("Cho Lay Hang");
+        switch (type) {
+            case "COMPLETED":
+                cate.setText("Hoan Thanh");
+                break;
+            case "CANCELLED":
+                cate.setText("Don Huy");
+                break;
+            case "PENDING_PICKUP":
+                cate.setText("Cho Lay Hang");
+                break;
         }
         Log.d("CATEGORY",type);
         DatabaseReference orders = genericFunction.getTableReference("Order");

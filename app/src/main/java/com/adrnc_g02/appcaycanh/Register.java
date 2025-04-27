@@ -194,7 +194,7 @@ public class Register extends AppCompatActivity {
                         {
                             String key = cUser.getUid();
                             Customer cModule = new Customer(key, fullName, email, birthday, phone);
-                            Address address1 = new Address(address);
+                            Address address1 = new Address();
                             session.saveUserToDatabase("LOGIN_EMAIL");
                             genericFunction.addData("Customer", key, cModule);
                             genericFunction.getTableReference("Customer").child(key).child("Address").child(address).setValue(address1);
