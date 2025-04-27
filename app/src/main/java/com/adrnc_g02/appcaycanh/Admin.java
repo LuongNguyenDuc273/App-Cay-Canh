@@ -1,6 +1,8 @@
 package com.adrnc_g02.appcaycanh;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.util.Log;
@@ -41,6 +43,7 @@ public class Admin extends AppCompatActivity {
     private GenericFunction genericFunction = new GenericFunction();
     private BarChart barChart;
     private ArrayList<BarEntry> revenueList;
+    private OrderItemAdapter orderItemAdapter;
     private LinearLayout confirmProducts, cancelProducts, successProducts, holdProducts;
     private final String[] monthNames = {"T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12"};
     private TextView txtHello, username, quantityConfirm, quantityCancel, quantityReturn, quantityHolding;
@@ -61,7 +64,7 @@ public class Admin extends AppCompatActivity {
         updateQuantityStatus();
         setupBarchar();
         loadRevenue();
-
+        selectCategoryOrder();
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         String greeting;
@@ -86,6 +89,44 @@ public class Admin extends AppCompatActivity {
         confirmProducts = findViewById(R.id.btnConfirm);
         cancelProducts = findViewById(R.id.btnCancel);
     }
+    private void selectCategoryOrder(){
+        holdProducts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent holdIntent = new Intent(getApplicationContext(), CategoryOrders.class);
+                holdIntent.putExtra("cate","HOLDING_TAKING");
+                startActivity(holdIntent);
+                finish();
+            }
+        });
+        successProducts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent successIntent = new Intent(getApplicationContext(), CategoryOrders.class);
+                successIntent.putExtra("cate","COMPLETED");
+                startActivity(successIntent);
+                finish();
+            }
+        });
+        confirmProducts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent confirmIntent = new Intent(getApplicationContext(), CategoryOrders.class);
+                confirmIntent.putExtra("cate","PENDING_COMFIRMATION");
+                startActivity(confirmIntent);
+                finish();
+            }
+        });
+        cancelProducts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent cancelIntent = new Intent(getApplicationContext(), CategoryOrders.class);
+                cancelIntent.putExtra("cate","CANCEL");
+                startActivity(cancelIntent);
+                finish();
+            }
+        });
+    }
     private void setUsername() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -102,7 +143,6 @@ public class Admin extends AppCompatActivity {
             username.setText("Chua Dang Nhap");
         }
     }
-
     private void updateQuantityStatus() {
         final int[] confirm = {0};
         final int[] cancel = {0};
