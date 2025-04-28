@@ -142,7 +142,7 @@ public class Admin extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent successIntent = new Intent(getApplicationContext(), CategoryOrders.class);
-                successIntent.putExtra("cate","COMPLETED_WAIT_REVIEW");
+                successIntent.putExtra("cate","COMPLETED");
                 startActivity(successIntent);
                 finish();
             }
@@ -319,7 +319,7 @@ public class Admin extends AppCompatActivity {
                         hold[0] += 1;
                     } else if (Status.equals("PENDING_CONFIRMATION")) {
                         confirm[0] += 1;
-                    } else if (Status.equals("COMPLETED_WAIT_REVIEW")) {
+                    } else if (Status.equals("COMPLETED")) {
                         back[0] += 1;
                     } else if (Status.equals("CANCELLED")) {
                         cancel[0] += 1;
@@ -359,7 +359,7 @@ public class Admin extends AppCompatActivity {
                        Object totalPaymentObj  = order.child("totalPayment").getValue();
                        if(totalPaymentObj !=null){
                            float totalPayment = Float.parseFloat(totalPaymentObj.toString());
-                           Object timeObj = order.child("time").getValue();
+                           Object timeObj = order.child("orderTime").getValue();
                            if(timeObj!=null){
                                try {
                                    long timestamp;
@@ -367,7 +367,7 @@ public class Admin extends AppCompatActivity {
                                        timestamp = (Long) timeObj;
                                    } else {
                                        String timeStr = timeObj.toString();
-                                       SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                                       SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
                                        Date date = format.parse(timeStr);
                                        timestamp = date != null ? date.getTime() : 0;
                                    }
