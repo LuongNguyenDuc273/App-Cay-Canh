@@ -7,4 +7,164 @@
     android:layout_height="match_parent"
     tools:context=".EditProduct">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sửa sản phẩm"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"/>
+
+            <ImageView
+                android:id="@+id/imgPreview"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:layout_marginBottom="16dp"
+                android:background="@color/light_gray"/>
+
+            <Button
+                android:id="@+id/btnSelectImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Chọn ảnh mới"
+                android:textAllCaps="false"
+                android:background="@drawable/round_button_green"
+                android:textColor="@color/white"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tên sản phẩm:"
+                android:textSize="16sp"
+                android:textColor="@color/dark_gray"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/edtNamePlant"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nhập tên sản phẩm"
+                android:padding="12dp"
+                android:background="@drawable/edit_text_bg"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Loại cây:"
+                android:textSize="16sp"
+                android:textColor="@color/dark_gray"
+                android:layout_marginBottom="8dp"/>
+
+            <Spinner
+                android:id="@+id/spinnerLine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:background="@drawable/edit_text_bg"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Giá:"
+                android:textSize="16sp"
+                android:textColor="@color/dark_gray"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/edtPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nhập giá"
+                android:inputType="number"
+                android:padding="12dp"
+                android:background="@drawable/edit_text_bg"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Số lượng:"
+                android:textSize="16sp"
+                android:textColor="@color/dark_gray"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/edtQuantity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nhập số lượng"
+                android:inputType="number"
+                android:padding="12dp"
+                android:background="@drawable/edit_text_bg"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mô tả sản phẩm:"
+                android:textSize="16sp"
+                android:textColor="@color/dark_gray"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/edtDescribe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nhập mô tả"
+                android:inputType="textMultiLine"
+                android:minLines="3"
+                android:gravity="top"
+                android:padding="12dp"
+                android:background="@drawable/edit_text_bg"
+                android:layout_marginBottom="24dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnCancel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Hủy"
+                    android:textAllCaps="false"
+                    android:background="@drawable/round_label_red"
+                    android:textColor="@color/black"
+                    android:layout_marginEnd="8dp"/>
+
+                <Button
+                    android:id="@+id/btnUpdate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Cập nhật"
+                    android:textAllCaps="false"
+                    android:background="@drawable/round_button_green"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
