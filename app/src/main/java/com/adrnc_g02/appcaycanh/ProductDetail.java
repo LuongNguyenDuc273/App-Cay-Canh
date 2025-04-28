@@ -243,6 +243,7 @@ public class ProductDetail extends AppCompatActivity {
                     Cart cart = new Cart(IDCus, IDProc, Quantity);
                     cartItemRef.setValue(cart);
                 }
+                Toast.makeText(ProductDetail.this, "Thếm sản phẩm vào giỏ hàng thành công", Toast.LENGTH_SHORT).show();
             }
 
             @Override

@@ -187,7 +187,7 @@ public class Profile extends AppCompatActivity {
             if (itemId == R.id.navHome) {
                 startActivity(new Intent(Profile.this, MainActivity.class));
             } else if (itemId == R.id.navCart) {
-                // Xử lý khi click vào giỏ hàng (chưa implement)
+                startActivity(new Intent(Profile.this, Shopping.class));
             } else if (itemId == R.id.navExplore) {
                 startActivity(new Intent(Profile.this, ShoppingCart.class));
             } else if (itemId == R.id.navProfile) {

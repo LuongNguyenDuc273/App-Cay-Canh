@@ -26,8 +26,10 @@
                 android:padding="16dp">
 
                 <!-- Sử dụng ImageView với background là circular_white_background.xml -->
+
                 <ImageView
                     android:id="@+id/profile_image"
+                    android:src="@drawable/profile"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:background="@drawable/circular_white_background"

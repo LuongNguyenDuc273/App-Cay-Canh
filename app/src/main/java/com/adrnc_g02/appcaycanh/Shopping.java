@@ -184,7 +184,7 @@ public class Shopping extends AppCompatActivity {
      */
     private void getAllLine() {
         TextView txtTitle = findViewById(R.id.txtTitle);
-        txtTitle.setText("Tat Ca");
+        txtTitle.setText("Tất Cả");
         tbline.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -226,11 +226,11 @@ public class Shopping extends AppCompatActivity {
     private void filterProductsByLine(String idLine) {
         if (idLine == null || idLine.isEmpty()) {
             TextView txtTitle = findViewById(R.id.txtTitle);
-            txtTitle.setText("Tat Ca");
+            txtTitle.setText("Tất cả");
             productAdater.searchData(dataProduct);
             return;
         }
-        String lineName = "Tat Ca";
+        String lineName = "Tất cả";
         for (Line line : dataLine) {
             if (line.getIDLine() != null && line.getIDLine().equals(idLine)) {
                 lineName = line.getNameLine();
