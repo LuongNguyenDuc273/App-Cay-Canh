@@ -37,18 +37,38 @@ import Model.Address;
 import Model.Customer;
 
 public class Register extends AppCompatActivity {
+    // UI elements
     private EditText edtemail, edtpassword, edtcfpassword;
     private ImageButton btnRegister;
     private TextView edtFullName, edtPhone, edtAddress, changeToLogIn, dateSet;
+
+    // Firebase
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
+    private FirebaseUser cUser;
+
+    // Helper class
     SessionControl session;
     private final GenericFunction genericFunction = new GenericFunction();
-    private FirebaseUser cUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Thiet lap giao dien co ban
+        setupUI();
+
+        // Anh xa
+        initializeViews();
+
+        // Thiet lap listeners
+        setupListeners();
+    }
+
+    /**
+     * Thiet lap giao dien co ban va xu ly insets cho he thong.
+     */
+    private void setupUI() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -56,7 +76,12 @@ public class Register extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        //Anh xa
+    }
+
+    /**
+     * Anh xa cac view.
+     */
+    private void initializeViews() {
         session = new SessionControl(this);
         edtFullName = findViewById(R.id.fullname_edt);
         edtemail = findViewById(R.id.register_edt);
@@ -68,54 +93,54 @@ public class Register extends AppCompatActivity {
         changeToLogIn = findViewById(R.id.login_tv);
         dateSet = findViewById(R.id.birthday_tv);
         mAuth = FirebaseAuth.getInstance();
+    }
 
-        //Su kien chon ngay
-        dateSet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                initDatePicker();
-            }
+    /**
+     * Thiet lap cac listeners.
+     */
+    private void setupListeners() {
+        // Su kien chon ngay
+        dateSet.setOnClickListener(view -> {
+            initDatePicker();
         });
 
-        //su kien an dang ky
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                intiRegister();
-            }
+        // Su kien an dang ky
+        btnRegister.setOnClickListener(view -> {
+            intiRegister();
         });
 
-        //su kien chuyen sang dang nhap
-        changeToLogIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(Register.this, Login.class));
-            }
+        // Su kien chuyen sang dang nhap
+        changeToLogIn.setOnClickListener(view -> {
+            startActivity(new Intent(Register.this, Login.class));
         });
     }
 
-    //Khoi tao ngay thang nam hien tai de hien thi
-    private void initDatePicker(){
-        // Lấy ngày hiện tại
+    /**
+     * Khoi tao ngay thang nam hien tai de hien thi.
+     */
+    private void initDatePicker() {
+        // Lay ngay hien tai
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        // Tạo DatePickerDialog
+        // Tao DatePickerDialog
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 Register.this, (view1, year1, monthOfYear, dayOfMonth) -> {
-            // Định dạng ngày theo kiểu dd/MM/yyyy
+            // Dinh dang ngay theo kieu dd/MM/yyyy
             String formattedDate = String.format("%02d/%02d/%04d", dayOfMonth, monthOfYear + 1, year1);
-            dateSet.setText(formattedDate);  // Gán ngày cho EditText
+            dateSet.setText(formattedDate);  // Gan ngay cho EditText
         }, year, month, day);
 
-        // Hiển thị DatePickerDialog
+        // Hien thi DatePickerDialog
         datePickerDialog.show();
     }
 
-    //function dang ky
-    private void intiRegister(){
+    /**
+     * Function dang ky.
+     */
+    private void intiRegister() {
         database = FirebaseDatabase.getInstance();
         DatabaseReference cusRef = database.getReference("Customer");
         DatabaseReference userRef = database.getReference("User");
@@ -129,43 +154,43 @@ public class Register extends AppCompatActivity {
 
         // Email validation
         if (TextUtils.isEmpty(email)) {
-            Toast.makeText(Register.this, "Hãy điền email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Register.this, "Hay dien email", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(Register.this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Register.this, "Email khong hop le", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Password validation
         if (TextUtils.isEmpty(password)) {
-            Toast.makeText(Register.this, "Hãy điền mật khẩu", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Register.this, "Hay dien mat khau", Toast.LENGTH_SHORT).show();
             return;
         }
         if (password.length() < 6) {
-            Toast.makeText(Register.this, "Mật khẩu phải có ít nhất 6 ký tự", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Register.this, "Mat khau phai co it nhat 6 ky tu", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Confirm Password validation
         if (TextUtils.isEmpty(cfPassword)) {
-            Toast.makeText(Register.this, "Hãy xác nhận mật khẩu", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Register.this, "Hay xac nhan mat khau", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!password.equals(cfPassword)) {
-            Toast.makeText(Register.this, "Mật khẩu không khớp", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Register.this, "Mat khau khong khop", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Full Name validation
         if (TextUtils.isEmpty(fullName)) {
-            Toast.makeText(Register.this, "Hãy điền họ tên", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Register.this, "Hay dien ho ten", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Phone validation (add more robust checks as needed)
         if (TextUtils.isEmpty(phone)) {
-            Toast.makeText(Register.this, "Hãy điền số điện thoại", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Register.this, "Hay dien so dien thoai", Toast.LENGTH_SHORT).show();
             return;
         }
         // Consider adding a check for valid phone number format using a regular expression.
@@ -174,14 +199,14 @@ public class Register extends AppCompatActivity {
         // if (TextUtils.isEmpty(address)) { ... }
 
         // Birthday validation
-        if (TextUtils.isEmpty(birthday)|| birthday.equals("Chọn ngày")) {
-            Toast.makeText(Register.this, "Hãy chọn ngày sinh", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(birthday) || birthday.equals("Chon ngay")) {
+            Toast.makeText(Register.this, "Hay chon ngay sinh", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Address validation
         if (TextUtils.isEmpty(address)) {
-            Toast.makeText(Register.this, "Hãy điền địa chỉ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Register.this, "Hay dien dia chi", Toast.LENGTH_SHORT).show();
             return;
         }
         // Luu vao authentication fire base
@@ -190,8 +215,7 @@ public class Register extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         cUser = mAuth.getCurrentUser();
                         //Luu vao realtime database
-                        if(cUser!=null)
-                        {
+                        if (cUser != null) {
                             String key = cUser.getUid();
                             String idAddress = genericFunction.getTableReference("Customer").child(key).child("Address").push().getKey();
                             Customer cModule = new Customer(key, fullName, email, birthday, phone);
@@ -201,7 +225,7 @@ public class Register extends AppCompatActivity {
                             genericFunction.addData("Customer", key, cModule);
                             genericFunction.getTableReference("Customer").child(key).child("Address").child(key).setValue(address1);
                             startActivity(new Intent(Register.this, MainActivity.class));
-                            Toast.makeText(Register.this, "Đã tạo tài khoản", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Register.this, "Da tao tai khoan", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         // If sign in fails, display a message to the user.
@@ -210,14 +234,14 @@ public class Register extends AppCompatActivity {
                         } catch (FirebaseAuthException e) {
                             // Handle specific Firebase Authentication exceptions
                             if (e.getErrorCode().equals("ERROR_EMAIL_ALREADY_IN_USE")) {
-                                Toast.makeText(Register.this, "Email đã được sử dụng", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Register.this, "Email da duoc su dung", Toast.LENGTH_SHORT).show();
                             } else if (e.getErrorCode().equals("ERROR_WEAK_PASSWORD")) {
-                                Toast.makeText(Register.this, "Mật khẩu quá yếu", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Register.this, "Mat khau qua yeu", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(Register.this, "Lỗi đăng ký: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Register.this, "Loi dang ky: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         } catch (Exception e) {
-                            Toast.makeText(Register.this, "Lỗi đăng ký: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Register.this, "Loi dang ky: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

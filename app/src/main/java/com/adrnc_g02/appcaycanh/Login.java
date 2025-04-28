@@ -1,8 +1,6 @@
 package com.adrnc_g02.appcaycanh;
 
 import android.content.Intent;
-import android.credentials.GetCredentialRequest;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -13,11 +11,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
@@ -28,54 +24,65 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import Model.User;
 
 public class Login extends AppCompatActivity {
-    private Button loginggbtn;
-    private TextView register;
-    private EditText edtemail, edtpassword;
-    private GoogleSignInClient client;
-    private ImageButton loginbtn;
-    private FirebaseAuth mAuth;
-    private SessionControl session;
-    private static final int RC_SIGN_IN = 1234;
+
+    private static final int RC_SIGN_IN = 1234; // Request code cho Google Sign-In
+    private Button loginggbtn; // Button dang nhap bang Google
+    private TextView register; // TextView chuyen sang trang dang ky
+    private EditText edtemail, edtpassword; // EditText nhap email va password
+    private GoogleSignInClient client; // Google Sign-In client
+    private ImageButton loginbtn; // Button dang nhap bang email
+    private FirebaseAuth mAuth; // Firebase Authentication
+    private SessionControl session; // Session control
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
-        //Anh xa
+        // Khoi tao cac view
+        initializeViews();
+
+        // Khoi tao Google Sign-In
+        initializeGoogleSignIn();
+
+        // Thiet lap listeners
+        setupListeners();
+    }
+
+    /**
+     * Khoi tao cac view
+     */
+    private void initializeViews() {
         loginggbtn = findViewById(R.id.logingg_btn);
         register = findViewById(R.id.register_tv);
         edtemail = findViewById(R.id.login_edt);
         edtpassword = findViewById(R.id.password_edt);
         loginbtn = findViewById(R.id.login_btn);
+    }
 
-        //Khoi tao gg sign in
+    /**
+     * Khoi tao Google Sign-In
+     */
+    private void initializeGoogleSignIn() {
         session = new SessionControl(this);
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        client = GoogleSignIn.getClient(this, options); // Initialize client HERE
+        client = GoogleSignIn.getClient(this, options);
+    }
 
-        //su kien dang nhap gg
+    /**
+     * Thiet lap listeners cho cac button va text view
+     */
+    private void setupListeners() {
         loginggbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,15 +90,13 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        //su kien dang nhap bang email
         loginbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            signIn();
+                signIn();
             }
         });
 
-        //su kien chuyen sang dang ky
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,45 +106,66 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    private void signIn(){
+    /**
+     * Dang nhap bang email va password
+     */
+    private void signIn() {
         mAuth = FirebaseAuth.getInstance();
         String email = edtemail.getText().toString().trim();
         String password = edtpassword.getText().toString().trim();
-        // Email validation
-        if (TextUtils.isEmpty(email)) {
-            Toast.makeText(Login.this, "Hãy điền email", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(Login.this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
+
+        // Kiem tra email va password
+        if (!validateEmailPassword(email, password)) {
             return;
         }
 
-        // Password validation
-        if (TextUtils.isEmpty(password)) {
-            Toast.makeText(Login.this, "Hãy điền mật khẩu", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (password.length() < 6) {
-            Toast.makeText(Login.this, "Mật khẩu phải có ít nhất 6 ký tự", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
+        // Dang nhap voi Firebase
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(Login.this, "Đăng nhập thành công ", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Login.this, "Dang nhap thanh cong ", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(Login.this, MainActivity.class);
                             intent.putExtra("userEmail", email);
                             startActivity(intent);
                         } else {
-                            Toast.makeText(Login.this, "Lỗi đăng nhập ", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Login.this, "Loi dang nhap ", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
+
+    /**
+     * Kiem tra email va password
+     * @param email Email
+     * @param password Password
+     * @return True neu hop le, false neu khong
+     */
+    private boolean validateEmailPassword(String email, String password) {
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(Login.this, "Hay dien email", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(Login.this, "Email khong hop le", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(Login.this, "Hay dien mat khau", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (password.length() < 6) {
+            Toast.makeText(Login.this, "Mat khau phai co it nhat 6 ky tu", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Dang nhap bang Google
+     */
     private void signIngg() {
         Intent signInIntent = client.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -148,7 +174,9 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == RC_SIGN_IN){
+
+        // Ket qua tra ve tu viec mo Intent tu Google Sign-In
+        if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
@@ -157,12 +185,13 @@ public class Login extends AppCompatActivity {
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                if(task.isSuccessful()){
+                                if (task.isSuccessful()) {
+                                    // Luu thong tin nguoi dung tu Google Sign-In
                                     session.saveUserToDatabase("FIRST_LOGIN_GOOGLE");
                                     Intent intent = new Intent(Login.this, MainActivity.class);
                                     startActivity(intent);
                                 } else {
-                                    Toast.makeText(Login.this, task.getException().getMessage(), Toast.LENGTH_SHORT);
+                                    Toast.makeText(Login.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -175,8 +204,9 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        // Kiem tra xem nguoi dung da dang nhap hay chua
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user!=null){
+        if (user != null) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }

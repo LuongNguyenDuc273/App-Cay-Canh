@@ -32,19 +32,48 @@ import java.util.List;
 import Model.Product;
 
 public class Search extends AppCompatActivity {
+
+    // UI elements
     private EditText searchEditText;
     private RecyclerView suggestionsRecyclerView;
-    private SearchAdapter searchAdapter;
     private View contentContainer;
     private ImageButton backButton;
     private ImageView searchIcon;
+
+    // Adapter
+    private SearchAdapter searchAdapter;
+
+    // Data
     private List<Product> allProducts = new ArrayList<>();
     private List<Product> filteredProducts = new ArrayList<>();
+
+    // Firebase
     DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Thiet lap giao dien co ban
+        setupUI();
+
+        // Khoi tao view
+        initializeViews();
+
+        // Thiet lap Recycler View
+        setupRecyclerView();
+
+        // Load san pham tu Firebase
+        loadProductsFromFirebase();
+
+        // Thiet lap cac listeners
+        setupListeners();
+    }
+
+    /**
+     * Thiet lap giao dien co ban va xu ly insets cho he thong.
+     */
+    private void setupUI() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_search);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -52,24 +81,32 @@ public class Search extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        // Khoi tao view
+    }
+
+    /**
+     * Khoi tao cac view.
+     */
+    private void initializeViews() {
         searchEditText = findViewById(R.id.search_edit_text);
         suggestionsRecyclerView = findViewById(R.id.suggestions_recycler_view);
         contentContainer = findViewById(R.id.content_container);
         backButton = findViewById(R.id.back_button);
         searchIcon = findViewById(R.id.search_icon);
+    }
 
-        // Khoi tao recycler view
+    /**
+     * Thiet lap Recycler View.
+     */
+    private void setupRecyclerView() {
         suggestionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         searchAdapter = new SearchAdapter(this, filteredProducts);
         suggestionsRecyclerView.setAdapter(searchAdapter);
+    }
 
-        // An nut back
-        backButton.setOnClickListener(v -> {
-            onBackPressed();
-        });
-
-        //Su kien tim kiem
+    /**
+     * Load san pham tu Firebase.
+     */
+    private void loadProductsFromFirebase() {
         databaseReference = FirebaseDatabase.getInstance().getReference("Product");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -85,12 +122,22 @@ public class Search extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Xử lý lỗi nếu cần
+                // Xu ly loi neu can
                 Toast.makeText(Search.this, "Firebase error: " + error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
 
-        // su kien tim kiem
+    /**
+     * Thiet lap cac listeners.
+     */
+    private void setupListeners() {
+        // An nut back
+        backButton.setOnClickListener(v -> {
+            onBackPressed();
+        });
+
+        // Su kien tim kiem
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -98,7 +145,7 @@ public class Search extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                // Filter products based on search text
+                // Loc san pham dua tren search text
                 String searchText = charSequence.toString().toLowerCase().trim();
                 filterProducts(searchText);
             }
@@ -109,27 +156,28 @@ public class Search extends AppCompatActivity {
         });
 
         // Su kien tim kiem
-        searchIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Search.this, SearchedProduct.class);
-                intent.putExtra("searchQuery", searchEditText.getText().toString());
-                startActivity(intent);
-            }
+        searchIcon.setOnClickListener(view -> {
+            Intent intent = new Intent(Search.this, SearchedProduct.class);
+            intent.putExtra("searchQuery", searchEditText.getText().toString());
+            startActivity(intent);
         });
     }
 
+    /**
+     * Loc san pham.
+     * @param searchText Text tim kiem.
+     */
     private void filterProducts(String searchText) {
         filteredProducts.clear();
 
         if (searchText.isEmpty()) {
-            // Hide suggestions if search text is empty
+            // An suggestions neu search text rong
             suggestionsRecyclerView.setVisibility(View.GONE);
             contentContainer.setVisibility(View.VISIBLE);
             return;
         }
 
-        // Show products that match the search text
+        // Show san pham match voi search text
         for (Product product : allProducts) {
             // Search by name, ID, or description
             if (product.getNameProc().toLowerCase().contains(searchText) ||
@@ -139,10 +187,10 @@ public class Search extends AppCompatActivity {
             }
         }
 
-        // Update UI - ensure RecyclerView is visible
+        // Cap nhat UI - dam bao RecyclerView hien thi
         searchAdapter.notifyDataSetChanged();
 
-        // Always make the RecyclerView visible if we have results
+        // Luon hien thi RecyclerView neu co ket qua
         if (filteredProducts.isEmpty()) {
             suggestionsRecyclerView.setVisibility(View.GONE);
             contentContainer.setVisibility(View.VISIBLE);
