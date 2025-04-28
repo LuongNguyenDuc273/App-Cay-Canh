@@ -30,6 +30,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
@@ -48,12 +49,15 @@ public class Admin extends AppCompatActivity {
     private GenericFunction genericFunction = new GenericFunction();
     private BarChart barChart;
     private String currentUserID = "";
-
+    private FirebaseAuth auth;
     private FirebaseUser currentUser;
     private ArrayList<BarEntry> revenueList;
     private OrderItemAdapter orderItemAdapter;
     private TextView txtHome, txtCart, txtManager;
     private DatabaseReference customerRef, addressRef;
+    private GenericFunction<Customer> customerGenericFunction;
+    private SessionControl session;
+    private FirebaseDatabase database;
 
     private ImageView icHome, icCart, icManager;
     private LinearLayout confirmProducts, cancelProducts,
@@ -73,7 +77,8 @@ public class Admin extends AppCompatActivity {
         });
 
         initializeViews();
-        setUsername();
+        initializeFirebase();
+        loadUserData();
         btnonClick();
         updateQuantityStatus();
         setupBarchar();
@@ -90,7 +95,18 @@ public class Admin extends AppCompatActivity {
         txtHello.setText(greeting);
 
     }
+    private void initializeFirebase() {
+        auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
+        database = FirebaseDatabase.getInstance();
+        customerRef = database.getReference("Customer");
+        session = new SessionControl(this);
+        customerGenericFunction = new GenericFunction<Customer>();
+        Log.d(TAG, "GenericFunction initialized: " + (customerGenericFunction != null));
+    }
     private void initializeViews() {
+        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+        currentUserID = cUser.getUid();
         barChart = findViewById(R.id.bar_chart);
         txtHello = findViewById(R.id.txtGreeting);
         username = findViewById(R.id.userEmail);
@@ -163,6 +179,9 @@ public class Admin extends AppCompatActivity {
                 icCart.setColorFilter(unselectedColor);
                 txtManager.setTextColor(unselectedColor);
                 icManager.setColorFilter(unselectedColor);
+                Intent cartIntent = new Intent(getApplicationContext(), Admin.class);
+                startActivity(cartIntent);
+                finish();
             }
         });
         btnCart.setOnClickListener(new View.OnClickListener() {
@@ -188,6 +207,9 @@ public class Admin extends AppCompatActivity {
                 icHome.setColorFilter(unselectedColor);
                 txtCart.setTextColor(unselectedColor);
                 icCart.setColorFilter(unselectedColor);
+                Intent cartIntent = new Intent(getApplicationContext(), ManagerStore.class);
+                startActivity(cartIntent);
+                finish();
             }
         });
     }

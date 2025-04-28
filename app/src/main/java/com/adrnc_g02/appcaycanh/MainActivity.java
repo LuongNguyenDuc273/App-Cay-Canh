@@ -1,5 +1,7 @@
 package com.adrnc_g02.appcaycanh;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -74,6 +76,10 @@ public class MainActivity extends AppCompatActivity {
     SessionControl session;
     private HashMap<String, Integer> productSalesMap = new HashMap<>();
     private DatabaseReference orderDetailQuanTity;
+    private DatabaseReference customerRef, addressRef;
+    private GenericFunction<Customer> customerGenericFunction;
+    private String currentUserID = "";
+    private FirebaseUser currentUser;
 
     private FirebaseAuth auth; //Added FirebaseAuth instance variable
     private GoogleSignInClient mGoogleSignInClient; // Add GoogleSignInClient
@@ -101,7 +107,9 @@ public class MainActivity extends AppCompatActivity {
         search = findViewById(R.id.searchView);
         searchbar = findViewById(R.id.searchContainer);
         admin = findViewById(R.id.imgProfile);
-
+        initializeFirebase();
+        // hien thi user
+        loadUserData();
 
         //Chuyen trang
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -161,8 +169,7 @@ public class MainActivity extends AppCompatActivity {
         productApdater = new ProductApdater(MainActivity.this,dataProduct);
         listProduct.setAdapter(productApdater);
         loadBestSellingProducts();
-        // hien thi user
-        setUsername();
+
 
         //Test chuyen sang them sang pham
         btnFavorite.setOnClickListener(new View.OnClickListener() {
@@ -223,22 +230,83 @@ public class MainActivity extends AppCompatActivity {
         }
         productApdater.searchData(filterProduct);
     }
+    private void initializeFirebase() {
+        auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
+        database = FirebaseDatabase.getInstance();
+        customerRef = database.getReference("Customer");
+        session = new SessionControl(this);
+        customerGenericFunction = new GenericFunction<Customer>();
+        Log.d(TAG, "GenericFunction initialized: " + (customerGenericFunction != null));
+    }
 
-    private void setUsername() {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            String userName = getIntent().getStringExtra("userName");
-            String userName2 = getIntent().getStringExtra("userName2");
-            if (userName != null) {
+    private void loadUserData() {
+        Log.d(TAG, "loadUserData called");
+        if (currentUser == null) {
+            Username.setText("Chua dang nhap");
+            Log.d(TAG, "No current user, set text to 'Chua dang nhap'");
+            return;
+        }
 
-                Username.setText(userName);
-            } else if (userName2 != null) {
-                Username.setText(userName2);
-            } else {
-                Username.setText(currentUser.getEmail());
-            }
+        // Lấy thông tin từ Intent (nếu có)
+        String userName = getIntent().getStringExtra("a");
+        String userName2 = getIntent().getStringExtra("b");
+        String userGmail = currentUser.getEmail();
+
+        Log.d(TAG, "userName from intent: " + userName);
+        Log.d(TAG, "userName2 from intent: " + userName2);
+        Log.d(TAG, "userGmail from currentUser: " + userGmail);
+
+        // Ưu tiên hiển thị tên từ Intent trước
+        if (userName != null) {
+            Username.setText(userName);
+            Log.d(TAG, "Set nameUser to userName");
+        } else if (userName2 != null) {
+            Username.setText(userName2);
+            Log.d(TAG, "Set nameUser to userName2");
         } else {
-            Username.setText("Chua Dang Nhap");
+            Username.setText(userGmail);
+            Log.d(TAG, "Set nameUser to userGmail");
+        }
+
+        // Nếu có email, query thông tin từ Database
+        if (userGmail != null) {
+            Log.d(TAG, "Querying Customer node with Gmail: " + userGmail);
+            customerRef.orderByChild("gmail")
+                    .equalTo(userGmail)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Log.d(TAG, "onDataChange called, dataSnapshot exists: " + dataSnapshot.exists());
+                            if (dataSnapshot.exists()) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    Customer customer = snapshot.getValue(Customer.class);
+                                    Log.d(TAG, "Customer object from snapshot: " + customer);
+                                    if (customer != null) {
+                                        displayInfo(customer); // Hiển thị thông tin
+                                        currentUserID = customer.getIDCus(); // Lưu ID người dùng
+                                        Log.d(TAG, "currentUserID set to: " + currentUserID);
+                                    }
+                                }
+                            } else {
+                                Log.d(TAG, "No data found in database, using currentUser info");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e(TAG, "Database error: " + error.getMessage());
+                            Toast.makeText(MainActivity.this, "Loi tai thong tin", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+    }
+    private void displayInfo(Customer customer) {
+        Log.d(TAG, "displayInfo called with customer: " + customer);
+        if (customer.getNameCus() != null && !customer.getNameCus().isEmpty()) {
+            Username.setText(customer.getNameCus());
+        } else {
+            Username.setText(currentUser.getEmail());
         }
     }
     public void loadBestSellingProducts(){
