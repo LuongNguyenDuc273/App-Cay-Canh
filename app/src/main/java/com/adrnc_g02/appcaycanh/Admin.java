@@ -1,5 +1,7 @@
 package com.adrnc_g02.appcaycanh;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -7,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -38,14 +41,20 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
+import Model.Customer;
 import Model.MonthlyRevenue;
 
 public class Admin extends AppCompatActivity {
     private GenericFunction genericFunction = new GenericFunction();
     private BarChart barChart;
+    private String currentUserID = "";
+
+    private FirebaseUser currentUser;
     private ArrayList<BarEntry> revenueList;
     private OrderItemAdapter orderItemAdapter;
     private TextView txtHome, txtCart, txtManager;
+    private DatabaseReference customerRef, addressRef;
+
     private ImageView icHome, icCart, icManager;
     private LinearLayout confirmProducts, cancelProducts,
             successProducts, holdProducts, btnCart, btnHome, btnManager;
@@ -198,6 +207,77 @@ public class Admin extends AppCompatActivity {
             username.setText("Chua Dang Nhap");
         }
     }
+    private void loadUserData() {
+        Log.d(TAG, "loadUserData called");
+        if (currentUser == null) {
+            username.setText("Chua dang nhap");
+            Log.d(TAG, "No current user, set text to 'Chua dang nhap'");
+            return;
+        }
+
+        // Lấy thông tin từ Intent (nếu có)
+        String userName = getIntent().getStringExtra("a");
+        String userName2 = getIntent().getStringExtra("b");
+        String userGmail = currentUser.getEmail();
+
+        Log.d(TAG, "userName from intent: " + userName);
+        Log.d(TAG, "userName2 from intent: " + userName2);
+        Log.d(TAG, "userGmail from currentUser: " + userGmail);
+
+        // Ưu tiên hiển thị tên từ Intent trước
+        if (userName != null) {
+            username.setText(userName);
+            Log.d(TAG, "Set nameUser to userName");
+        } else if (userName2 != null) {
+            username.setText(userName2);
+            Log.d(TAG, "Set nameUser to userName2");
+        } else {
+            username.setText(userGmail);
+            Log.d(TAG, "Set nameUser to userGmail");
+        }
+
+        // Nếu có email, query thông tin từ Database
+        if (userGmail != null) {
+            Log.d(TAG, "Querying Customer node with Gmail: " + userGmail);
+            customerRef.orderByChild("gmail")
+                    .equalTo(userGmail)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Log.d(TAG, "onDataChange called, dataSnapshot exists: " + dataSnapshot.exists());
+                            if (dataSnapshot.exists()) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    Customer customer = snapshot.getValue(Customer.class);
+                                    Log.d(TAG, "Customer object from snapshot: " + customer);
+                                    if (customer != null) {
+                                        displayInfo(customer); // Hiển thị thông tin
+                                        currentUserID = customer.getIDCus(); // Lưu ID người dùng
+                                        Log.d(TAG, "currentUserID set to: " + currentUserID);
+                                    }
+                                }
+                            } else {
+                                Log.d(TAG, "No data found in database, using currentUser info");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e(TAG, "Database error: " + error.getMessage());
+                            Toast.makeText(Admin.this, "Loi tai thong tin", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+    }
+    private void displayInfo(Customer customer) {
+        Log.d(TAG, "displayInfo called with customer: " + customer);
+        // Hiển thị tên, ưu tiên tên từ Database
+        if (customer.getNameCus() != null && !customer.getNameCus().isEmpty()) {
+            username.setText(customer.getNameCus());
+        } else {
+            username.setText(currentUser.getEmail());
+        }
+    }
+
     private void updateQuantityStatus() {
         final int[] confirm = {0};
         final int[] cancel = {0};
