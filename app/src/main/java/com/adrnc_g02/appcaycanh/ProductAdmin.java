@@ -1,5 +1,7 @@
 package com.adrnc_g02.appcaycanh;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +34,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import Model.Customer;
 import Model.Line;
 import Model.Product;
 
@@ -49,7 +52,12 @@ public class ProductAdmin extends AppCompatActivity {
     private LinearLayout btnCart, btnHome, btnManager;
     private TextView txtHello;
     private DatabaseReference myRef;
-
+    private DatabaseReference customerRef, addressRef;
+    private GenericFunction<Customer> customerGenericFunction;
+    private SessionControl session;
+    private String currentUserID = "";
+    private FirebaseAuth auth;
+    private FirebaseUser currentUser;
     private ProductApdater productAdater;
 
     @Override
@@ -65,7 +73,8 @@ public class ProductAdmin extends AppCompatActivity {
         initializeViews();
         myRef = genericFunction.getTableReference("Line");
         btnonClick();
-        setUsername();
+        initializeFirebase();
+        loadUserData();
         tblProduct = genericFunction.getTableReference("Product");
         dataProduct = new ArrayList<Product>();
         gridLayoutManager = new GridLayoutManager(this, 2);
@@ -86,6 +95,8 @@ public class ProductAdmin extends AppCompatActivity {
     }
 
     private void initializeViews() {
+        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+        currentUserID = cUser.getUid();
         btnAddProduct = findViewById(R.id.addButton);
         btnAddLine = findViewById(R.id.addLine);
         pGrid = findViewById(R.id.productGrid);
@@ -101,20 +112,82 @@ public class ProductAdmin extends AppCompatActivity {
         icCart = findViewById(R.id.iccart);
         icManager = findViewById(R.id.icmanager);
     }
-    private void setUsername() {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            String userName = getIntent().getStringExtra("userEmail");
-            String userName2 = getIntent().getStringExtra("userEmail2");
-            if (userName != null) {
-                username.setText(userName);
-            } else if (userName2 != null) {
-                username.setText(userName2);
-            } else {
-                username.setText(currentUser.getEmail());
-            }
+    private void initializeFirebase() {
+        auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
+        database = FirebaseDatabase.getInstance();
+        customerRef = database.getReference("Customer");
+        session = new SessionControl(this);
+        customerGenericFunction = new GenericFunction<Customer>();
+        Log.d(TAG, "GenericFunction initialized: " + (customerGenericFunction != null));
+    }
+    private void loadUserData() {
+        Log.d(TAG, "loadUserData called");
+        if (currentUser == null) {
+            username.setText("Chua dang nhap");
+            Log.d(TAG, "No current user, set text to 'Chua dang nhap'");
+            return;
+        }
+
+        // Lấy thông tin từ Intent (nếu có)
+        String userName = getIntent().getStringExtra("a");
+        String userName2 = getIntent().getStringExtra("b");
+        String userGmail = currentUser.getEmail();
+
+        Log.d(TAG, "userName from intent: " + userName);
+        Log.d(TAG, "userName2 from intent: " + userName2);
+        Log.d(TAG, "userGmail from currentUser: " + userGmail);
+
+        // Ưu tiên hiển thị tên từ Intent trước
+        if (userName != null) {
+            username.setText(userName);
+            Log.d(TAG, "Set nameUser to userName");
+        } else if (userName2 != null) {
+            username.setText(userName2);
+            Log.d(TAG, "Set nameUser to userName2");
         } else {
-            username.setText("Chua Dang Nhap");
+            username.setText(userGmail);
+            Log.d(TAG, "Set nameUser to userGmail");
+        }
+
+        // Nếu có email, query thông tin từ Database
+        if (userGmail != null) {
+            Log.d(TAG, "Querying Customer node with Gmail: " + userGmail);
+            customerRef.orderByChild("gmail")
+                    .equalTo(userGmail)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Log.d(TAG, "onDataChange called, dataSnapshot exists: " + dataSnapshot.exists());
+                            if (dataSnapshot.exists()) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    Customer customer = snapshot.getValue(Customer.class);
+                                    Log.d(TAG, "Customer object from snapshot: " + customer);
+                                    if (customer != null) {
+                                        displayInfo(customer); // Hiển thị thông tin
+                                        currentUserID = customer.getIDCus(); // Lưu ID người dùng
+                                        Log.d(TAG, "currentUserID set to: " + currentUserID);
+                                    }
+                                }
+                            } else {
+                                Log.d(TAG, "No data found in database, using currentUser info");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e(TAG, "Database error: " + error.getMessage());
+                            Toast.makeText(ProductAdmin.this, "Loi tai thong tin", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+    }
+    private void displayInfo(Customer customer) {
+        Log.d(TAG, "displayInfo called with customer: " + customer);
+        if (customer.getNameCus() != null && !customer.getNameCus().isEmpty()) {
+            username.setText(customer.getNameCus());
+        } else {
+            username.setText(currentUser.getEmail());
         }
     }
     private void getAllProduct() {
@@ -193,6 +266,9 @@ public class ProductAdmin extends AppCompatActivity {
                 icHome.setColorFilter(unselectedColor);
                 txtCart.setTextColor(unselectedColor);
                 icCart.setColorFilter(unselectedColor);
+                Intent cartIntent = new Intent(getApplicationContext(), ManagerStore.class);
+                startActivity(cartIntent);
+                finish();
             }
         });
     }

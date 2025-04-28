@@ -88,14 +88,14 @@ public class CategoryOrders extends AppCompatActivity {
     private void getData(){
         String type = getIntent().getStringExtra("cate");
         switch (type) {
-            case "COMPLETED":
-                cate.setText("Hoan Thanh");
+            case "COMPLETED_WAIT_REVIEW":
+                cate.setText("Hoàn Thành");
                 break;
             case "CANCELLED":
-                cate.setText("Don Huy");
+                cate.setText("Đơn Hủy");
                 break;
             case "PENDING_PICKUP":
-                cate.setText("Cho Lay Hang");
+                cate.setText("Chờ Lấy Hàng");
                 break;
         }
         Log.d("CATEGORY",type);
