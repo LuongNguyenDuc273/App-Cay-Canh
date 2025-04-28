@@ -49,4 +49,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.playServicesAuth)
+    implementation("com.google.android.material:material:1.11.0")  // hoặc version mới hơn
+
 }
