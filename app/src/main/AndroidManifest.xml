@@ -13,6 +13,9 @@
         android:theme="@style/Theme.AppCayCanh"
         tools:targetApi="31">
         <activity
+            android:name=".AddReview"
+            android:exported="false" />
+        <activity
             android:name=".MyReview"
             android:exported="false" />
         <activity
@@ -20,9 +23,6 @@
             android:exported="false" />
         <activity
             android:name=".EditProduct"
-            android:exported="false" />
-        <activity
-            android:name=".Review"
             android:exported="false" />
         <activity
             android:name=".ProductAdmin"
@@ -74,9 +74,6 @@
             android:exported="true" />
         <activity
             android:name=".MyProduct"
-            android:exported="false" />
-        <activity
-            android:name=".Profilee"
             android:exported="false" />
         <activity
             android:name=".Login"
