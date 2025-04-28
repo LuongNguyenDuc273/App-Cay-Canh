@@ -272,6 +272,37 @@
                         </LinearLayout>
                     </LinearLayout>
 
+                    <!-- Đường kẻ phân cách -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"/>
+
+                    <!-- Phần đánh giá sản phẩm -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Đánh Giá Sản Phẩm"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/nunito_medium"
+                            android:textColor="#333333"
+                            android:layout_marginBottom="12dp"/>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvReview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clipToPadding="false"
+                            android:overScrollMode="never"/>
+                    </LinearLayout>
+
                     <!-- We've removed the quantity selector and action buttons from here -->
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

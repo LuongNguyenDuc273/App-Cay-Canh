@@ -27,31 +27,6 @@ public class OrderManagment {
     private double totalPayment = 0;
     private int totalQuantity = 0;
 
-//    public void addOrder(String idProc, int productQuantity, String price, String address) {
-//        totalPayment = 0;
-//        totalQuantity = 1;
-//        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
-//        if (cUser == null) {
-//            return;
-//        }
-//        String userID = cUser.getUid();
-//        String orderID = genericFunction.getTableReference("Order").push().getKey();
-//
-//        // Use the price directly instead of querying products again
-//        double productPrice = Double.parseDouble(price);
-//        totalPayment = productPrice * productQuantity;
-//
-//        OrderDetail orderDetail = new OrderDetail(idProc, totalPayment, productQuantity, productPrice);
-//
-//        Order order = new Order(orderID, userID, totalPayment, totalQuantity, address, "PENDING_CONFIRMATION");
-//        genericFunction.getTableReference("Order").child(orderID).setValue(order);
-//        genericFunction.getTableReference("Order")
-//                .child(orderID)
-//                .child("OrderDetail")
-//                .child(orderDetail.getIDProc())
-//                .setValue(orderDetail);
-//    }
-
     public void addOrder(List<Cart> cartOrder, String address) {
         totalPayment = 0;
         totalQuantity = 0;

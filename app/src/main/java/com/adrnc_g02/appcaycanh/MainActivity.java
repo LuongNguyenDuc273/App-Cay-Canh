@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,10 +39,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import Model.*;
-import java.lang.reflect.Array;
+
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -53,34 +50,66 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView listbnt,listProduct;
-    private Button btnlogout,btnAll;
+    // UI elements
+    private RecyclerView listbnt, listProduct;
+    private Button btnlogout, btnAll;
     private BottomNavigationView bottomNavigationView;
     private ImageView admin;
-    private ArrayList<Line> dataLine;
-    private ArrayList<Product> dataProduct;
-    private FirebaseDatabase database;
     private CardView searchbar;
+    private SearchView search;
+    private TextView nd, Username;
+    private ImageButton btnFavorite, btnNotification;
+
+    // Firebase
+    private FirebaseDatabase database;
+    private DatabaseReference tbline, tblProduct;
+    private DatabaseReference orderDetailQuanTity;
+    private FirebaseAuth auth; // FirebaseAuth instance variable
+    private GoogleSignInClient mGoogleSignInClient; // GoogleSignInClient
+
+    // Adapters and Layout Managers
     private LinearLayoutManager linearLayoutManager;
     private MyAdapter myAdapter;
-    private SearchView search;
     private ProductApdater productApdater;
-    private TextView nd,Username;
     private GridLayoutManager gridLayoutManager;
-    private DatabaseReference tbline, tblProduct;
-    private ImageButton btnFavorite, btnNotification;
+
+    // Data
+    private ArrayList<Line> dataLine;
+    private ArrayList<Product> dataProduct;
+    private HashMap<String, Integer> productSalesMap = new HashMap<>();
+
+    // Helper classes
     private MenuNavigation menuNavigation = new MenuNavigation(this);
     private GenericFunction genericFunction = new GenericFunction();
     SessionControl session;
-    private HashMap<String, Integer> productSalesMap = new HashMap<>();
-    private DatabaseReference orderDetailQuanTity;
-
-    private FirebaseAuth auth; //Added FirebaseAuth instance variable
-    private GoogleSignInClient mGoogleSignInClient; // Add GoogleSignInClient
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Thiet lap giao dien co ban
+        setupUI();
+
+        // Anh xa cac view
+        initializeViews();
+
+        // Khoi tao Firebase
+        initializeFirebase();
+
+        // Thiet lap Adapter cho RecyclerView
+        setupRecyclerViews();
+
+        // Load du lieu
+        loadData();
+
+        // Thiet lap listeners
+        setupListeners();
+    }
+
+    /**
+     * Thiet lap giao dien co ban va xu ly insets cho he thong.
+     */
+    private void setupUI() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -88,11 +117,17 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        //Anh xa
+    }
+
+    /**
+     * Anh xa cac view tu layout.
+     */
+    private void initializeViews() {
         session = new SessionControl(this);
         btnFavorite = findViewById(R.id.btnFavorite); //Test
         btnNotification = findViewById(R.id.btnNotification); //Test
-        auth = FirebaseAuth.getInstance(); // Initialize Firebase Auth here
+        auth = FirebaseAuth.getInstance(); // Khoi tao Firebase Auth
+
         listbnt = findViewById(R.id.listbutton);
         listProduct = findViewById(R.id.recyclerViewPlants);
         Username = findViewById(R.id.txtUsername);
@@ -101,32 +136,22 @@ public class MainActivity extends AppCompatActivity {
         search = findViewById(R.id.searchView);
         searchbar = findViewById(R.id.searchContainer);
         admin = findViewById(R.id.imgProfile);
+    }
 
-
-        //Chuyen trang
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-           menuNavigation.navigateTo(itemId);
-           return true;
-        });
-
-        //chuyen sang admin
-        admin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent adminIntent = new Intent(getApplicationContext(), Admin.class);
-                String userName = getIntent().getStringExtra("userName");
-                String userName2 = getIntent().getStringExtra("userName2");
-                adminIntent.putExtra("userEmail", userName);
-                adminIntent.putExtra("userEmail2", userName2);
-                startActivity(adminIntent);
-                finish();
-            }
-        });
-
-        //hien thi danh muc san pham
+    /**
+     * Khoi tao Firebase va lay du lieu tham chieu.
+     */
+    private void initializeFirebase() {
         database = FirebaseDatabase.getInstance();
         tbline = database.getReference("Line");
+        tblProduct = database.getReference("Product");
+    }
+
+    /**
+     * Thiet lap RecyclerViews va Adapters.
+     */
+    private void setupRecyclerViews() {
+        // Danh muc san pham
         dataLine = new ArrayList<Line>();
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         listbnt.setLayoutManager(linearLayoutManager);
@@ -135,71 +160,72 @@ public class MainActivity extends AppCompatActivity {
             public void onLineClick(int position, Line line) {
                 btnAll.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.bg_button_outline));
                 btnAll.setTextColor(ContextCompat.getColor(MainActivity.this, android.R.color.black));
-
                 Log.d("LineClick", "Line clicked: position=" + position + ", lineId=" + line.getIDLine() + ", lineName=" + line.getNameLine());
                 filterProductsByLine(line.getIDLine());
             }
         });
-        btnAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btnAll.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.bg_button_green));
-                btnAll.setTextColor(ContextCompat.getColor(MainActivity.this, android.R.color.white));
-                myAdapter.selectAllButton();
-                productApdater.searchData(dataProduct);
-            }
-        });
         myAdapter.setAllButton(btnAll);
         listbnt.setAdapter(myAdapter);
-        getAllLine();
 
-        // hien thi cac san pham
-        tblProduct = database.getReference("Product");
+        // San pham
         dataProduct = new ArrayList<Product>();
         gridLayoutManager = new GridLayoutManager(this, 2);
         listProduct.setLayoutManager(gridLayoutManager);
-        productApdater = new ProductApdater(MainActivity.this,dataProduct);
+        productApdater = new ProductApdater(MainActivity.this, dataProduct);
         listProduct.setAdapter(productApdater);
-        loadBestSellingProducts();
-        // hien thi user
-        setUsername();
+    }
 
-        //Test chuyen sang them sang pham
-        btnFavorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddProduct.class);
-                startActivity(intent);
-            }
+    /**
+     * Load du lieu ban dau.
+     */
+    private void loadData() {
+        getAllLine();
+        loadBestSellingProducts();
+        setUsername();
+        setupGreeting();
+        initGoogleSignIn();
+    }
+
+    /**
+     * Thiet lap cac listeners cho cac button va cac thanh phan khac.
+     */
+    private void setupListeners() {
+        // Chuyen trang
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            menuNavigation.navigateTo(itemId);
+            return true;
         });
-        // Chao theo thoi gian
-        TextView txtGreeting = findViewById(R.id.txtGreeting);
-        Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        String greeting;
-        if (hour >= 5 && hour <= 10) {greeting = "Chào buổi sáng ☀️";}
-        else if (hour >= 11 && hour <= 12) {greeting = "Chào buổi trưa 🍱";}
-        else if (hour >= 13 && hour <= 17) {greeting = "Chào buổi chiều 🌤️";}
-        else if (hour >= 18 && hour <= 21) {greeting = "Chào buổi tối 🌆";}
-        else {greeting = "Khuya rồi 😴";}
-        txtGreeting.setText(greeting);
+
+        // Chuyen sang trang admin
+        admin.setOnClickListener(v -> {
+            Intent adminIntent = new Intent(getApplicationContext(), Admin.class);
+            String userName = getIntent().getStringExtra("userName");
+            String userName2 = getIntent().getStringExtra("userName2");
+            adminIntent.putExtra("userEmail", userName);
+            adminIntent.putExtra("userEmail2", userName2);
+            startActivity(adminIntent);
+            finish();
+        });
+
+        //Test chuyen sang them san pham
+        btnFavorite.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, AddProduct.class);
+            startActivity(intent);
+        });
 
         //Test chuyen sang them danh muc san pham
-        btnNotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddLine.class);
-                startActivity(intent);
-            }
+        btnNotification.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, AddLine.class);
+            startActivity(intent);
         });
 
-
-        // Initialize Google Sign-In client
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id)) // Replace with your web client ID
-                .requestEmail()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        btnAll.setOnClickListener(v -> {
+            btnAll.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.bg_button_green));
+            btnAll.setTextColor(ContextCompat.getColor(MainActivity.this, android.R.color.white));
+            myAdapter.selectAllButton();
+            productApdater.searchData(dataProduct);
+        });
 
         search.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,20 +236,58 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     *  Thiet lap loi chao theo thoi gian
+     */
+    private void setupGreeting() {
+        TextView txtGreeting = findViewById(R.id.txtGreeting);
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        String greeting;
+        if (hour >= 5 && hour <= 10) {
+            greeting = "Chao buoi sang ☀️";
+        } else if (hour >= 11 && hour <= 12) {
+            greeting = "Chao buoi trua 🍱";
+        } else if (hour >= 13 && hour <= 17) {
+            greeting = "Chao buoi chieu 🌤️";
+        } else if (hour >= 18 && hour <= 21) {
+            greeting = "Chao buoi toi 🌆";
+        } else {
+            greeting = "Khuya roi 😴";
+        }
+        txtGreeting.setText(greeting);
+    }
+    /**
+     * Khoi tao Google Sign-In client
+     */
+    private void initGoogleSignIn() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id)) // Replace with your web client ID
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+    }
+    /**
+     * Loc san pham theo danh muc.
+     * @param idLine ID cua danh muc.
+     */
     private void filterProductsByLine(String idLine) {
-        if (idLine == null|| idLine.isEmpty()){
+        if (idLine == null || idLine.isEmpty()) {
             productApdater.searchData(dataProduct);
             return;
         }
         ArrayList<Product> filterProduct = new ArrayList<>();
-        for (Product product : dataProduct){
-            if(product.getIDLine()!=null && product.getIDLine().equals(idLine)){
+        for (Product product : dataProduct) {
+            if (product.getIDLine() != null && product.getIDLine().equals(idLine)) {
                 filterProduct.add(product);
             }
         }
         productApdater.searchData(filterProduct);
     }
 
+    /**
+     * Thiet lap ten nguoi dung.
+     */
     private void setUsername() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -241,38 +305,40 @@ public class MainActivity extends AppCompatActivity {
             Username.setText("Chua Dang Nhap");
         }
     }
-    public void loadBestSellingProducts(){
+
+    /**
+     * Load san pham ban chay nhat.
+     */
+    public void loadBestSellingProducts() {
         DatabaseReference orderRef = database.getReference("Order");
         orderRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 productSalesMap.clear();
-                Log.d("BestSeller", "Số bản ghi OrderDetail: " + snapshot.getChildrenCount());
+                Log.d("BestSeller", "So ban ghi OrderDetail: " + snapshot.getChildrenCount());
 
                 for (DataSnapshot orderSnapshot : snapshot.getChildren()) {
                     DataSnapshot orderDetailSnapshot = orderSnapshot.child("OrderDetail");
-                    Log.d("BestSeller", "OrderID: " + orderSnapshot.getKey() + ", Có OrderDetail: " + orderDetailSnapshot.exists());
-                    for(DataSnapshot detaiOder: orderDetailSnapshot.getChildren()){
+                    Log.d("BestSeller", "OrderID: " + orderSnapshot.getKey() + ", Co OrderDetail: " + orderDetailSnapshot.exists());
+                    for (DataSnapshot detaiOder : orderDetailSnapshot.getChildren()) {
                         String productID = detaiOder.child("idproc").getValue(String.class);
                         Integer quantity = detaiOder.child("totalQuantity").getValue(Integer.class);
-                        Log.d("BestSeller", "Chi tiết đơn hàng - ProductID: " + productID + ", Số lượng: " + quantity);
-                        if(productID !=null && quantity !=null)
-                        {
-                            if(productSalesMap.containsKey(productID))
-                            {
+                        Log.d("BestSeller", "Chi tiet don hang - ProductID: " + productID + ", So luong: " + quantity);
+                        if (productID != null && quantity != null) {
+                            if (productSalesMap.containsKey(productID)) {
                                 int currentQuantity = productSalesMap.get(productID);
-                                productSalesMap.put(productID, currentQuantity+ quantity);
-                            }else{
+                                productSalesMap.put(productID, currentQuantity + quantity);
+                            } else {
                                 productSalesMap.put(productID, quantity);
                             }
                         }
                     }
                 }
-                for (Map.Entry<String, Integer> entry: productSalesMap.entrySet()){
-                    Log.d("BestSeller", "Tổng số lượng bán - Sản phẩm ID: " + entry.getKey() + ", Tổng bán: " + entry.getValue());
+                for (Map.Entry<String, Integer> entry : productSalesMap.entrySet()) {
+                    Log.d("BestSeller", "Tong so luong ban - San pham ID: " + entry.getKey() + ", Tong ban: " + entry.getValue());
                 }
                 if (productSalesMap.isEmpty()) {
-                    Log.d("BestSeller", "Không có dữ liệu bán hàng, hiển thị tất cả sản phẩm");
+                    Log.d("BestSeller", "Khong co du lieu ban hang, hien thi tat ca san pham");
                     getAllProduct();
                     return;
                 }
@@ -287,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
                 List<String> bestSellingProductIds = new ArrayList<>();
                 for (Map.Entry<String, Integer> entry : sortedProduct) {
                     bestSellingProductIds.add(entry.getKey());
-                    Log.d("BestSeller", "Sắp xếp theo bán chạy - ID: " + entry.getKey() + ", Số lượng: " + entry.getValue());
+                    Log.d("BestSeller", "Sap xep theo ban chay - ID: " + entry.getKey() + ", So luong: " + entry.getValue());
                 }
                 dataProduct.clear();
                 for (String productId : bestSellingProductIds) {
@@ -297,37 +363,39 @@ public class MainActivity extends AppCompatActivity {
                             Product product = snapshot.getValue(Product.class);
                             if (product != null) {
                                 dataProduct.add(product);
-                                Log.d("BestSeller", "Đã thêm sản phẩm: " + product.getNameProc() +
-                                        ", Số lượng bán: " + productSalesMap.get(product.getIDProc()));
+                                Log.d("BestSeller", "Da them san pham: " + product.getNameProc() +
+                                        ", So luong ban: " + productSalesMap.get(product.getIDProc()));
                                 productApdater.notifyDataSetChanged();
                             }
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            Log.e("BestSeller", "Lỗi khi tải sản phẩm: " + error.getMessage());
+                            Log.e("BestSeller", "Loi khi tai san pham: " + error.getMessage());
                         }
                     });
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("BestSeller", "Lỗi khi tải dữ liệu đơn hàng: " + error.getMessage());
+                Log.e("BestSeller", "Loi khi tai du lieu don hang: " + error.getMessage());
                 getAllProduct();
             }
         });
     }
 
+    /**
+     * Lay tat ca san pham.
+     */
     private void getAllProduct() {
         tblProduct.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 dataProduct.clear();
-                for(DataSnapshot productsnapshot:snapshot.getChildren())
-                {
+                for (DataSnapshot productsnapshot : snapshot.getChildren()) {
                     Product product = productsnapshot.getValue(Product.class);
-                    if (product!=null)
-                    {
+                    if (product != null) {
                         dataProduct.add(product);
                     }
                 }
@@ -341,22 +409,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * Lay tat ca cac danh muc.
+     */
     private void getAllLine() {
         tbline.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 dataLine.clear();
-                for(DataSnapshot lineSnapshot:snapshot.getChildren())
-                {
+                for (DataSnapshot lineSnapshot : snapshot.getChildren()) {
                     Line line = lineSnapshot.getValue(Line.class);
-                    if (line!=null)
-                    {
+                    if (line != null) {
                         dataLine.add(line);
                     }
                 }
                 Log.d("FirebaseData", "Final dataLine size: " + dataLine.size());
                 myAdapter.notifyDataSetChanged();
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Toast.makeText(MainActivity.this, "Loi kho tai cac lines: " + error.getMessage(), Toast.LENGTH_SHORT).show();
@@ -364,8 +435,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-    @Override
+        @Override
     protected void onStart() {
         super.onStart();
         FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -389,11 +459,5 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-//        if(genericFunction.getItemReference("User", user.getUid()).child("status").equals("FIRST_LOGIN_GOOGLE")){
-//            String key = user.getUid();
-//            Customer cModule = new Customer(key,"", user.getEmail(), "", "", "");
-//            genericFunction.addData("Customer", key, cModule);
-//        }
     }
 }

@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -26,13 +28,17 @@ import java.util.List;
 import Model.Order;
 import Model.Product;
 
-public class OrderHistory extends AppCompatActivity {
+public class MyReview extends AppCompatActivity {
     // UI elements
-    private RecyclerView rvOrder;
+    private RecyclerView reviewRecyclerView;
+    private ProgressBar progressBar;
+    private TextView tvEmptyReviews;
+    private ImageButton btnBack;
+    private RecyclerView rvReview;
     private ImageButton backButton;
 
-    // Adapter
-    private OrderAdapter orderAdapter;
+    // Adapters
+    private ReviewAdapter reviewAdapter;
 
     // Data
     private List<Product> allProducts = new ArrayList<>();
@@ -64,7 +70,7 @@ public class OrderHistory extends AppCompatActivity {
      */
     private void setupUI() {
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_order_history);
+        setContentView(R.layout.activity_my_review);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -76,9 +82,9 @@ public class OrderHistory extends AppCompatActivity {
      * Khoi tao cac view.
      */
     private void initializeViews() {
+        rvReview = findViewById(R.id.reviewRecyclerView);
         backButton = findViewById(R.id.btnBack);
-        rvOrder = findViewById(R.id.rvOrders);
-        rvOrder.setLayoutManager(new LinearLayoutManager(this));
+        rvReview.setLayoutManager(new LinearLayoutManager(this));
     }
 
     /**
@@ -87,7 +93,7 @@ public class OrderHistory extends AppCompatActivity {
     private void setupListeners() {
         // Su kien quay lai
         backButton.setOnClickListener(v -> {
-            startActivity(new Intent(OrderHistory.this, Profile.class));
+            startActivity(new Intent(MyReview.this, Profile.class));
         });
     }
 
@@ -116,7 +122,7 @@ public class OrderHistory extends AppCompatActivity {
     }
 
     /**
-     * Load danh sach don hang cua nguoi dung.
+     * Load danh sach don hang da hoan thanh cua nguoi dung.
      */
     protected void loadOrders() {
         FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -127,21 +133,20 @@ public class OrderHistory extends AppCompatActivity {
 
                 for (DataSnapshot itemsnapshot : snapshot.getChildren()) {
                     Order order = itemsnapshot.getValue(Order.class);
-                    if (order != null && order.getIDCus().equals(cUser.getUid())) {
+                    if (order != null && order.getStatus().equals("COMPLETED") && order.getIDCus().equals(cUser.getUid())) {
                         filterOrderList.add(order);
                     }
                 }
-
-                // Khoi tao RecyclerView va Adapter sau khi load du lieu
+                // Initialize RecyclerView and Adapter *after* data is loaded
                 runOnUiThread(() -> {
-                    orderAdapter = new OrderAdapter(OrderHistory.this, filterOrderList, allProducts);
-                    rvOrder.setAdapter(orderAdapter);
+                    reviewAdapter = new ReviewAdapter(MyReview.this, filterOrderList, allProducts);
+                    rvReview.setAdapter(reviewAdapter);
                 });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Xu ly loi. Log loi!
+                // Handle errors appropriately.  Log the error!
                 Log.e("FirebaseError", "Error fetching orders: " + error.getMessage());
             }
         });
