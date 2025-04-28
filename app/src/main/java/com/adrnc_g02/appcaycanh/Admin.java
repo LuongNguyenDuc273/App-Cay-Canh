@@ -142,7 +142,7 @@ public class Admin extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent successIntent = new Intent(getApplicationContext(), CategoryOrders.class);
-                successIntent.putExtra("cate","COMPLETED");
+                successIntent.putExtra("cate","COMPLETED_WAIT_REVIEW");
                 startActivity(successIntent);
                 finish();
             }
@@ -319,7 +319,7 @@ public class Admin extends AppCompatActivity {
                         hold[0] += 1;
                     } else if (Status.equals("PENDING_CONFIRMATION")) {
                         confirm[0] += 1;
-                    } else if (Status.equals("COMPLETED")) {
+                    } else if (Status.equals("COMPLETED_WAIT_REVIEW")) {
                         back[0] += 1;
                     } else if (Status.equals("CANCELLED")) {
                         cancel[0] += 1;

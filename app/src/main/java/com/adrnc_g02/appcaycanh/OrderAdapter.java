@@ -89,36 +89,43 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         public void bind(Order order, List<Product> allProducts, Context context) {
             //Set the information for the current view holder.
             setOrderDetails(order, productAdapter, tvOrderName, allProducts);
-
             // Set order status and button properties based on order status
+            if (!(context instanceof OrderHistory) && !(context instanceof WaitingConfirmation)) {
+                btnStatus.setVisibility(View.GONE);
+            }
             switch(order.getStatus()) {
                 case "PENDING_CONFIRMATION":
                     tvStatus.setText("Chờ xác nhận");
                     tvStatus.setTextColor(context.getResources().getColor(R.color.orange));
-
-                    // Set button to "Hủy đơn" with red color
-                    btnStatus.setText("Hủy đơn");
-                    btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#FF5252"))); // Red color
-                    btnStatus.setVisibility(View.VISIBLE);
+                    if(context instanceof OrderHistory || context instanceof WaitingConfirmation)
+                    {
+                        // Set button to "Hủy đơn" with red color
+                        btnStatus.setText("Hủy đơn");
+                        btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#FF5252"))); // Red color
+                        btnStatus.setVisibility(View.VISIBLE);
+                    }
                     break;
 
                 case "CANCELLED":
                     tvStatus.setText("Đã hủy");
                     tvStatus.setTextColor(context.getResources().getColor(R.color.red));
-
-                    // Set button to "Mua lại" with green color
-                    btnStatus.setText("Mua lại");
-                    btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#13C123"))); // Green color
-                    btnStatus.setVisibility(View.VISIBLE);
+                    if(context instanceof OrderHistory || context instanceof WaitingConfirmation){
+                        // Set button to "Mua lại" with green color
+                        btnStatus.setText("Mua lại");
+                        btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#13C123"))); // Green color
+                        btnStatus.setVisibility(View.VISIBLE);
+                    }
                     break;
 
                 case "PENDING_PICKUP":
                     tvStatus.setTextColor(context.getResources().getColor(R.color.orange));
                     tvStatus.setText("Chờ lấy hàng");
+                    if(context instanceof OrderHistory || context instanceof WaitingConfirmation){
 
-                    // Set button to "Chờ giao hàng" but hide it
-                    btnStatus.setText("Chờ giao hàng");
-                    btnStatus.setVisibility(View.GONE);
+                        // Set button to "Chờ giao hàng" but hide it
+                        btnStatus.setText("Chờ giao hàng");
+                        btnStatus.setVisibility(View.GONE);
+                    }
                     break;
 
                 case "PENDING_COMPLETED":
@@ -136,9 +143,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                     tvStatus.setTextColor(context.getResources().getColor(R.color.green));
 
                     // Set button to "Đánh giá" with green color
-                    btnStatus.setText("Đánh giá");
-                    btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#13C123"))); // Green color
-                    btnStatus.setVisibility(View.VISIBLE);
+                    if(context instanceof OrderHistory || context instanceof WaitingConfirmation){
+
+                        btnStatus.setText("Đánh giá");
+                        btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#13C123"))); // Green color
+                        btnStatus.setVisibility(View.VISIBLE);
+                    }
                     break;
 
                 case "COMPLETED":
@@ -153,7 +163,10 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
                 default:
                     // Handle any other status if needed
-                    btnStatus.setVisibility(View.GONE);
+                    if(context instanceof OrderHistory || context instanceof WaitingConfirmation)
+                    {
+                        btnStatus.setVisibility(View.GONE);
+                    }
                     break;
             }
 
