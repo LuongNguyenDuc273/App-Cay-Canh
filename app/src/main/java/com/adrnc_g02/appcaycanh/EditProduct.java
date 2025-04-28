@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -31,11 +32,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,11 +101,13 @@ public class EditProduct extends AppCompatActivity {
     private void getData(){
         tblProduct = genericFunction.getTableReference("Product");
         tblLine = genericFunction.getTableReference("Line");
+        storageReference = FirebaseStorage.getInstance().getReference();
         Intent intent = getIntent();
         if(intent!=null){
             productId = intent.getStringExtra("Key");
             currentImageUrl = intent.getStringExtra("Image");
             selectedLineId = intent.getStringExtra("Line");
+            Log.d("EditProduct", "Loaded product with Line ID: " + selectedLineId);
             edtName.setText(intent.getStringExtra("Name"));
             edtPrice.setText(intent.getStringExtra("Price"));
             edtDes.setText(intent.getStringExtra("Description"));
@@ -111,28 +117,47 @@ public class EditProduct extends AppCompatActivity {
             }
         }
     }
-    private void setUpSpinner(){
+    private void setUpSpinner() {
         tblLine.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 lineList.clear();
-                for(DataSnapshot lines :snapshot.getChildren()){
-                    Line line = lines.getValue(Line.class);
-                    if (line!=null){
+
+                // Thêm tất cả các line vào danh sách
+                for (DataSnapshot lineSnapshot : snapshot.getChildren()) {
+                    Line line = lineSnapshot.getValue(Line.class);
+                    if (line != null) {
                         lineList.add(line);
                     }
                 }
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(EditProduct.this,
+
+                // Tạo adapter cho spinner
+                List<String> lineNames = new ArrayList<>();
+                for (Line line : lineList) {
+                    lineNames.add(line.getNameLine());
+                }
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                        EditProduct.this,
                         android.R.layout.simple_spinner_item,
-                        getLineNames());
+                        lineNames);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(adapter);
-                for (int i=0; i<lineList.size();i++){
-                    if(lineList.get(i).getIDLine().equals(selectedLineId))
-                    {
-                        spinner.setSelection(i);
-                        break;
+
+                // Tìm và đặt spinner về vị trí của Line đang được chọn
+                if (selectedLineId != null && !selectedLineId.isEmpty()) {
+                    for (int i = 0; i < lineList.size(); i++) {
+                        if (lineList.get(i).getIDLine().equals(selectedLineId)) {
+                            spinner.setSelection(i);
+                            Log.d("EditProduct", "Set spinner selection to position " + i +
+                                    " for Line ID: " + selectedLineId);
+                            break;
+                        }
                     }
+                } else if (!lineList.isEmpty()) {
+                    // Nếu không có Line nào được chọn trước đó, chọn cái đầu tiên
+                    selectedLineId = lineList.get(0).getIDLine();
+                    Log.d("EditProduct", "No Line selected, defaulting to first Line ID: " + selectedLineId);
                 }
             }
 
@@ -141,15 +166,74 @@ public class EditProduct extends AppCompatActivity {
                 Toast.makeText(EditProduct.this, "Lỗi khi tải danh sách loại cây: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
+        // Đặt listener cho spinner
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedLineId = lineList.get(position).getIDLine();
+                if (position >= 0 && position < lineList.size()) {
+                    selectedLineId = lineList.get(position).getIDLine();
+                    Log.d("EditProduct", "User selected Line ID: " + selectedLineId +
+                            " at position " + position);
+                    Toast.makeText(EditProduct.this, "Đã chọn dòng: " +
+                            lineList.get(position).getNameLine(), Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+                // Không làm gì nếu không có gì được chọn
+            }
+        });
+    }
+    private void UpdateSpinner(){
+        tblLine.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                lineList.clear(); // Clear danh sách trước khi thêm dữ liệu mới
 
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    Line line = childSnapshot.getValue(Line.class);
+                    if (line != null) {
+                        lineList.add(line);
+                    }
+                }
+
+                // Tạo một danh sách chỉ chứa NameLine để hiển thị trong Spinner
+                List<String> nameList = new ArrayList<>();
+                for (Line line : lineList) {
+                    nameList.add(line.getNameLine());
+                }
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(EditProduct.this, android.R.layout.simple_spinner_dropdown_item, nameList);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(adapter);
+
+                // Lắng nghe sự kiện khi một item được chọn trong Spinner
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        // Lấy IDLine tương ứng với item được chọn
+                        selectedLineId = lineList.get(position).getIDLine();
+                        Toast.makeText(EditProduct.this, "Selected Line ID: " + selectedLineId, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        // Xử lý khi không có item nào được chọn (tùy chọn)
+                        if (!lineList.isEmpty()) {
+                            selectedLineId = lineList.get(0).getIDLine(); // Lấy ID của phần tử đầu tiên
+                        } else {
+                            selectedLineId = null; // Hoặc một giá trị mặc định khác
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Xử lý lỗi nếu có
+                Toast.makeText(EditProduct.this, "Lỗi khi lấy dữ liệu: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -193,6 +277,7 @@ public class EditProduct extends AppCompatActivity {
             Toast.makeText(this, "Vui lòng điền đầy đủ thông tin", Toast.LENGTH_SHORT).show();
             return;
         }
+
         if(isImageChanged && imageUri != null){
             final StorageReference fileRef = storageReference.child("product_image/" + UUID.randomUUID().toString());
             fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -217,13 +302,19 @@ public class EditProduct extends AppCompatActivity {
         }
     }
     private void saveProduct(String name, String price, String quantity, String des, String imageUrl){
+        if (selectedLineId == null || selectedLineId.isEmpty()) {
+            Toast.makeText(this, "Vui lòng chọn loại cây cảnh", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Log.d("SaveProduct", "Saving product with Line ID: " + selectedLineId);
         Map<String, Object> updates = new HashMap<>();
         updates.put("nameProc",name);
         updates.put("price", price);
         updates.put("reQuantity", quantity);
         updates.put("describe", des);
         updates.put("photo", imageUrl);
-        updates.put("IDLine", selectedLineId);
+        updates.put("idline", selectedLineId);
+        Log.d("Line", selectedLineId);
         tblProduct.child(productId).updateChildren(updates)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
