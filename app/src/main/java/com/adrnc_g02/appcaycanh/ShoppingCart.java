@@ -39,22 +39,53 @@ import Model.Cart;
 import Model.Product;
 
 public class ShoppingCart extends AppCompatActivity {
-    private BottomNavigationView bottomNavigationView;
-    private MenuNavigation menuNavigation = new MenuNavigation(this);
+
+    // UI elements
     private RecyclerView rvCartItems;
-    private CartAdapter cartAdapter;
     private CheckBox cbSelectAll;
     private TextView tvTotalAmount;
     private Button btnCheckout;
     private ImageButton btnBack;
+    private BottomNavigationView bottomNavigationView;
+
+    // Adapter
+    private CartAdapter cartAdapter;
+
+    // Data
     private List<Cart> cartItems = new ArrayList<>();
     private List<Product> products = new ArrayList<>();
-    private OrderManagment orderManagment = new OrderManagment();
+
+    // Firebase
     DatabaseReference databaseReference;
+
+    // Helper classes
+    private MenuNavigation menuNavigation = new MenuNavigation(this);
+    private OrderManagment orderManagment = new OrderManagment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Thiet lap giao dien co ban
+        setupUI();
+
+        // Khoi tao view
+        initializeViews();
+
+        // Thiet lap bottom navigation
+        setupBottomNavigation();
+
+        // Thiet lap listeners
+        setupListeners();
+
+        // Load du lieu
+        fetchProductAndCart();
+    }
+
+    /**
+     * Thiet lap giao dien co ban va xu ly insets cho he thong.
+     */
+    private void setupUI() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_shopping_cart);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -62,28 +93,38 @@ public class ShoppingCart extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
 
-        // Initialize views
+    /**
+     * Khoi tao cac view.
+     */
+    private void initializeViews() {
         rvCartItems = findViewById(R.id.rv_cart_items);
         cbSelectAll = findViewById(R.id.cb_select_all);
         tvTotalAmount = findViewById(R.id.tv_total_amount);
         btnCheckout = findViewById(R.id.btn_checkout);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         btnBack = findViewById(R.id.btn_back);
+    }
 
-        // Setup back button
-        btnBack.setOnClickListener(v -> onBackPressed());
-
-        // Setup bottom navigation
+    /**
+     * Thiet lap bottom navigation.
+     */
+    private void setupBottomNavigation() {
         bottomNavigationView.setSelectedItemId(R.id.navExplore);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             menuNavigation.navigateTo(itemId);
             return true;
         });
+    }
 
-        // Load data
-        fetchProductAndCart();
+    /**
+     * Thiet lap cac listeners.
+     */
+    private void setupListeners() {
+        // Setup back button
+        btnBack.setOnClickListener(v -> onBackPressed());
 
         // Setup "Select All" checkbox
         cbSelectAll.setOnClickListener(v -> {
@@ -96,7 +137,7 @@ public class ShoppingCart extends AppCompatActivity {
         btnCheckout.setOnClickListener(v -> {
             List<Cart> selectedItems = cartAdapter.getSelectedCarts();
             if (selectedItems.isEmpty()) {
-                Toast.makeText(this, "Vui lòng chọn sản phẩm trước khi thanh toán", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Vui long chon san pham truoc khi thanh toan", Toast.LENGTH_SHORT).show();
             } else {
                 // Create a list of product IDs to pass to OrderConfirmation
                 ArrayList<String> selectedProductIds = new ArrayList<>();
@@ -112,18 +153,9 @@ public class ShoppingCart extends AppCompatActivity {
         });
     }
 
-    private void loadSampleData() {
-        // Add sample products
-        products.add(new Product("P001", "L001", "Chậu Tự Tưới Bằng Sứ", "20", "245000", "Chậu tự tưới cao cấp", ""));
-        products.add(new Product("P002", "L002", "Cây Phát Tài", "5", "180000", "Cây phong thủy", ""));
-        products.add(new Product("P003", "L001", "Xẻng Làm Vườn Mini", "0", "50000", "Dụng cụ làm vườn", ""));
-
-        // Add sample cart items
-        cartItems.add(new Cart("C001", "P001", 1));
-        cartItems.add(new Cart("C001", "P002", 2));
-        cartItems.add(new Cart("C001", "P003", 1));
-    }
-
+    /**
+     * Thiet lap Recycler View.
+     */
     private void setupRecyclerView() {
         // Check if both products and cartItems are loaded
         if (!products.isEmpty() && !cartItems.isEmpty()) {
@@ -148,7 +180,7 @@ public class ShoppingCart extends AppCompatActivity {
                 @Override
                 public void onItemDeleted(String productId) {
                     // You can show a confirmation toast or handle it specially
-                    Toast.makeText(ShoppingCart.this, "Đã xóa sản phẩm khỏi giỏ hàng", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ShoppingCart.this, "Da xoa san pham khoi gio hang", Toast.LENGTH_SHORT).show();
                     updateTotal();
                     updateSelectAllCheckbox();
                 }
@@ -156,18 +188,27 @@ public class ShoppingCart extends AppCompatActivity {
         }
     }
 
+    /**
+     * Cap nhat tong tien.
+     */
     private void updateTotal() {
         double total = cartAdapter.getTotal();
         NumberFormat formatter = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
         tvTotalAmount.setText(formatter.format(total) + "₫");
     }
 
+    /**
+     * Cap nhat trang thai checkbox select all.
+     */
     private void updateSelectAllCheckbox() {
         List<Cart> selectedItems = cartAdapter.getSelectedCarts();
         cbSelectAll.setChecked(selectedItems.size() == cartItems.size() && !cartItems.isEmpty());
     }
 
-    private void fetchProductAndCart(){
+    /**
+     * Load san pham va gio hang.
+     */
+    private void fetchProductAndCart() {
         databaseReference = FirebaseDatabase.getInstance().getReference("Product");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -185,11 +226,14 @@ public class ShoppingCart extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Xử lý lỗi nếu cần
+                // Xu ly loi neu can
             }
         });
     }
 
+    /**
+     * Load gio hang tu firebase.
+     */
     private void fetchCart() {
         FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
         databaseReference = FirebaseDatabase.getInstance().getReference("Customer").child(cUser.getUid()).child("Cart");

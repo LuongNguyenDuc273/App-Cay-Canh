@@ -26,19 +26,48 @@ import java.util.List;
 import Model.Product;
 
 public class SearchedProduct extends AppCompatActivity {
+    // UI elements
     private TextView txtSearch;
     private ImageButton backButton;
-    private List<Product> AllProducts = new ArrayList<>();
-    private List<Product> SearchedProducts = new ArrayList<>();
-    private ProductApdater productApdater;
-    private GridLayoutManager gridLayoutManager;
     private RecyclerView listSearchedProduct;
 
+    // Adapter
+    private ProductApdater productApdater;
+
+    // Data
+    private List<Product> AllProducts = new ArrayList<>();
+    private List<Product> SearchedProducts = new ArrayList<>();
+
+    // Firebase
     DatabaseReference databaseReference;
+
+    // Layout Manager
+    private GridLayoutManager gridLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Thiet lap giao dien co ban
+        setupUI();
+
+        // Khoi tao view
+        initializeViews();
+
+        // Thiet lap Recycler View
+        setupRecyclerView();
+
+        // Load san pham tu Firebase
+        loadProductsFromFirebase();
+
+        // Thiet lap listeners
+        setupListeners();
+    }
+
+    /**
+     * Thiet lap giao dien co ban va xu ly insets cho he thong.
+     */
+    private void setupUI() {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_searched_product);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -46,25 +75,35 @@ public class SearchedProduct extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
 
-        // Khoi tao view
+    /**
+     * Khoi tao cac view.
+     */
+    private void initializeViews() {
         txtSearch = findViewById(R.id.searchQueryText);
         backButton = findViewById(R.id.backButton);
         listSearchedProduct = findViewById(R.id.recyclerViewPlants);
 
-        // Set recycler view
+        // Set text cho txtSearch
+        String searchQuery = getIntent().getStringExtra("searchQuery");
+        txtSearch.setText("San pham Lien quan den: " + searchQuery);
+    }
+
+    /**
+     * Thiet lap Recycler View.
+     */
+    private void setupRecyclerView() {
         gridLayoutManager = new GridLayoutManager(this, 2);
         listSearchedProduct.setLayoutManager(gridLayoutManager);
-        productApdater = new ProductApdater(SearchedProduct.this,SearchedProducts);
+        productApdater = new ProductApdater(SearchedProduct.this, SearchedProducts);
         listSearchedProduct.setAdapter(productApdater);
+    }
 
-
-        // Set text cho txtSearch
-        String searchQuery =  getIntent().getStringExtra("searchQuery");
-        txtSearch.setText("Sản phẩm Liên quan đến: " + searchQuery);
-
-
-        // Nap du lieu san pham
+    /**
+     * Load san pham tu Firebase.
+     */
+    private void loadProductsFromFirebase() {
         databaseReference = FirebaseDatabase.getInstance().getReference("Product");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -76,7 +115,8 @@ public class SearchedProduct extends AppCompatActivity {
                     }
                 }
 
-                // Move this inside onDataChange - after data is loaded
+                // Sau khi load du lieu, loc san pham
+                String searchQuery = getIntent().getStringExtra("searchQuery");
                 if (searchQuery != null && !searchQuery.isEmpty()) {
                     filterProducts(searchQuery.toLowerCase());
                 }
@@ -84,22 +124,28 @@ public class SearchedProduct extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Handle error
+                // Xu ly loi
             }
         });
+    }
 
+    /**
+     * Thiet lap cac listeners.
+     */
+    private void setupListeners() {
         // An nut back
         backButton.setOnClickListener(v -> {
             finish();
         });
-
-        //
-
     }
 
+    /**
+     * Loc san pham.
+     * @param searchText Text tim kiem.
+     */
     private void filterProducts(String searchText) {
         SearchedProducts.clear();
-        // Show products that match the search text
+        // Show san pham match voi search text
         for (Product product : AllProducts) {
             // Search by name, ID, or description
             if (product.getNameProc().toLowerCase().contains(searchText) ||
@@ -109,9 +155,7 @@ public class SearchedProduct extends AppCompatActivity {
             }
         }
 
-        // Update UI
+        // Cap nhat UI
         productApdater.notifyDataSetChanged();
     }
-
-
 }

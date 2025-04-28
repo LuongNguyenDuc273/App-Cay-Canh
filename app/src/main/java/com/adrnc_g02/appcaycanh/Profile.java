@@ -62,7 +62,7 @@ public class Profile extends AppCompatActivity {
     private ImageView personalInfoArrow, addressArrow, datePicker;
     private LinearLayout
             personalInfoHeader, personalInfoContent, addressHeader, addressContent,
-            add_Address, waitingConfirmationLayout, waitingPickupLayout;
+            add_Address, waitingConfirmationLayout, waitingPickupLayout, myReview;
     private BottomNavigationView bottomNavigationView;
     private RecyclerView addressRecycleView;
 
@@ -165,6 +165,7 @@ public class Profile extends AppCompatActivity {
         add_Address = findViewById(R.id.add_address);
         waitingConfirmationLayout = findViewById(R.id.waiting_confirmation_layout);
         waitingPickupLayout = findViewById(R.id.waiting_delivery_layout);
+        myReview = findViewById(R.id.my_review);
 
         // RecyclerView cho danh sách địa chỉ
         addressRecycleView = findViewById(R.id.address_recycler_view);
@@ -220,6 +221,11 @@ public class Profile extends AppCompatActivity {
         // Xử lý chuyển sang trang lịch sử đơn hàng
         orderHistory.setOnClickListener(view -> {
             startActivity(new Intent(Profile.this, OrderHistory.class));
+        });
+
+        // Xử lý chuyển sang trang đánh giá
+        myReview.setOnClickListener(view -> {
+            startActivity(new Intent(Profile.this, MyReview.class));
         });
     }
 

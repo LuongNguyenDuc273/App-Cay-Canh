@@ -16,6 +16,15 @@
             android:name=".AddReview"
             android:exported="false" />
         <activity
+            android:name=".MyReview"
+            android:exported="false" />
+        <activity
+            android:name=".ManagerStore"
+            android:exported="false" />
+        <activity
+            android:name=".EditProduct"
+            android:exported="false" />
+        <activity
             android:name=".ProductAdmin"
             android:exported="false" />
         <activity

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">AppCayCanh </string>
     <string name="qu_n_m_t_kh_u"><u>Quên mật khẩu ?</u></string>
+    <item name="tvNoReviews" type="id" />
 </resources>
