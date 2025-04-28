@@ -81,6 +81,11 @@ public class MainActivity extends AppCompatActivity {
     // Helper classes
     private MenuNavigation menuNavigation = new MenuNavigation(this);
     private GenericFunction genericFunction = new GenericFunction();
+    private GenericFunction<Customer> customerGenericFunction;
+
+    private DatabaseReference customerRef;
+    private String currentUserID = "";
+    private FirebaseUser currentUser;
     SessionControl session;
 
     @Override
@@ -145,6 +150,11 @@ public class MainActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         tbline = database.getReference("Line");
         tblProduct = database.getReference("Product");
+        auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
+        customerRef = database.getReference("Customer");
+        session = new SessionControl(this);
+        customerGenericFunction = new GenericFunction<Customer>();
     }
 
     /**
@@ -198,14 +208,36 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Chuyen sang trang admin
-        admin.setOnClickListener(v -> {
-            Intent adminIntent = new Intent(getApplicationContext(), Admin.class);
-            String userName = getIntent().getStringExtra("userName");
-            String userName2 = getIntent().getStringExtra("userName2");
-            adminIntent.putExtra("userEmail", userName);
-            adminIntent.putExtra("userEmail2", userName2);
-            startActivity(adminIntent);
-            finish();
+        admin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userName = getIntent().getStringExtra("userName");
+                String userName2 = getIntent().getStringExtra("userName2");
+                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference()
+                        .child("Customer").child(currentUser.getUid());
+                userRef.child("role").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String userRole = snapshot.getValue(String.class);
+                        Intent intent;
+                        if (userRole != null && userRole.equals("Admin")) {
+                            intent = new Intent(getApplicationContext(), Admin.class);
+                        } else {
+                            intent = new Intent(getApplicationContext(), Profile.class);
+                        }
+                        intent.putExtra("userEmail", userName);
+                        intent.putExtra("userEmail2", userName2);
+                        startActivity(intent);
+                        finish();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(getApplicationContext(), "Lỗi: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
         });
 
         //Test chuyen sang them san pham
