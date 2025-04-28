@@ -3,6 +3,7 @@ package com.adrnc_g02.appcaycanh;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,7 @@ public class ProductApdater extends RecyclerView.Adapter<ProductApdater.MyViewHo
         holder.productItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("Line ID", products.get(holder.getAdapterPosition()).getIDLine());
                 Intent intent = new Intent(context, ProductDetail.class);
                 intent.putExtra("Image", products.get(holder.getAdapterPosition()).getPhoto());
                 intent.putExtra("Name", products.get(holder.getAdapterPosition()).getNameProc());
