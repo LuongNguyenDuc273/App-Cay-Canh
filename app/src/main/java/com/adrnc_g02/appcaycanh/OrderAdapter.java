@@ -1,6 +1,7 @@
 package com.adrnc_g02.appcaycanh;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
@@ -139,6 +139,19 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                     btnStatus.setText("Đánh giá");
                     btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#13C123"))); // Green color
                     btnStatus.setVisibility(View.VISIBLE);
+
+                    // Thêm sự kiện click cho nút Đánh giá
+                    btnStatus.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // Tạo Intent để chuyển sang trang Review
+                            Intent intent = new Intent(context, AddReview.class);
+                            // Truyền orderID sang trang Review
+                            intent.putExtra("orderID", order.getIDOrder());
+                            // Bắt đầu Activity mới
+                            context.startActivity(intent);
+                        }
+                    });
                     break;
 
                 case "COMPLETED":
