@@ -16,4 +16,8 @@
         android:id="@+id/navProfile"
         android:icon="@drawable/ic_profile"
         android:title="Tôi" />
+    <item
+        android:id="@+id/navBlog"
+        android:icon="@drawable/ic_blog"
+        android:title="Blog" />
 </menu>

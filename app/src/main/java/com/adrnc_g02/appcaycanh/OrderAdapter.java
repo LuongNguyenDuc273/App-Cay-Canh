@@ -103,6 +103,10 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                         btnStatus.setText("Hủy đơn");
                         btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#FF5252"))); // Red color
                         btnStatus.setVisibility(View.VISIBLE);
+                    }else{
+                        btnStatus.setText("Xác nhận");
+                        btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#FF5252"))); // Red color
+                        btnStatus.setVisibility(View.VISIBLE);
                     }
                     break;
 
@@ -170,11 +174,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                 case "COMPLETED":
                     tvStatus.setText("Giao hàng thành công");
                     tvStatus.setTextColor(context.getResources().getColor(R.color.green));
+                    if(context instanceof OrderHistory || context instanceof WaitingConfirmation){
 
                     // Set button to "Mua lại" with green color
                     btnStatus.setText("Mua lại");
                     btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#13C123"))); // Green color
-                    btnStatus.setVisibility(View.VISIBLE);
+                    btnStatus.setVisibility(View.VISIBLE);}
                     break;
 
                 default:
