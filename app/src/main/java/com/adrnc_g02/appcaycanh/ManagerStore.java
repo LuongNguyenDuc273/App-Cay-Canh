@@ -104,6 +104,9 @@ import Model.Product;
         txtHome = findViewById(R.id.textHome);
         txtCart = findViewById(R.id.txtcart);
         txtManager = findViewById(R.id.txtmanager);
+        icCart = findViewById(R.id.iccart);
+        icHome = findViewById(R.id.ichome);
+        icManager = findViewById(R.id.icmanager);
     }
     private void btnonClick(){
         int selectedColor = getResources().getColor(R.color.green);

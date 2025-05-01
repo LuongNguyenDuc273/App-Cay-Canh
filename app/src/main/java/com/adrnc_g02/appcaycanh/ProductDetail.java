@@ -6,16 +6,19 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -50,7 +53,7 @@ public class ProductDetail extends AppCompatActivity {
     private TextView productName, productPrice, productCategory, productDes, productStatus;
     private Button btnBuy, btnIncreaseQuantity, btnDecreaseQuantity;
     private EditText tvQuantity;
-
+    private CardView bottomActionBar;
     // Adapter
     private ReviewAdapter reviewAdapter;
 
@@ -114,9 +117,9 @@ public class ProductDetail extends AppCompatActivity {
         tvQuantity = findViewById(R.id.tvQuantity);
         rvReview = findViewById(R.id.rvReview);
         rvReview.setLayoutManager(new LinearLayoutManager(this));
-
         // Dat gia tri ban dau cho tvQuantity
         tvQuantity.setText(String.valueOf(currentQuantity));
+        bottomActionBar = findViewById(R.id.bottomActionBar);
     }
 
     /**
@@ -170,9 +173,49 @@ public class ProductDetail extends AppCompatActivity {
         int quantity = getIntent().getStringExtra("Quantity") != null ?
                 Integer.parseInt(getIntent().getStringExtra("Quantity")) : 0;
         productQuantity = quantity;
-        Log.d("Kiem Tra", "So luong" + quantity);
         String des = getIntent().getStringExtra("Description");
         String key = getIntent().getStringExtra("Key");
+
+        checkUserRoleAndDisplayInfo(line, quantity, des, key);
+
+        Glide.with(this).load(imageUrl).into(imageView);
+        productName.setText(name);
+        productPrice.setText(price);
+        productDes.setText(des);
+    }
+
+    private void checkUserRoleAndDisplayInfo(String line, int quantity, String des, String key) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            genericFunction.getTableReference("Customer").child(userId)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                String userRole = snapshot.child("role").getValue(String.class);
+
+                                if (userRole == null || !userRole.equals("Admin")) {
+                                    showDetailedProductInfo(line, quantity);
+                                } else {
+                                    hideDetailedProductInfo();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("FirebaseError", "Lỗi khi kiểm tra vai trò: " + error.getMessage());
+                            showDetailedProductInfo(line, quantity);
+                        }
+                    });
+        } else {
+            showDetailedProductInfo(line, quantity);
+        }
+    }
+
+    private void showDetailedProductInfo(String line, int quantity) {
+        // Hiển thị thông tin về Line
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Line").child(line);
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -193,8 +236,13 @@ public class ProductDetail extends AppCompatActivity {
                 Log.e("FirebaseError", "Loi: " + error.getMessage());
             }
         });
+
         if (quantity > 0) {
             productStatus.setText("Con hang: " + quantity + " san pham");
+            btnBuy.setEnabled(true);
+            btnAddToCart.setEnabled(true);
+            btnIncreaseQuantity.setEnabled(true);
+            btnDecreaseQuantity.setEnabled(true);
         } else {
             btnBuy.setEnabled(false);
             btnAddToCart.setEnabled(false);
@@ -202,15 +250,20 @@ public class ProductDetail extends AppCompatActivity {
             btnAddToCart.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.white)));
             btnIncreaseQuantity.setEnabled(false);
             btnDecreaseQuantity.setEnabled(false);
-            productStatus.setText("Tam het hang");
+            productStatus.setText("Tạm hết hàng");
             productStatus.setTextColor(getResources().getColor(R.color.red));
             productStatus.setBackground(getResources().getDrawable(R.drawable.bg_unavailable_status));
             btnBuy.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.gray)));
         }
-        Glide.with(this).load(imageUrl).into(imageView);
-        productName.setText(name);
-        productPrice.setText(price);
-        productDes.setText(des);
+    }
+
+    private void hideDetailedProductInfo() {
+        btnBuy.setVisibility(View.INVISIBLE);
+        btnAddToCart.setVisibility(View.INVISIBLE);
+        btnIncreaseQuantity.setVisibility(View.INVISIBLE);
+        btnDecreaseQuantity.setVisibility(View.INVISIBLE);
+        tvQuantity.setVisibility(View.INVISIBLE);
+        bottomActionBar.setVisibility(View.INVISIBLE);
     }
 
     /**

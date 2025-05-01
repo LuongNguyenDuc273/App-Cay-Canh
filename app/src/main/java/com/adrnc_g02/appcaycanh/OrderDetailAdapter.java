@@ -69,7 +69,6 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
         public void bind(OrderAdapter.OrderProductItem item) {
             tvProductName.setText(item.getProduct().getNameProc());
             tvVariant.setText(item.getProduct().getDescribe());
-
             // Format and set price
             NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
             String formattedPrice = formatter.format(item.getPrice()).replace("₫", "đ");

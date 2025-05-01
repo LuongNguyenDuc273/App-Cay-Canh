@@ -33,5 +33,11 @@ public class MenuNavigation {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         }
+        else if (destinationID == R.id.navBlog) {
+            Intent intent = new Intent(context, Blog.class); // Replace LoginActivity
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        }
+
     }
 }
