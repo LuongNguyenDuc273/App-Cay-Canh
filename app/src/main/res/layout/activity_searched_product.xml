@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".SearchedProduct">
+    tools:context=".Search.SearchedProduct">
 
     <!-- Top toolbar with back button, title and search icon -->
     <androidx.appcompat.widget.Toolbar

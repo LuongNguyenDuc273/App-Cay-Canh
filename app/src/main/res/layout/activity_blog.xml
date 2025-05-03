@@ -6,7 +6,7 @@
     android:id="@+id/main"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".Blog">
+    tools:context=".Bloggg.Blog">
 
     <!-- Header Section with Improved Design -->
     <androidx.constraintlayout.widget.ConstraintLayout

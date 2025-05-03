@@ -6,7 +6,7 @@
     android:id="@+id/main"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".MainActivity">
+    tools:context=".Home.MainActivity">
 
     <!-- Header Section -->
     <androidx.constraintlayout.widget.ConstraintLayout

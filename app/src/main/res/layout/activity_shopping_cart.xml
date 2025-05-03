@@ -6,7 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ShoppingCart">
+    tools:context=".Cart.ShoppingCart">
 
     <!-- Top Bar -->
     <androidx.appcompat.widget.Toolbar
