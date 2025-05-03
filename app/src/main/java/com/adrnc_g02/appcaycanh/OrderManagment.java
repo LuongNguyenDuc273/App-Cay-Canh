@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
@@ -100,6 +101,7 @@ public class OrderManagment {
                     .child("OrderDetail")
                     .child(orderDetail.getIDProc())
                     .setValue(orderDetail);
+            updateProductQuantity(orderDetail.getIDProc(), orderDetail.getTotalQuantity());
         }
 
         removeCart(userID, cartList);
@@ -116,6 +118,45 @@ public class OrderManagment {
             // Log for debugging
             Log.d("CartAdapter", "Removing item: " + cart.getIDProc());
         }
+    }
+
+    public void updateProductQuantity(String productID, int buyQuantity){
+        // Get reference to the product in Firebase
+        DatabaseReference productRef = genericFunction.getTableReference("Product").child(productID);
+
+        // Use a transaction to safely update the quantity
+        productRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Product product = snapshot.getValue(Product.class);
+
+                if (product != null) {
+                    try {
+                        // Get current quantity
+                        int currentQuantity = Integer.parseInt(product.getReQuantity());
+
+                        // Calculate new quantity (making sure it doesn't go below 0)
+                        int newQuantity = Math.max(0, currentQuantity - buyQuantity);
+
+                        // Update the quantity in Firebase
+                        productRef.child("reQuantity").setValue(String.valueOf(newQuantity));
+
+                        Log.d("ProductUpdate", "Updated product: " + productID +
+                                " from quantity: " + currentQuantity +
+                                " to: " + newQuantity);
+                    } catch (NumberFormatException e) {
+                        Log.e("ProductUpdate", "Failed to parse quantity: " + e.getMessage());
+                    }
+                } else {
+                    Log.e("ProductUpdate", "Product not found: " + productID);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("ProductUpdate", "Failed to update product quantity: " + error.getMessage());
+            }
+        });
     }
 
 }

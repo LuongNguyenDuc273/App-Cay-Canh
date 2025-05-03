@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Button;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -108,6 +109,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                         btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#FF5252"))); // Red color
                         btnStatus.setVisibility(View.VISIBLE);
                     }
+                    btnStatus.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            updateStatus(order.getIDOrder(), "CANCELLED");
+                            Toast.makeText(context, "Đã hủy đơn", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     break;
 
                 case "CANCELLED":
@@ -119,6 +127,11 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                         btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#13C123"))); // Green color
                         btnStatus.setVisibility(View.VISIBLE);
                     }
+                    btnStatus.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                        }
+                    });
                     break;
 
                 case "PENDING_PICKUP":
@@ -140,6 +153,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                     btnStatus.setText("Đã nhận được");
                     btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#13C123"))); // Green color
                     btnStatus.setVisibility(View.VISIBLE);
+                    btnStatus.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            updateStatus(order.getIDOrder(), "COMPLETED_WAIT_REVIEW");
+                        }
+                    });
                     break;
 
                 case "COMPLETED_WAIT_REVIEW":
@@ -180,6 +199,11 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                     btnStatus.setText("Mua lại");
                     btnStatus.setBackground(createRoundedDrawable(Color.parseColor("#13C123"))); // Green color
                     btnStatus.setVisibility(View.VISIBLE);}
+                    btnStatus.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                        }
+                    });
                     break;
 
                 default:
@@ -253,6 +277,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         }
     }
 
+    public void updateStatus(String orderID, String status){
+        genericFunction.getTableReference("Order").child(orderID)
+                .child("status").setValue(status);
+        notifyDataSetChanged();
+    }
+
     // Static class to hold product data for display
     public static class OrderProductItem {
         private Product product;
@@ -277,4 +307,5 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             return price;
         }
     }
+
 }
