@@ -37,7 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class Login extends AppCompatActivity {
-
+    private static final String TAG = "LoginActivity";
     private static final int RC_SIGN_IN = 1234; // Request code cho Google Sign-In
     private Button loginggbtn; // Button dang nhap bang Google
     private TextView register; // TextView chuyen sang trang dang ky
@@ -47,6 +47,8 @@ public class Login extends AppCompatActivity {
     private FirebaseAuth mAuth; // Firebase Authentication
     private SessionControl session; // Session control
     private DatabaseReference userRef;
+    private AccessControl accessControl;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,8 @@ public class Login extends AppCompatActivity {
 
         // Khoi tao cac view
         initializeViews();
+        session = new SessionControl(this);
+        accessControl = new AccessControl(this);
 
         // Khoi tao Google Sign-In
         initializeGoogleSignIn();
@@ -134,12 +138,19 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(Login.this, "Dang nhap thanh cong ", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "signIn:success");
+                            Toast.makeText(Login.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Log.d("User", user.getEmail());
-                            checkUserRole(user.getEmail());
+                            if (user != null) {
+                                Log.d(TAG, "signIn: User email: " + user.getEmail());
+                                checkUserRole(user.getEmail());
+                            } else {
+                                accessControl.redirectToHomePage(Login.this);
+                            }
                         } else {
-                            Toast.makeText(Login.this, "Loi dang nhap ", Toast.LENGTH_SHORT).show();
+                            Log.w(TAG, "signIn:failure", task.getException());
+                            Toast.makeText(Login.this, "Lỗi đăng nhập: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -148,34 +159,26 @@ public class Login extends AppCompatActivity {
     private void checkUserRole(String email) {
         userRef.orderByChild("gmail").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                         String role = userSnapshot.child("role").getValue(String.class);
-
-                        if (role != null && role.equals("Admin")) {
-                            Intent adminIntent = new Intent(Login.this, Admin.class);
-                            adminIntent.putExtra("userEmail", email);
-                            startActivity(adminIntent);
-                        } else {
-                            Intent intent = new Intent(Login.this, MainActivity.class);
-                            intent.putExtra("userEmail", email);
-                            startActivity(intent);
+                        Log.d(TAG, "onDataChange: User role: " + role);
+                        if (role == null) {
+                            role = AccessControl.ROLE_USER;
                         }
-                        finish();
-                        break;
+                        accessControl.saveUserSession(email, role);
+                        accessControl.redirectToHomePage(Login.this);
+                        return;
                     }
-                } else {
-                    Intent intent = new Intent(Login.this, MainActivity.class);
-                    intent.putExtra("userEmail", email);
-                    startActivity(intent);
-                    finish();
                 }
+                accessControl.saveUserSession(email, AccessControl.ROLE_USER);
+                accessControl.redirectToHomePage(Login.this);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(Login.this, "Lỗi kết nối database: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(Login.this, "Lỗi kết nối database: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

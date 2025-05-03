@@ -46,6 +46,8 @@ import Model.Customer;
 import Model.MonthlyRevenue;
 
 public class Admin extends AppCompatActivity {
+    private static final String TAG = "AdminActivity";
+    private AccessControl accessControl;
     private GenericFunction genericFunction = new GenericFunction();
     private BarChart barChart;
     private String currentUserID = "";
@@ -75,7 +77,13 @@ public class Admin extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        accessControl = new AccessControl(this);
 
+        if (!accessControl.checkAccessForActivity(Admin.class)) {
+            Log.d(TAG, "onCreate: User not authorized to access AdminActivity");
+            accessControl.redirectUnauthorizedAccess(this);
+            return;
+        }
         initializeViews();
         initializeFirebase();
         loadUserData();

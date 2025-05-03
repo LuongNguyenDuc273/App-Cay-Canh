@@ -1,5 +1,7 @@
 package com.adrnc_g02.appcaycanh;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +26,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.mikephil.charting.data.BarEntry;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -51,20 +54,31 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     // UI elements
+    private static final String TAG = "MainActivity";
+    private AccessControl accessControl;
     private RecyclerView listbnt, listProduct;
     private Button btnlogout, btnAll;
     private BottomNavigationView bottomNavigationView;
     private ImageView admin;
     private CardView searchbar;
     private SearchView search;
+    private String currentUserID = "";
+    private FirebaseAuth auth;
+    private FirebaseUser currentUser;
+    private ArrayList<BarEntry> revenueList;
+    private OrderItemAdapter orderItemAdapter;
+    private TextView txtHome, txtCart, txtManager;
+    private DatabaseReference customerRef, addressRef;
+    private GenericFunction<Customer> customerGenericFunction;
+    private SessionControl session;
+    private FirebaseDatabase database;
+
     private TextView nd, Username;
     private ImageButton btnFavorite, btnNotification;
 
     // Firebase
-    private FirebaseDatabase database;
     private DatabaseReference tbline, tblProduct;
     private DatabaseReference orderDetailQuanTity;
-    private FirebaseAuth auth; // FirebaseAuth instance variable
     private GoogleSignInClient mGoogleSignInClient; // GoogleSignInClient
 
     // Adapters and Layout Managers
@@ -81,17 +95,16 @@ public class MainActivity extends AppCompatActivity {
     // Helper classes
     private MenuNavigation menuNavigation = new MenuNavigation(this);
     private GenericFunction genericFunction = new GenericFunction();
-    private GenericFunction<Customer> customerGenericFunction;
-
-    private DatabaseReference customerRef;
-    private String currentUserID = "";
-    private FirebaseUser currentUser;
-    SessionControl session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        accessControl = new AccessControl(this);
+        if (!accessControl.checkAccessForActivity(MainActivity.class)) {
+            accessControl.redirectUnauthorizedAccess(this);
+            return;
+        }
         // Thiet lap giao dien co ban
         setupUI();
 
@@ -132,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
         btnFavorite = findViewById(R.id.btnFavorite); //Test
         btnNotification = findViewById(R.id.btnNotification); //Test
         auth = FirebaseAuth.getInstance(); // Khoi tao Firebase Auth
-
         listbnt = findViewById(R.id.listbutton);
         listProduct = findViewById(R.id.recyclerViewPlants);
         Username = findViewById(R.id.txtUsername);
@@ -191,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
     private void loadData() {
         getAllLine();
         loadBestSellingProducts();
-        setUsername();
+        loadUserData();
         setupGreeting();
         initGoogleSignIn();
     }
@@ -267,6 +279,79 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void loadUserData() {
+        Log.d(TAG, "loadUserData called");
+        if (currentUser == null) {
+            Username.setText("Chua dang nhap");
+            Log.d(TAG, "No current user, set text to 'Chua dang nhap'");
+            return;
+        }
+
+        // Lấy thông tin từ Intent (nếu có)
+        String userName = getIntent().getStringExtra("a");
+        String userName2 = getIntent().getStringExtra("b");
+        String userGmail = currentUser.getEmail();
+
+        Log.d(TAG, "userName from intent: " + userName);
+        Log.d(TAG, "userName2 from intent: " + userName2);
+        Log.d(TAG, "userGmail from currentUser: " + userGmail);
+
+        // Ưu tiên hiển thị tên từ Intent trước
+        if (userName != null) {
+            Username.setText(userName);
+            Log.d(TAG, "Set nameUser to userName");
+        } else if (userName2 != null) {
+            Username.setText(userName2);
+            Log.d(TAG, "Set nameUser to userName2");
+        } else {
+            Username.setText(userGmail);
+            Log.d(TAG, "Set nameUser to userGmail");
+        }
+
+        // Nếu có email, query thông tin từ Database
+        if (userGmail != null) {
+            Log.d(TAG, "Querying Customer node with Gmail: " + userGmail);
+            customerRef.orderByChild("gmail")
+                    .equalTo(userGmail)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Log.d(TAG, "onDataChange called, dataSnapshot exists: " + dataSnapshot.exists());
+                            if (dataSnapshot.exists()) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    Customer customer = snapshot.getValue(Customer.class);
+                                    Log.d(TAG, "Customer object from snapshot: " + customer);
+                                    if (customer != null) {
+                                        displayInfo(customer); // Hiển thị thông tin
+                                        currentUserID = customer.getIDCus(); // Lưu ID người dùng
+                                        Log.d(TAG, "currentUserID set to: " + currentUserID);
+                                    }
+                                }
+                            } else {
+                                Log.d(TAG, "No data found in database, using currentUser info");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e(TAG, "Database error: " + error.getMessage());
+                            Toast.makeText(MainActivity.this, "Loi tai thong tin", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+    }
+
+    private void displayInfo(Customer customer) {
+        Log.d(TAG, "displayInfo called with customer: " + customer);
+        // Hiển thị tên, ưu tiên tên từ Database
+        if (customer.getNameCus() != null && !customer.getNameCus().isEmpty()) {
+            Username.setText(customer.getNameCus());
+        } else {
+            Username.setText(currentUser.getEmail());
+        }
+    }
+
 
     /**
      *  Thiet lap loi chao theo thoi gian
