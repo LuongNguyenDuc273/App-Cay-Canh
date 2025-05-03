@@ -50,7 +50,7 @@ import Model.Product;
      private GridLayoutManager gridLayoutManager;
      private GenericFunction genericFunction = new GenericFunction();
      private RecyclerView pGrid;
-     private TextView txtHome, txtCart, txtManager, username;
+     private TextView txtHome, txtCart, txtManager, username, logout;
      private ImageView icHome, icCart, icManager;
      private LinearLayout btnCart, btnHome, btnManager;
      private TextView txtHello;
@@ -73,7 +73,10 @@ import Model.Product;
         initializeFirebase();
         loadUserData();
         btnonClick();
-
+        logout.setOnClickListener(view -> {
+            session.signOutCompletely();
+            Log.d(TAG, "Logout button clicked");
+        });
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         String greeting;
@@ -100,6 +103,7 @@ import Model.Product;
         txtHello = findViewById(R.id.txtGreeting);
         btnHome = findViewById(R.id.home);
         btnCart = findViewById(R.id.cart);
+        logout = findViewById(R.id.Logout);
         btnManager = findViewById(R.id.manager);
         txtHome = findViewById(R.id.textHome);
         txtCart = findViewById(R.id.txtcart);
