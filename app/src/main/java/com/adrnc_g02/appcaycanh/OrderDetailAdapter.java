@@ -1,10 +1,13 @@
 package com.adrnc_g02.appcaycanh;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -56,6 +59,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
         private TextView tvVariant;
         private TextView tvDiscountPrice;
         private TextView tvQuantity;
+        private LinearLayout layoutitem;
 
         public OrderDetailViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -64,6 +68,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
             tvVariant = itemView.findViewById(R.id.tvProductDescription);
             tvDiscountPrice = itemView.findViewById(R.id.tvDiscountPrice);
             tvQuantity = itemView.findViewById(R.id.tvQuantity);
+            layoutitem = itemView.findViewById(R.id.layoutItemOrder);
         }
 
         public void bind(OrderAdapter.OrderProductItem item) {
@@ -87,6 +92,20 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
             } else {
                 ivProductImage.setImageResource(R.drawable.plant_placeholder);
             }
+            layoutitem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, ProductDetail.class);
+                    intent.putExtra("Image", item.getProduct().getPhoto());
+                    intent.putExtra("Name", item.getProduct().getNameProc());
+                    intent.putExtra("Line", item.getProduct().getIDLine());
+                    intent.putExtra("Price", item.getProduct().getPrice());
+                    intent.putExtra("Description", item.getProduct().getDescribe());
+                    intent.putExtra("Quantity", item.getProduct().getReQuantity());
+                    intent.putExtra("Key", item.getProduct().getIDProc());
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 }
