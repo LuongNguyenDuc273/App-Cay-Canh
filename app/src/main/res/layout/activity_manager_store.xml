@@ -269,7 +269,7 @@
                 android:id="@+id/txtmanager"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Quản lý"
+                android:text="Quản lý cửa hàng"
                 android:textColor="@color/green"
                 android:textSize="12sp" />
         </LinearLayout>
