@@ -44,12 +44,130 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- Menu cho các mệnh phong thủy -->
+    <HorizontalScrollView
+        android:id="@+id/menuMenh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:background="@color/green_dark_L"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="12dp"
+            android:paddingHorizontal="8dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardMenhKim"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="6dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/green_light">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="Mệnh Kim"
+                    android:textColor="@color/green_dark"
+                    android:textSize="14sp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardMenhMoc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="6dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/green_light">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="Mệnh Mộc"
+                    android:textColor="@color/green_dark"
+                    android:textSize="14sp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardMenhThuy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="6dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/green_light"
+                app:strokeWidth="1dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="Mệnh Thủy"
+                    android:textColor="@color/green_dark"
+                    android:textSize="14sp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardMenhHoa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="6dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/green_light">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="Mệnh Hỏa"
+                    android:textColor="@color/green_dark"
+                    android:textSize="14sp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardMenhTho"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="6dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/green_light">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="Mệnh Thổ"
+                    android:textColor="@color/green_dark"
+                    android:textSize="14sp" />
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </HorizontalScrollView>
+
     <!-- ScrollView for Blog Content -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout">
+        app:layout_constraintTop_toBottomOf="@id/menuMenh">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -64,7 +182,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Cây phong thủy trong nhà mang lại tài lộc, may mắn, sức khỏe"
+                android:text="Người mệnh Kim trồng cây gì để may mắn và ý nghĩa phong thủy?"
                 android:textColor="@color/dark_gray"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -127,7 +245,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:lineSpacingExtra="6dp"
-                android:text="Trong phong thủy, cây cảnh không chỉ là đồ vật trang trí mà còn ảnh hưởng đến vượng khí của gia chủ. Trồng cây phong thủy có thể mang đến nhiều tài lộc, may mắn và sức khỏe. Việc nên trang trí cây cảnh phong thủy loại nào phù hợp nhất? Bài viết dưới đây sẽ giúp bạn giải đáp những thắc mắc này!"
+                android:text="Kim là cung mệnh đứng đầu trong ngũ hành. Theo phong thủy thì Kim tượng trưng cho những kim loại, nguyên khí và các loại đất đá sâu bên trong lòng đất. Chính vì vậy người mệnh Kim khá cứng rắn, mạnh mẽ, luôn có mục tiêu và quyết đoán, kiên định theo đuổi mục tiêu đến cùng. Tuy nhiên, bên cạnh những điểm mạnh trong tính cách thì người mệnh Kim cũng có một số nhược điểm là khá ngang ngạnh, bướng bỉnh và dễ nổi cáu. Ngoài ra họ hay so sánh và có chút toan tính, chỉ thích mình là trung tâm và muốn người khác nghe theo, đặc biệt là trong các cuộc tranh luận."
                 android:textColor="@color/dark_gray"
                 android:textSize="16sp" />
 
@@ -148,7 +266,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Nguyên tắc khi lựa chọn cây phong thủy cho căn nhà"
+                    android:text="Chọn cây phong thủy cho người mệnh Kim"
                     android:textColor="@color/dark_gray"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -160,7 +278,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:lineSpacingExtra="6dp"
-                android:text="Theo phong thủy thì việc trang trí cây cảnh trong nhà sẽ giúp thu hút vượng khí, mang lại tài lộc và may mắn cho gia chủ. Thế nhưng nếu như bạn lựa chọn cây phong thủy không hợp mệnh thì chúng có thể gây ra những ảnh hưởng tiêu cực, xui xẻo cho gia đình."
+                android:text="Dưới đây là một số cây phong thủy đem đến may mắn, tài lộc cho người mệnh Kim:"
                 android:textColor="@color/dark_gray"
                 android:textSize="16sp" />
 
@@ -175,15 +293,6 @@
                     android:layout_width="4dp"
                     android:layout_height="match_parent"
                     android:background="@color/green_dark_L" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="Top 5 cây phong thủy phổ biến nhất"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
             </LinearLayout>
 
             <!-- Top Plants List -->
@@ -221,7 +330,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="1. Cây Trúc Phú Quý"
+                                android:text="1. Cây Bạch Mã Hoàng Tử"
                                 android:textColor="@color/dark_gray"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
@@ -230,7 +339,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
-                                android:text="Mang lại tài lộc, may mắn và năng lượng tích cực cho gia chủ"
+                                android:text="Đây là loại cây cảnh mọc theo nhóm. Thân cây màu trắng ngà, to bằng chiếc đũa. Mỗi khóm có nhiều nhánh nhỏ. Tán lá xòe rộng với những chiếc lá khá to và bóng. Ở giữa mỗi chiếc lá là một đường gân to màu trắng xanh toản ra hai bên là những đường gân nhỏ. Cây Bạch Mã Hoàng Tử là một trong những loại cây phong thủy hợp với người mệnh Kim. Loại cây này mang đến nhiều may mắn trong sự nghiệp cho gia chủ và thường được sử dụng để làm quà tặng trong các dịp khai trương, thăng chức,... Đặc biệt là loại cây này phù hợp với nam mệnh Kim vì tượng trưng cho sự mạnh mẽ và nam tính."
                                 android:textColor="@color/dark_gray"
                                 android:textSize="14sp" />
                         </LinearLayout>
@@ -265,7 +374,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="2. Cây Kim Tiền"
+                                android:text="2. Cây Dây Nhện"
                                 android:textColor="@color/dark_gray"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
@@ -274,7 +383,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
-                                android:text="Biểu tượng của sự giàu có và thịnh vượng, hút tài lộc"
+                                android:text="Cây Dây Nhện còn có tên gọi khác là cây Lan Chi. Loại cây này có nhiều lá mọc xòe ra xung quanh được ví như mạng nhện. Loại cây này khá nhỏ và dài. Nếu bạn trồng càng lâu thì lá mọc ra càng nhiều, dần dần thành một khóm. Người mệnh Kim trồng cây này trong nhà sẽ mau thăng tiến trong công việc, các mối quan hệ trở nên tốt đẹp đồng thời có được sự an lành và may mắn trong cuộc sống. Ngoài lợi ích về phong thủy thì loài cây này còn giúp thanh lọc không khí, chữa lành vết thương bằng cách giã nhuyễn rồi đắp lên. Vị trí thích hợp để đặt loại cây này là bàn làm việc."
                                 android:textColor="@color/dark_gray"
                                 android:textSize="14sp" />
                         </LinearLayout>
@@ -309,7 +418,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="3. Cây Ngọc Bích"
+                                android:text="3. Cây Ngọc Ngân"
                                 android:textColor="@color/dark_gray"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
@@ -318,8 +427,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
-                                android:text="Mang lại sự thịnh vượng và bình an cho gia đình"
-                                android:textColor="@color/dark_gray"
+                                android:text="Cây Ngọc Ngân có đặc điểm dễ nhận biết là lá to và xòe rộng với màu sắc của lá chủ yếu là trắng xanh ở giữa, viền lá xanh đậm. Bạn có thể trồng thủy sinh hoặc trồng trong đất đá bình thường đều được nhé! Loài cây này mang nhiều ý nghĩa. Ngoài vẻ ngoài sang trọng thì loài cây này còn là biểu tượng cho tình yêu sâu sắc, bền vững cùng với đó là khả năng xua đuổi tà vận, những điều bất trắc."                                android:textColor="@color/dark_gray"
                                 android:textSize="14sp" />
                         </LinearLayout>
                     </LinearLayout>
@@ -361,6 +469,7 @@
                 android:layout_marginTop="16dp"
                 android:clipToPadding="false"
                 android:orientation="horizontal"
+                android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/related_product_item" />
