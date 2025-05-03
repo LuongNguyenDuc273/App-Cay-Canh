@@ -101,7 +101,6 @@ public class Admin extends AppCompatActivity {
         else if (hour >= 18 && hour <= 21) {greeting = "Chào buổi tối 🌆";}
         else {greeting = "Khuya rồi 😴";}
         txtHello.setText(greeting);
-
     }
     private void initializeFirebase() {
         auth = FirebaseAuth.getInstance();
