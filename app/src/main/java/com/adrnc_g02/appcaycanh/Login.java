@@ -3,6 +3,7 @@ package com.adrnc_g02.appcaycanh;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +30,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class Login extends AppCompatActivity {
 
@@ -40,6 +46,7 @@ public class Login extends AppCompatActivity {
     private ImageButton loginbtn; // Button dang nhap bang email
     private FirebaseAuth mAuth; // Firebase Authentication
     private SessionControl session; // Session control
+    private DatabaseReference userRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +58,8 @@ public class Login extends AppCompatActivity {
 
         // Khoi tao Google Sign-In
         initializeGoogleSignIn();
+        userRef = FirebaseDatabase.getInstance().getReference("Customer");
+
 
         // Thiet lap listeners
         setupListeners();
@@ -126,14 +135,49 @@ public class Login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(Login.this, "Dang nhap thanh cong ", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(Login.this, MainActivity.class);
-                            intent.putExtra("userEmail", email);
-                            startActivity(intent);
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Log.d("User", user.getEmail());
+                            checkUserRole(user.getEmail());
                         } else {
                             Toast.makeText(Login.this, "Loi dang nhap ", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+    }
+
+    private void checkUserRole(String email) {
+        userRef.orderByChild("gmail").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                        String role = userSnapshot.child("role").getValue(String.class);
+
+                        if (role != null && role.equals("Admin")) {
+                            Intent adminIntent = new Intent(Login.this, Admin.class);
+                            adminIntent.putExtra("userEmail", email);
+                            startActivity(adminIntent);
+                        } else {
+                            Intent intent = new Intent(Login.this, MainActivity.class);
+                            intent.putExtra("userEmail", email);
+                            startActivity(intent);
+                        }
+                        finish();
+                        break;
+                    }
+                } else {
+                    Intent intent = new Intent(Login.this, MainActivity.class);
+                    intent.putExtra("userEmail", email);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Login.this, "Lỗi kết nối database: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**
