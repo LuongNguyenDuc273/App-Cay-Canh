@@ -3,6 +3,8 @@ package com.adrnc_g02.appcaycanh;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+
+import com.adrnc_g02.appcaycanh.Generic.GenericFunction;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -11,8 +13,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

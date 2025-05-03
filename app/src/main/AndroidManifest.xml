@@ -13,73 +13,73 @@
         android:theme="@style/Theme.AppCayCanh"
         tools:targetApi="31">
         <activity
-            android:name=".Blog"
+            android:name=".Bloggg.Blog"
             android:exported="false" />
         <activity
-            android:name=".AddReview"
+            android:name=".Adminn.AddReview"
             android:exported="false" />
         <activity
-            android:name=".MyReview"
+            android:name=".Review.MyReview"
             android:exported="false" />
         <activity
-            android:name=".ManagerStore"
+            android:name=".Adminn.ManagerStore"
             android:exported="false" />
         <activity
-            android:name=".EditProduct"
+            android:name=".Adminn.EditProduct"
             android:exported="false" />
         <activity
-            android:name=".ProductAdmin"
+            android:name=".Adminn.ProductAdmin"
             android:exported="false" />
         <activity
             android:name=".CategoryOrders"
             android:exported="false" />
         <activity
-            android:name=".OrderConfirmation"
+            android:name=".Order.OrderConfirmation"
             android:exported="false" />
         <activity
-            android:name=".Admin"
+            android:name=".Adminn.Admin"
             android:exported="false" />
         <activity
-            android:name=".OrderHistory"
+            android:name=".Order.OrderHistory"
             android:exported="false" />
         <activity
-            android:name=".Profile"
+            android:name=".Profile.Profile"
             android:exported="false" />
         <activity
-            android:name=".WaitingPickup"
+            android:name=".Order.WaitingPickup"
             android:exported="false" />
         <activity
-            android:name=".WaitingConfirmation"
+            android:name=".Order.WaitingConfirmation"
             android:exported="false" />
         <activity
             android:name=".Blogs"
             android:exported="false" />
         <activity
-            android:name=".Shopping"
+            android:name=".ProductType.Shopping"
             android:exported="false" />
         <activity
-            android:name=".SearchedProduct"
+            android:name=".Search.SearchedProduct"
             android:exported="false" />
         <activity
-            android:name=".Search"
+            android:name=".Search.Search"
             android:exported="false" />
         <activity
-            android:name=".ShoppingCart"
+            android:name=".Cart.ShoppingCart"
             android:exported="false" />
         <activity
-            android:name=".ProductDetail"
+            android:name=".Productdetail.ProductDetail"
             android:exported="false" />
         <activity
-            android:name=".AddLine"
+            android:name=".Adminn.AddLine"
             android:exported="false" />
         <activity
-            android:name=".AddProduct"
+            android:name=".Adminn.AddProduct"
             android:exported="true" />
         <activity
             android:name=".MyProduct"
             android:exported="false" />
         <activity
-            android:name=".Login"
+            android:name=".Session.Login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -88,10 +88,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".Home.MainActivity"
             android:exported="true" />
         <activity
-            android:name=".Register"
+            android:name=".Session.Register"
             android:exported="true" />
     </application>
 

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/circular_white_background"
-    tools:context=".AddReview">
+    tools:context=".Adminn.AddReview">
 
     <!-- Toolbar with back button and title -->
     <androidx.appcompat.widget.Toolbar
